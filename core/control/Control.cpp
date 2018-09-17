@@ -142,7 +142,7 @@ void Control::ui_init()
     }
 
     connect(_uiHandle->get_qobject("音频测试"), SIGNAL(clicked()), this, SLOT(start_sound_test()));
-    connect(_uiHandle->get_qobject("显示测试"), SIGNAL(clicked()), this, SLOT(start_display_est()));
+    connect(_uiHandle->get_qobject("显示测试"), SIGNAL(clicked()), this, SLOT(start_display_test()));
 
     if (_baseInfo->bright_level != "0"){
         connect(_uiHandle->get_qobject("亮度测试"), SIGNAL(clicked()), this, SLOT(start_bright_test()));
