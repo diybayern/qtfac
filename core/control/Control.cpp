@@ -25,7 +25,7 @@ Control::Control():QObject()
     _hwInfo                 = new HwInfo;
 	_facArg                 = new FacArg;
 
-	_funcFinishStatus       = new FuncFinishStatus;
+	_funcFinishStatus                   = new FuncFinishStatus;
 	_funcFinishStatus->mem_finish       = false;
     _funcFinishStatus->usb_finish       = false;
     _funcFinishStatus->net_finish       = false;
@@ -92,26 +92,26 @@ void Control::ui_init()
     _uiHandle->add_interface_test_button("EDID测试");
     _uiHandle->add_interface_test_button("CPU测试");
     
-    if (_baseInfo->hdd_cap != "0") {
+    if (_baseInfo->hdd_cap != "0" || _baseInfo->hdd_cap != "") {
         _uiHandle->add_interface_test_button("HDD测试");
     }
     
-    if (_baseInfo->fan_speed != "0") {
+    if (_baseInfo->fan_speed != "0" || _baseInfo->fan_speed != "") {
         _uiHandle->add_interface_test_button("FAN测试");
     }
 
-    if (_baseInfo->wifi_exist != "0") {
+    if (_baseInfo->wifi_exist != "0" || _baseInfo->wifi_exist != "") {
         _uiHandle->add_interface_test_button("WIFI测试");
     }
 
     _uiHandle->add_main_test_button("音频测试");
     _uiHandle->add_main_test_button("显示测试");
     
-    if (_baseInfo->bright_level != "0"){
+    if (_baseInfo->bright_level != "0" || _baseInfo->bright_level != ""){
         _uiHandle->add_main_test_button("亮度测试");
     }
     
-    if (_baseInfo->camara_exist != "0") {
+    if (_baseInfo->camara_exist != "0" || _baseInfo->camara_exist != "") {
         _uiHandle->add_main_test_button("摄像头测试");
     }
     
@@ -129,25 +129,25 @@ void Control::ui_init()
     connect(_uiHandle->get_qobject("网口测试"), SIGNAL(clicked()), this, SLOT(start_net_test()));
     connect(_uiHandle->get_qobject("EDID测试"), SIGNAL(clicked()), this, SLOT(start_edid_test()));
     connect(_uiHandle->get_qobject("CPU测试"), SIGNAL(clicked()), this, SLOT(start_cpu_test()));
-    if (_baseInfo->hdd_cap != "0") {
+    if (_baseInfo->hdd_cap != "0" || _baseInfo->hdd_cap != "") {
         connect(_uiHandle->get_qobject("HDD测试"), SIGNAL(clicked()), this, SLOT(start_hdd_test()));
     }
     
-    if (_baseInfo->fan_speed != "0") {
+    if (_baseInfo->fan_speed != "0" || _baseInfo->fan_speed != "") {
         connect(_uiHandle->get_qobject("FAN测试"), SIGNAL(clicked()), this, SLOT(start_fan_test()));
     }
 
-    if (_baseInfo->wifi_exist != "0") {
+    if (_baseInfo->wifi_exist != "0" || _baseInfo->wifi_exist != "") {
         connect(_uiHandle->get_qobject("WIFI测试"), SIGNAL(clicked()), this, SLOT(start_wifi_test()));
     }
 
     connect(_uiHandle->get_qobject("音频测试"), SIGNAL(clicked()), this, SLOT(start_sound_test()));
     connect(_uiHandle->get_qobject("显示测试"), SIGNAL(clicked()), this, SLOT(start_display_test()));
 
-    if (_baseInfo->bright_level != "0"){
+    if (_baseInfo->bright_level != "0" || _baseInfo->bright_level != ""){
         connect(_uiHandle->get_qobject("亮度测试"), SIGNAL(clicked()), this, SLOT(start_bright_test()));
     }
-    if (_baseInfo->camara_exist != "0") {
+    if (_baseInfo->camara_exist != "0" || _baseInfo->camara_exist != "") {
         connect(_uiHandle->get_qobject("摄像头测试"), SIGNAL(clicked()), this, SLOT(start_camera_test()));
     }
     connect(_uiHandle->get_qobject("拷机测试"), SIGNAL(clicked()), this, SLOT(start_stress_test()));
@@ -272,6 +272,7 @@ void Control::set_test_result(string func,string result,string ui_log)
     cout << "result:" << result << endl;
     cout << "ui_log:" << ui_log << endl;
     _uiHandle->set_test_result(func, result);
+	_uiHandle->update_screen_log(ui_log);
 }
 
 void Control::show_main_test_ui()
@@ -283,6 +284,12 @@ int Control::get_test_step()
 {
 	return _testStep;
 }
+
+void Control::update_screen_log(string uiLog)
+{
+	_uiHandle->update_screen_log(uiLog);
+}
+
 
 void Control::auto_start_stress_test()
 {

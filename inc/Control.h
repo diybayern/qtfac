@@ -68,7 +68,8 @@ public:
     void set_test_result(string func,string result,string ui_log);
     static Control* get_control();
     void show_main_test_ui();
-    UiHandle* _uiHandle;
+    void update_screen_log(string uiLog);
+    
 
     int get_test_step();
     FuncFinishStatus* get_func_finish_status()
@@ -111,6 +112,7 @@ private:
 
 private:
     static Control* _control;
+    UiHandle* _uiHandle;
     BaseInfo* _baseInfo;
     HwInfo* _hwInfo;
     FuncFinishStatus* _funcFinishStatus;

@@ -39,6 +39,23 @@ const string FAC_CONFIG_FILE      = "/tmp/fac_config.conf";
 #define USB_SPEED_LEN   32
 
 struct BaseInfo {
+    BaseInfo():mem_cap(""),
+        usb_total_num(""),
+        usb_3_num(""),
+        cpu_type(""),
+        ssd_cap(""),
+        emmc_cap(""),
+        hdd_cap(""),
+        wifi_exist(""),
+        fan_speed(""),
+        bright_level(""),
+        camara_exist(""),
+        vga_exist(""),
+        hdmi_exist(""),
+        lcd_info("")
+        {
+        }
+        
     string mem_cap;
     string usb_total_num;
     string usb_3_num;

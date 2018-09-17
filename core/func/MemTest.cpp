@@ -16,8 +16,10 @@ bool MemTest::compare_men_cap(int mem_cap)
 	float mem_cap_max = mem_cap * 1024;
     string real_mem_cap = execute_command("free -m | awk '/Mem/ {print $2}'");
     if (get_int_value(real_mem_cap) > mem_cap_min  && get_int_value(real_mem_cap) < mem_cap_max){
-        return true;
+		Control::get_control()->update_screen_log("mem cap is right\n");
+		return true;
     } else {
+        Control::get_control()->update_screen_log("mem cap is wrong\n");
         return false;
     }
 }
