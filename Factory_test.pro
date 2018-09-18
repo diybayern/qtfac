@@ -28,6 +28,8 @@ SOURCES += main.cpp\
     core/func/UploadMes.cpp \
     core/func/UsbTest.cpp \
     core/func/WifiTest.cpp \
+    core/func/i2c.cpp \
+    core/func/parse_edid.cpp \
     core/ui/UiHandle.cpp \
     utils/fac_log.cpp \
     utils/fac_utils.cpp \
@@ -55,7 +57,10 @@ HEADERS  += \
     inc/messageform.h \
     inc/Control.h \
     inc/VideoTestThread.h \
-    inc/ImageTestThread.h
+    inc/ImageTestThread.h \
+    inc/i2c_dev.h \
+    inc/libx86.h \
+    inc/modes.h \
 
 INCLUDEPATH += /usr/local/include/
 

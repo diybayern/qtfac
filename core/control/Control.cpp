@@ -14,7 +14,7 @@ Control::Control():QObject()
 	_funcBase[WIFI]         = new CpuTest(this);
 	_funcBase[SOUND]        = new SoundTest(this);
 	_funcBase[BRIGHT]       = new SoundTest(this);
-	_funcBase[CAMARA]       = new SoundTest(this);
+	_funcBase[CAMERA]       = new SoundTest(this);
 	_funcBase[STRESS]       = new StressTest(this);
 	_funcBase[UPLOAD_LOG]   = new SoundTest(this);
 	_funcBase[NEXT_PROCESS] = new SoundTest(this);
@@ -210,8 +210,8 @@ void Control::start_net_test()
 
 void Control::start_edid_test()
 {
-    
-    cout << "2" << endl;
+    _funcBase[EDID]->start_test(_baseInfo);
+    LOG_INFO("start edid test");
 }
 
 void Control::start_hdd_test()

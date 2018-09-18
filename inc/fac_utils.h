@@ -25,7 +25,7 @@ const string MEM_TEST_SCRIPT      = FACTORY_PATH + "mem_test.sh";
 const string MEM_UI_LOG           = FACTORY_PATH + "mem_ui_log";
 const string FAC_CONFIG_FILE      = "/tmp/fac_config.conf";
 
-
+#define AGAIN           (3)
 #define SUCCESS         (0)
 #define FAIL            (1)
 #define TIME_MAX_LEN    (50)

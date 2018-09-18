@@ -7,7 +7,7 @@
 #include "FuncTest.h"
 #include "SoundTest.h"
 #include "NetTest.h"
-
+#include "EdidTest.h"
 
 
 #include "FuncBase.h"
@@ -27,7 +27,7 @@ enum FuncType
     WIFI,
     SOUND,
     BRIGHT,
-    CAMARA,
+    CAMERA,
     STRESS,
     UPLOAD_LOG,
     NEXT_PROCESS
