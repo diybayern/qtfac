@@ -7,7 +7,7 @@ Control::Control():QObject()
     _funcBase[MEM]          = new MemTest(this);
 	_funcBase[USB]          = new UsbTest(this);
 	_funcBase[CPU]          = new CpuTest(this);
-	_funcBase[EDID]         = new CpuTest(this);
+	_funcBase[EDID]         = new EdidTest(this);
 	_funcBase[NET]          = new NetTest(this);
 	_funcBase[HDD]          = new CpuTest(this);
 	_funcBase[FAN]          = new FanTest(this);
