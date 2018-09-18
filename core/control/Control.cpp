@@ -51,7 +51,7 @@ Control::Control():QObject()
 	sprintf(_facArg->ftp_dest_path,"%sfac_config.conf",_facArg->ftp_dest_path);
 	char* response = ftp_send_file("/tmp/fac_config.conf",_facArg);
 	response = response_to_chinese(response);
-	LOG_INFO("ddsds%s",response);
+	LOG_INFO("ddddddsds%s",response);
 
 	auto_start_stress_test();
 }
