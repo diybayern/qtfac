@@ -48,6 +48,13 @@ void MainTestWindow::add_main_test_button(QString item)
     _main_test_item_list.append(listitem);
 }
 
+void MainTestWindow::add_stress_test_label(QString item)
+{
+    StressTestItem listitem;
+    listitem.itemname = item;
+    stress_test_item_list.append(listitem);
+}
+
 void MainTestWindow::add_complete_or_single_test_label(QString config)
 {
     QPalette pa;
@@ -205,6 +212,7 @@ void MainTestWindow::_prepare_main_test_layout()
             iteminfo.name = name;
             iteminfo.button = button;
             iteminfo.label = label;
+            iteminfo.mode = MAINFUNC;
             _insert_item_record(iteminfo);
         }
 
@@ -223,17 +231,20 @@ void MainTestWindow::_prepare_main_test_layout()
                 iteminfo.name = _main_test_item_list.at(0).itemname;
                 iteminfo.button = button;
                 iteminfo.label = label;
+                iteminfo.mode = MAINFUNC;
                 _insert_item_record(iteminfo);
 
                 for (int j = 0 ; j < _interface_test_list.count(); j++)
                 {
-                    button = new QPushButton(_interface_test_list.at(j).itemname);
+                    QCheckBox*r_button = new QCheckBox(_interface_test_list.at(j).itemname);
+                    r_button->setObjectName(_interface_test_list.at(j).itemname);
                     label = new QLabel;
-                    _main_test_layout->addWidget(button, j+1, 1);
+                    _main_test_layout->addWidget(r_button, j+1, 1);
                     _main_test_layout->addWidget(label, j+1, 2);
                     iteminfo.name = _interface_test_list.at(j).itemname;
-                    iteminfo.button = button;
+                    iteminfo.button = r_button;
                     iteminfo.label = label;
+                    iteminfo.mode = INTERFACE;
                     _insert_item_record(iteminfo);
                 }
 
@@ -245,6 +256,7 @@ void MainTestWindow::_prepare_main_test_layout()
                  iteminfo.name = _main_test_item_list.at(i).itemname;
                  iteminfo.button = button;
                  iteminfo.label = label;
+                 iteminfo.mode = MAINFUNC;
                  _insert_item_record(iteminfo);
              }
          }
@@ -376,8 +388,22 @@ void MainTestWindow::show_stress_test_window()
     start_stress_ui();
 }
 
+void MainTestWindow::show_display_test_window()
+{
+    start_display_test_ui();
+}
+
 void MainTestWindow::slot_finish_show_stress_window()
 {
     StressTestWindow::get_stress_test_window()->finish_stress_window();
 }
 
+void MainTestWindow::slot_finish_show_display_window()
+{
+    DisplayTestWindow::get_display_test_window()->finish_display_window();
+}
+
+void MainTestWindow::update_stress_label_value(QString item, QString result)
+{
+    StressTestWindow::get_stress_test_window()->update_stress_label_value(item, result);
+}

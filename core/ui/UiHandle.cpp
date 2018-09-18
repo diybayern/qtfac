@@ -6,7 +6,9 @@ UiHandle::UiHandle()
     connect(this, SIGNAL(need_to_show_main_test()), MainTestWindow::get_main_test_window(), SLOT(show_main_test_window()));
     connect(this, SIGNAL(print_result(QString,QString)), MainTestWindow::get_main_test_window(), SLOT(get_result_string(QString,QString)));
     connect(this, SIGNAL(to_show_stress_test_window()), MainTestWindow::get_main_test_window(), SLOT(show_stress_test_window()));
+    connect(this, SIGNAL(to_show_display_test_window()), MainTestWindow::get_main_test_window(), SLOT(show_display_test_window()));
     connect(this, SIGNAL(need_to_update_screen_log(QString)), MainTestWindow::get_main_test_window(), SLOT(update_screen_log(QString)));
+    connect(this, SIGNAL(to_update_stress_label_value(QString,QString)), MainTestWindow::get_main_test_window(), SLOT(update_stress_label_value(QString,QString)));
 }
 
 UiHandle::~UiHandle()
@@ -27,8 +29,6 @@ UiHandle* UiHandle::get_uihandle()
     return _ui_handle;
 }
 
-
-
 void UiHandle::add_interface_test_button(string item)
 {
     MainTestWindow::get_main_test_window()->add_interface_test_button(QString::fromStdString(item));
@@ -42,6 +42,11 @@ void UiHandle::add_main_label(string item, string result)
 void UiHandle::add_main_test_button(string item)
 {
     MainTestWindow::get_main_test_window()->add_main_test_button(QString::fromStdString(item));
+}
+
+void UiHandle::add_stress_test_label(string item)
+{
+    MainTestWindow::get_main_test_window()->add_stress_test_label(QString::fromStdString(item));
 }
 
 void UiHandle::confirm_test_result_dialog(string title)
@@ -66,7 +71,7 @@ void UiHandle::to_show_main_test_ui()
 
 void UiHandle::show_display_ui()
 {
-
+    emit to_show_display_test_window();
 }
 
 void UiHandle::show_stress_test_ui()
@@ -86,8 +91,7 @@ void UiHandle::update_screen_log(string textInfo)
 
 void UiHandle::update_stress_label_value(string item, string result)
 {
-
-
+    emit to_update_stress_label_value(QString::fromStdString(item), QString::fromStdString(result));
 }
 
 void UiHandle::show_sn_mac_message_box()
@@ -95,7 +99,7 @@ void UiHandle::show_sn_mac_message_box()
     MainTestWindow::get_main_test_window()->show_sn_mac_message_box();
 }
 
-QPushButton* UiHandle::get_qobject(string name)
+QObject* UiHandle::get_qobject(string name)
 {
     QObject *obj = new QObject;
     for (int i = 0 ; i < MainTestWindow::get_main_test_window()->itemlist.count(); i++)
@@ -103,13 +107,37 @@ QPushButton* UiHandle::get_qobject(string name)
         string objname = (MainTestWindow::get_main_test_window()->itemlist.at(i).name).toStdString();
         if (objname == name)
         {
-            obj = MainTestWindow::get_main_test_window()->itemlist.at(i).button;
-            QPushButton *b = qobject_cast<QPushButton*>(obj);
-            return b;
+            if (MainTestWindow::MAINFUNC == MainTestWindow::get_main_test_window()->itemlist.at(i).mode) {
+                obj = MainTestWindow::get_main_test_window()->itemlist.at(i).button;
+                QPushButton *p_b = qobject_cast<QPushButton*>(obj);
+                return p_b;
+            } else {
+                obj = MainTestWindow::get_main_test_window()->itemlist.at(i).button;
+                QCheckBox *c_b = qobject_cast<QCheckBox*>(obj);
+                return c_b;
+            }
         }
     }
-    return qobject_cast<QPushButton*>(obj);
+    return obj;
 }
+/*
+QCheckBox* UiHandle::get_qobject_interface(string name)
+{
+    QObject *obj = new QObject;
+    for (int i = 0 ; i < MainTestWindow::get_main_test_window()->itemlist.count(); i++)
+    {
+        string objname = (MainTestWindow::get_main_test_window()->itemlist.at(i).name).toStdString();
+        if (objname == name)
+        {
+            if (MainTestWindow::INTERFACE == MainTestWindow::get_main_test_window()->itemlist.at(i).mode) {
+                obj = MainTestWindow::get_main_test_window()->itemlist.at(i).button;
+                QCheckBox *r_b = qobject_cast<QCheckBox*>(obj);
+                return r_b;
+            }
+        }
+    }
+    return qobject_cast<QCheckBox*>(obj);
+}*/
 
 
 

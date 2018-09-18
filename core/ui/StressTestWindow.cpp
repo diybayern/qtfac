@@ -52,14 +52,50 @@ StressTestWindow::StressTestWindow(QWidget *parent)
     }
 
     // info layout
-    _lb_info = new QLabel(_frame);
+    _lb_info = new QFrame(_frame);
     _if_a.info_start_x = st_w/2;
     _if_a.info_start_y = st_h/3;
     _if_a.info_w = st_w/2;
     _if_a.info_h = st_h - st_h/3;
     _lb_info->setObjectName(QString::fromUtf8("lb_info"));
     _lb_info->setGeometry(QRect(_if_a.info_start_x, _if_a.info_start_y, _if_a.info_w, _if_a.info_h));
-    _lb_info->installEventFilter(this);
+
+    _group_box = new QGroupBox(_lb_info);
+    _group_box->setObjectName(QString::fromUtf8("_group_box"));
+    _group_box->setStyleSheet("QGroupBox{border:none}");
+    _group_box->setGeometry(QRect(0, 0, _if_a.info_w, _if_a.info_h));
+    _grid_box = new QGridLayout(_group_box);
+
+    QFont font;
+    if ((st_h <= 1080 && st_h > 1050) && (st_w <= 1920 && st_w > 1680)) {
+        font.setPointSize(16);
+    } else if ((st_h <= 1050 && st_h > 1024) && (st_w <= 1680 && st_w > 1440)) {
+       font.setPointSize(16);
+    } else if ((st_h <= 1024 && st_h >= 900) && (st_w <= 1440 && st_w >= 1280)) {
+       font.setPointSize(14);
+    } else if ((st_h < 900 && st_h >= 720) && (st_w <= 1280 && st_w > 1024)) {
+       font.setPointSize(12);
+    } else {
+       font.setPointSize(18);
+    }
+    font.setWeight(QFont::Black);
+
+    for (int i = 0; i < MainTestWindow::get_main_test_window()->stress_test_item_list.count(); i++) {
+        QString item = MainTestWindow::get_main_test_window()->stress_test_item_list.at(i).itemname;
+        QLabel* st_lab = new QLabel(item);
+        st_lab->setFont(font);
+        QLabel* st_lab_value = new QLabel;
+        st_lab_value->setFont(font);
+        _grid_box->addWidget(st_lab, i, 0);
+        _grid_box->addWidget(st_lab_value, i, 1);
+        Stress_Test_Info info;
+        info.name = item;
+        info.label = st_lab_value;
+        stress_test_info_list.append(info);
+    }
+    //_grid_box->setSpacing(20);
+    _grid_box->setColumnStretch(0, 1);
+    _grid_box->setColumnStretch(1, 3);
 
     //connect and start thread
     connect(ImageTestThread::get_image_test_thread(), SIGNAL(sig_send_one_pixmap(QPixmap)), this, SLOT(slot_get_one_pixmap(QPixmap)));
@@ -82,6 +118,22 @@ void StressTestWindow::finish_stress_window()
     if (NULL != _stress_test_window) {
         this->deleteLater();
         _stress_test_window = NULL;
+    }
+}
+
+void StressTestWindow::update_stress_label_value(QString item, QString result)
+{
+    if (stress_test_info_list.isEmpty()) {
+        return ;
+    }
+
+    for (int i = 0; i < stress_test_info_list.count(); i++) {
+        QString tmp =  stress_test_info_list.at(i).name;
+        if (item.compare(tmp) == 0) {
+            QLabel* label = stress_test_info_list.at(i).label;
+            label->setText(result);
+            label->update();
+        }
     }
 }
 

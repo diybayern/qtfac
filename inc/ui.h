@@ -40,14 +40,20 @@ class MainTestItem
         QString itemname;
 };
 
+class StressTestItem
+{
+    public:
+        QString itemname;
+};
+
 class ItemCheck
 {
     public:
         QString name;
         QObject *button;
         QObject *label;
+        int     mode;
 };
-
 
 class MainTestWindow : public QDialog
 {
@@ -55,8 +61,8 @@ class MainTestWindow : public QDialog
 
     public:
         enum {
-            NO_PRODUCTID = 0,
-            PRODUCTID,
+            MAINFUNC = 0,
+            INTERFACE,
         };
         explicit MainTestWindow(QWidget *parent = 0);
         ~MainTestWindow();
@@ -64,6 +70,7 @@ class MainTestWindow : public QDialog
         void add_interface_test_button(QString item);
         void add_main_label(QString item, QString result);
         void add_main_test_button(QString item);
+        void add_stress_test_label(QString item);
         void confirm_test_result_dialog(QString title);
         void add_complete_or_single_test_label(QString config);
         void show_sn_mac_message_box();
@@ -73,6 +80,7 @@ class MainTestWindow : public QDialog
         static MainTestWindow* get_main_test_window();
         int get_current_res_h;
         int get_current_res_w;
+        QList<StressTestItem> stress_test_item_list;
 
     private:
         static MainTestWindow* _main_test_window;
@@ -144,8 +152,12 @@ class MainTestWindow : public QDialog
         void resume_message_box();
         void get_result_string(QString func, QString result);
         void show_stress_test_window();
+        void show_display_test_window();
         void slot_finish_show_stress_window();
+        void slot_finish_show_display_window();
         void update_screen_log(QString info);
+        void update_stress_label_value(QString item, QString result);
+
 };
 
 
@@ -179,6 +191,13 @@ public:
     QLabel * lb_image;
 };
 
+class Stress_Test_Info
+{
+    public:
+        QString name;
+        QLabel *label;
+};
+
 
 
 class StressTestWindow : public QWidget
@@ -191,6 +210,8 @@ public:
     static StressTestWindow* get_stress_test_window();
     void finish_stress_window();
     void _set_picture(QPixmap& pix);
+    QList<Stress_Test_Info> stress_test_info_list;
+    void update_stress_label_value(QString item, QString result);
 
 protected:
     void mousePressEvent(QMouseEvent* event);
@@ -205,14 +226,16 @@ private:
     static StressTestWindow* _stress_test_window;
     QFrame *_frame;
     QLabel *_lb_video;
-    QFrame *_lb_image_frame;
-    QLabel *_lb_info;
+    QLabel *_lb_image_frame;
+    QFrame *_lb_info;
     QList<image_layout_attr> _image_label_list;
     video_attr _v_a;
     image_attr _im_a;
     info_attr  _if_a;
     QImage mImage;
     QPixmap _m_pixmap;
+    QGroupBox *_group_box;
+    QGridLayout *_grid_box;
     int st_w;
     int st_h;
 
@@ -225,26 +248,39 @@ signals:
 
 };
 
-class DisplayTestWindow : public QLabel
+class DisplayTestWindow : public QWidget
 {
     Q_OBJECT
+public:
+    enum {
+        RGB = 1,
+        BLACK,
+        WHITE
+    };
 
+    explicit DisplayTestWindow(QWidget *parent = 0);
+    ~DisplayTestWindow();
+    static DisplayTestWindow* get_display_test_window();
+    void start_exec();
+    void finish_display_window();
 
+protected:
+    void mousePressEvent(QMouseEvent* event);
+    void keyPressEvent(QKeyEvent *event);
+    void paintEvent(QPaintEvent* event);
 
+private:
+    static DisplayTestWindow* _display_test_window;
+    int _state;
+    int _st_w;
+    int _st_h;
 
+signals:
+    void sig_finish_show_display_window();
 };
 
 
-
-
-
-
-
-
-
-
-
-
+extern void start_display_test_ui();
 extern bool start_stress_ui();
 extern MainTestWindow *gstr_maintestwindow;
 #endif //UI_H

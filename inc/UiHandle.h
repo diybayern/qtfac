@@ -17,6 +17,7 @@ class UiHandle: public QObject
         void add_interface_test_button(string item);
         void add_main_label(string item, string result);
         void add_main_test_button(string item);
+        void add_stress_test_label(string item);
         void confirm_test_result_dialog(string title);
         void set_test_result(string item, string result);
         void show_display_ui();
@@ -27,7 +28,8 @@ class UiHandle: public QObject
         void to_show_main_test_ui();
         void add_complete_or_single_test_label(string config);
         void show_sn_mac_message_box();
-        QPushButton *get_qobject(string name);
+        QObject *get_qobject(string name);
+       // QCheckBox *get_qobject_interface(string name);
     private:
         static UiHandle* _ui_handle;
 
@@ -35,7 +37,9 @@ class UiHandle: public QObject
         void to_draw_main_test_window();
         void need_to_show_main_test();
         void print_result(QString func, QString result);
+        void to_update_stress_label_value(QString item, QString result);
         void to_show_stress_test_window();
+        void to_show_display_test_window();
         void need_to_update_screen_log(QString info);
 
 };

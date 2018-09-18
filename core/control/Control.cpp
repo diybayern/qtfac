@@ -123,6 +123,17 @@ void Control::ui_init()
     
     _uiHandle->sync_main_test_ui();
     
+    _uiHandle->add_stress_test_label("运行时间");
+    _uiHandle->add_stress_test_label("CPU温度");
+    _uiHandle->add_stress_test_label("编码状态");
+    _uiHandle->add_stress_test_label("解码状态");
+    _uiHandle->add_stress_test_label("产品型号");
+    _uiHandle->add_stress_test_label("硬件版本");
+    _uiHandle->add_stress_test_label("SN序列号");
+    _uiHandle->add_stress_test_label("MAC地址");
+    _uiHandle->add_stress_test_label("CPU频率");
+    _uiHandle->add_stress_test_label("Mem");
+    _uiHandle->add_stress_test_label("Cpu");
     
     connect(_uiHandle->get_qobject("内存测试"), SIGNAL(clicked()), this, SLOT(start_mem_test()));
     connect(_uiHandle->get_qobject("USB测试"), SIGNAL(clicked()), this, SLOT(start_usb_test()));
@@ -231,7 +242,7 @@ void Control::start_sound_test()
 
 void Control::start_display_test()
 {
-    
+    _uiHandle->show_display_ui();
     cout << "2" << endl;
 }
 
@@ -250,6 +261,18 @@ void Control::start_camera_test()
 void Control::start_stress_test()
 {
     _funcBase[STRESS]->start_test(_baseInfo);
+    _uiHandle->show_stress_test_ui();
+    _uiHandle->update_stress_label_value("运行时间","0天0时0分0秒");
+    _uiHandle->update_stress_label_value("CPU温度","49.00°C");
+    _uiHandle->update_stress_label_value("编码状态","PASS");
+    _uiHandle->update_stress_label_value("解码状态","PASS");
+    _uiHandle->update_stress_label_value("产品型号","RG-Rain310W V2");
+    _uiHandle->update_stress_label_value("硬件版本","V1.00");
+    _uiHandle->update_stress_label_value("SN序列号","G1LQ9CK000967");
+    _uiHandle->update_stress_label_value("MAC地址","00:74:9c:5d:9f:45");
+    _uiHandle->update_stress_label_value("CPU频率","2.30G");
+    _uiHandle->update_stress_label_value("Mem","4309128K used 3853928K free");
+    _uiHandle->update_stress_label_value("Cpu","96.6% usr  3.4% sys \n0.0% idle  0.0% iowait");
     cout << "start_stress_test" << endl;
 }
 
