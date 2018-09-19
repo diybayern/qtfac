@@ -21,6 +21,9 @@ const string FACTORY_PATH         = "/usr/local/bin/factory/";
 const string STRESS_LOCK_FILE     = FACTORY_PATH + "lock";
 const string FAN_TEST_SCRIPT      = FACTORY_PATH + "fan_test.sh";
 const string MEM_TEST_SCRIPT      = FACTORY_PATH + "mem_test.sh";
+const string WIFI_TEST_SCRIPT     = FACTORY_PATH + "wifi_test.sh";
+const string HDD_TEST_SCRIPT      = FACTORY_PATH + "hdd_test.sh";
+
 
 const string MEM_UI_LOG           = FACTORY_PATH + "mem_ui_log";
 const string FAC_CONFIG_FILE      = "/tmp/fac_config.conf";
@@ -41,6 +44,10 @@ const string FAC_CONFIG_FILE      = "/tmp/fac_config.conf";
 
 #define USB_PATH_LEN    1024
 #define USB_SPEED_LEN   32
+
+#define MAC_ADDR_LEN     (6)
+#define CMD_BUF_SIZE   (256)
+
 
 struct BaseInfo {
     BaseInfo():mem_cap(""),
@@ -105,6 +112,16 @@ struct FacArg{
     char* wifi_enp;
 };
 
+struct MacPacket {
+    unsigned char dst_mac[MAC_ADDR_LEN];
+    unsigned char src_mac[MAC_ADDR_LEN];
+    unsigned short type;
+    unsigned int magic;
+    unsigned int index;
+    unsigned char data[100];
+};
+
+
 typedef struct tagUdevInfo {
 	char block[USB_BLOCK_LEN];
 	char vendor[USB_VENDOR_LEN];
@@ -137,6 +154,8 @@ char* ftp_send_file(const char* local_file_path, FacArg* fac);
 char* response_to_chinese(const char* response);
 bool combine_fac_log_to_mes(string sendLogPath);
 bool is_digit(char *str);
+char* delNL(char *line);
+
 
 
 

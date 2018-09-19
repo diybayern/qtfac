@@ -9,9 +9,9 @@ Control::Control():QObject()
 	_funcBase[CPU]          = new CpuTest(this);
 	_funcBase[EDID]         = new EdidTest(this);
 	_funcBase[NET]          = new NetTest(this);
-	_funcBase[HDD]          = new CpuTest(this);
+	_funcBase[HDD]          = new HddTest(this);
 	_funcBase[FAN]          = new FanTest(this);
-	_funcBase[WIFI]         = new CpuTest(this);
+	_funcBase[WIFI]         = new WifiTest(this);
 	_funcBase[SOUND]        = new SoundTest(this);
 	_funcBase[BRIGHT]       = new SoundTest(this);
 	_funcBase[CAMERA]       = new SoundTest(this);
@@ -41,18 +41,13 @@ Control::Control():QObject()
 	_testStep = STEP_IDLE;
 	_stress_test_stage = "";
 	_autoUploadLog = true;
+	_mes_log_file = "";
     
     init_base_info();
     init_hw_info();
     ui_init();
 	init_func_test();
 	init_fac_config();
-
-	combine_fac_log_to_mes("/tmp/fac_config.conf");
-	sprintf(_facArg->ftp_dest_path,"%sfac_config.conf",_facArg->ftp_dest_path);
-	char* response = ftp_send_file("/tmp/fac_config.conf",_facArg);
-	response = response_to_chinese(response);
-	LOG_INFO("ddddddsds%s",response);
 
 	auto_start_stress_test();
 }
@@ -218,10 +213,11 @@ void Control::start_edid_test()
 }
 
 void Control::start_hdd_test()
-{
-    
-    cout << "2" << endl;
+{    
+     _funcBase[HDD]->start_test(_baseInfo);   
+     LOG_INFO("start hdd test");
 }
+
 
 void Control::start_fan_test()
 {
@@ -231,10 +227,11 @@ void Control::start_fan_test()
 }
 
 void Control::start_wifi_test()
-{
-    
-    cout << "2" << endl;
+{    
+	_funcBase[WIFI]->start_test(_baseInfo);    
+	LOG_INFO("start wifi test");
 }
+
 
 void Control::start_sound_test()
 {
@@ -309,6 +306,93 @@ void Control::show_main_test_ui()
 int Control::get_test_step()
 {
 	return _testStep;
+}
+
+void Control::init_mes_log()
+{
+    int i=0;
+    int j=0;
+    char date[64] = { 0, };
+    char new_mac_name[128];
+    struct tm *timenow = NULL;
+    time_t timep;
+ 
+    while(_hwInfo->mac[i] != '\0'){
+        if(_hwInfo->mac[i] != ':'){
+            new_mac_name[j] = _hwInfo->mac[i];
+            j++;
+        }
+        i++;
+    }
+
+    new_mac_name[j] = '\0';
+    char* mac_capital = (char*)malloc(128);
+    char* sn_capital = (char*)malloc(128);
+	
+    mac_capital = lower_to_capital(new_mac_name, mac_capital);
+    sn_capital = lower_to_capital(_hwInfo->sn.c_str(), sn_capital);
+	_mes_log_file = "/var/log/" + mac_capital + ".txt";
+      
+    if (access(_mes_log_file.c_str(), F_OK) == 0) {
+        remove(_mes_log_file.c_str());
+    }
+	_facArg->ftp_dest_path = _facArg->ftp_dest_path + mac_capital + ".txt";
+    
+    time(&timep);
+    timenow = localtime(&timep);
+    strftime(date, 64, "%Y%m%d-%H:%M:%S", timenow);
+
+	/*
+    LOG_MES("---------------------Product infomation-----------------------\n");
+    LOG_MES("Model: \t%s\n", info->product_name);
+    LOG_MES("SN: \t%s\n", sn_capital);
+    LOG_MES("MAC: \t%s\n", mac_capital);
+    LOG_MES("DATE: \t%s\n", date);
+    LOG_MES("OPERATION: \t%s\n", info->ftp->job_number);
+    LOG_MES("---------------------Simple test result-----------------------\n");
+    LOG_MES("MEMORY:    NULL\n");
+    LOG_MES("USB:       NULL\n");
+    LOG_MES("NET:       NULL\n");
+    LOG_MES("EDID:      NULL\n");
+ 
+    if (IS_PRODUCT_NEED_HDD_TEST(info->product_id)) {
+        LOG_MES("HDD:       NULL\n");
+    }
+    if (IS_PRODUCT_NEED_FAN_TEST(info->product_id)) {
+        LOG_MES("FAN:       NULL\n");
+    }
+    if (IS_PRODUCT_NEED_WIFI_TEST(info->product_id)) {
+        LOG_MES("WIFI:      NULL\n");
+    }
+    LOG_MES("AUDIO:     NULL\n");
+    LOG_MES("DISPLAY:   NULL\n");
+    if (info->product_id == PRODUCT_RAIN200V2_V1_0 || info->product_id == PRODUCT_RAIN200V2_V1_20
+	    || info->product_id == PRODUCT_RAIN200PRO_EXAM || info->product_id == PRODUCT_RAIN200PRO_EXAM_V1_20) {
+        LOG_MES("BRIGHTNESS:NULL\n");
+    }
+    if (info->product_id == PRODUCT_RAIN200PRO_EXAM || info->product_id == PRODUCT_RAIN200PRO_EXAM_V1_20) {
+        LOG_MES("CAMERA:    NULL\n");
+    }
+    
+    LOG_MES("STRESS:    NULL\n");
+    LOG_MES("---------------------Detail test result-----------------------\n");
+    */
+    free(mac_capital);
+    free(sn_capital);
+}
+
+
+void Conrol::upload_mes_log() {
+	if (combine_fac_log_to_mes("/tmp/fac_config.conf")) {
+		sprintf(_facArg->ftp_dest_path,"%sfac_config.conf",_facArg->ftp_dest_path);
+		char* response = ftp_send_file("/tmp/fac_config.conf",_facArg);
+		response = response_to_chinese(response);
+		LOG_INFO("upload %s",response);
+	} else {
+		LOG_INFO("combine mes fail");
+	}
+	
+	
 }
 
 void Control::update_screen_log(string uiLog)

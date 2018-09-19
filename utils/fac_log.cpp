@@ -1,8 +1,8 @@
 #include "../inc/fac_log.h"
 #include "../inc/fac_utils.h"
 
-#define WRITE_LOG_PATH                        "/var/log/factory_test.log"
-#define WRITE_LOG_BAK                         "/var/log/factory_test_bak.log"
+#define WRITE_LOG_PATH                        "/var/log/qt.log"
+#define WRITE_LOG_BAK                         "/var/log/qt_bak.log"
 
 #define LOG_MAX_SIZE    (5<<20)
 #define LOG_MAX_LEN     (1024)

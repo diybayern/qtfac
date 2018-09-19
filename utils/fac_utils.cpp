@@ -461,3 +461,12 @@ char* ftp_send_file(const char* local_file_path, FacArg* fac)
     FtpQuit(ftp_handle);
     return ret_rsp;
 }
+
+char* delNL(char *line)
+{
+    int len = strlen(line);
+
+    if (line[len-1] == '\n')
+        line[len-1] = '\0';
+    return line;
+}

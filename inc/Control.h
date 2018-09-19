@@ -8,12 +8,15 @@
 #include "SoundTest.h"
 #include "NetTest.h"
 #include "EdidTest.h"
+#include "WifiTest.h"
+#include "HddTest.h"
+
 
 
 #include "FuncBase.h"
 #include "UiHandle.h"
 
-#define   FUNC_TYPE_NUM     (13) 
+#define   FUNC_TYPE_NUM     (13)
 
 enum FuncType
 {
@@ -69,6 +72,8 @@ public:
     static Control* get_control();
     void show_main_test_ui();
     void update_screen_log(string uiLog);
+    void upload_mes_log();
+    void init_mes_log();
     
 
     int get_test_step();
@@ -125,6 +130,7 @@ private:
     FacArg* _facArg;
     string _stress_test_stage;
     bool _autoUploadLog;
+    string _mes_log_file;
 
 signals:
 
