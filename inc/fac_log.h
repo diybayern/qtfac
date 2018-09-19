@@ -16,6 +16,12 @@ enum LOG_LEVEL {
 
 void _write_log(const char *file, const char *func, int line, int level, const char *fmt, ...);
 
+
+#define LOG_MES(format, args...) write_mes_log(format, ##args)
+void write_mes_log(const char *fmt, ...);
+
+
+
 #endif /*__FAC_LOG_H__*/
 
 

@@ -11,6 +11,7 @@ void HddTest::set_hdd_test_result(string func,string result,string ui_log)
 {
     Control *control = Control::get_control();
     control->set_test_result(func,result,ui_log);
+	control->set_hdd_test_finish();
 }
 
 string HddTest::hdd_test_all(string hdd_cap)

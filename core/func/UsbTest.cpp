@@ -28,6 +28,7 @@ void UsbTest::set_usb_test_result(string func,string result,string ui_log)
 {
     Control *control = Control::get_control();
     control->set_test_result(func,result,ui_log);
+	control->set_usb_test_finish();
 }
 
 bool UsbTest::get_dev_mount_point(struct udev_device* dev, char* dst) {

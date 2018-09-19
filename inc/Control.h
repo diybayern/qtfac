@@ -40,7 +40,7 @@ enum TestStep {
     STEP_IDLE = 0,
     STEP_INTERFACE,
     STEP_SOUND,
-    STEP_SCREEN,
+    STEP_DISPLAY,
     STEP_BRIGHTNESS,
     STEP_CAMERA,
     STEP_STRESS,
@@ -49,15 +49,17 @@ enum TestStep {
 };
 
 struct FuncFinishStatus {
+    bool interface_finish;
     bool mem_finish;
     bool usb_finish;
+    bool cpu_finish;
     bool net_finish;
     bool edid_finish;
     bool hdd_finish;
     bool fan_finish;
     bool wifi_finish;
     bool sound_finish;
-    bool screen_finish;
+    bool display_finish;
     bool bright_finish;
     bool camera_finish;
 };
@@ -92,14 +94,49 @@ public:
         return _hwInfo;
     }
 
+    void set_interfacetest_finish()
+    {
+        _funcFinishStatus->interface_finish = true;
+    }
+
     void set_mem_test_finish()
     {
         _funcFinishStatus->mem_finish = true;
     }
 
+    void set_usb_test_finish()
+    {
+        _funcFinishStatus->usb_finish = true;
+    }
+
+    void set_cpu_test_finish()
+    {
+        _funcFinishStatus->cpu_finish = true;
+    }
+
+    void set_edid_test_finish()
+    {
+        _funcFinishStatus->edid_finish = true;
+    }
+
+    void set_net_test_finish()
+    {
+        _funcFinishStatus->net_finish = true;
+    }
+
+    void set_hdd_test_finish()
+    {
+        _funcFinishStatus->hdd_finish = true;
+    }
+
     void set_fan_test_finish()
     {
         _funcFinishStatus->fan_finish = true;
+    }
+
+    void set_wifi_test_finish()
+    {
+        _funcFinishStatus->wifi_finish = true;
     }
 
     string get_stress_test_stage() {
@@ -135,6 +172,7 @@ private:
 signals:
 
 public slots:
+    void start_interface_test();
     void start_mem_test();
     void start_usb_test();
     void start_net_test();

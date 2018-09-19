@@ -411,7 +411,7 @@ bool combine_fac_log_to_mes(string sendLogPath) {
     FILE* fp_fac;
     int c;
     fp_mes = fopen(sendLogPath.c_str(),"ab");
-    fp_fac = fopen("/var/log/factory_test.log","rb");
+    fp_fac = fopen("/var/log/qt.log","rb");
     if (fp_mes == NULL || fp_fac == NULL) {
         if (fp_mes) {
             fclose(fp_mes);
@@ -469,4 +469,19 @@ char* delNL(char *line)
     if (line[len-1] == '\n')
         line[len-1] = '\0';
     return line;
+}
+
+char* lower_to_capital(const char* lower_str, char* capital_str)
+{
+    int i=0;
+    while (lower_str[i] != '\0') {
+        if (lower_str[i]>='a' && lower_str[i]<='z') {
+            capital_str[i] = lower_str[i]-32;
+        } else {
+            capital_str[i] = lower_str[i];
+        }
+        i++;
+    }
+    capital_str[i] = '\0';
+    return capital_str;
 }

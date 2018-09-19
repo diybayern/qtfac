@@ -12,6 +12,7 @@ void CpuTest::set_cpu_test_result(string func,string result,string ui_log)
 {
     Control *control = Control::get_control();
     control->set_test_result(func,result,ui_log);
+	control->set_cpu_test_finish();
 }
 
 bool CpuTest::is_cpu_test_pass(BaseInfo* baseInfo)
@@ -47,6 +48,7 @@ void FanTest::set_fan_test_result(string func,string result,string ui_log)
 {
     Control *control = Control::get_control();
     control->set_test_result(func,result,ui_log);
+	control->set_fan_test_finish();
 }
 
 string FanTest::fan_speed_test(string speed)
@@ -65,7 +67,6 @@ void* FanTest::test_all(void *arg)
 	} else {
         set_fan_test_result("FAN测试","FAIL",result);
 	}
-    Control::get_control()->set_fan_test_finish();
 	return NULL;
 }
 

@@ -184,7 +184,7 @@ bool WifiTest::wifi_sprintf_mac_addr(unsigned char* src, char* dst) {
 			 len = recvfrom(fd, &recv_packet, sizeof(recv_packet), 0, 0, 0);
 		 
 			 if (len != sizeof(recv_packet)) {
-				 LOG_ERROR("recv len failed %d\n", len);
+				 //LOG_ERROR("recv len failed %d\n", len);
 				 close(fd);
 				 usleep(10000);
 				 break;
@@ -401,6 +401,7 @@ void WifiTest::set_wifi_test_result(string func,string result,string ui_log)
 {
     Control *control = Control::get_control();
     control->set_test_result(func,result,ui_log);
+	control->set_wifi_test_finish();
 }
 
 void* WifiTest::test_all(void* arg)

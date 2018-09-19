@@ -42,11 +42,11 @@ const string FAC_CONFIG_FILE      = "/tmp/fac_config.conf";
 #define USB_VENDOR_LEN    (64)
 #define USB_WRITE_LEN     (1024 * 1024)
 
-#define USB_PATH_LEN    1024
-#define USB_SPEED_LEN   32
+#define USB_PATH_LEN      (1024)
+#define USB_SPEED_LEN     (32)
 
-#define MAC_ADDR_LEN     (6)
-#define CMD_BUF_SIZE   (256)
+#define MAC_ADDR_LEN      (6)
+#define CMD_BUF_SIZE      (256)
 
 
 struct BaseInfo {
@@ -155,6 +155,8 @@ char* response_to_chinese(const char* response);
 bool combine_fac_log_to_mes(string sendLogPath);
 bool is_digit(char *str);
 char* delNL(char *line);
+char* lower_to_capital(const char* lower_str, char* capital_str);
+
 
 
 

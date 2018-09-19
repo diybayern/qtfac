@@ -3,6 +3,7 @@
 
 #define WRITE_LOG_PATH                        "/var/log/qt.log"
 #define WRITE_LOG_BAK                         "/var/log/qt_bak.log"
+#define UPLOAD_MES_LOG                         "/var/log/mes.txt"
 
 #define LOG_MAX_SIZE    (5<<20)
 #define LOG_MAX_LEN     (1024)
@@ -102,3 +103,33 @@ void _write_log(const char *fname, const char *function, int line, int level, co
     __write_log(os_log, fname, function, line, level, fmt, args);
     va_end(args);
 }
+
+void write_mes_log(const char *fmt, ...)
+{
+    va_list args;
+    char *buf;
+    FILE *fp;
+
+    buf = (char *)malloc(512);
+    if (buf == NULL) {
+        LOG_ERROR("Failed to alloc memory(size %d) for mes log.\n", 512);
+        return;
+    }
+
+    va_start(args, fmt);
+    vsnprintf(buf, 512, fmt, args);
+    va_end(args);
+
+    fp = fopen(UPLOAD_MES_LOG, "a+");
+    if (fp == NULL) {
+        LOG_ERROR("Failed to open send log file %s\n", UPLOAD_MES_LOG);
+        free(buf);
+        return;
+    }
+    fprintf(fp, "%s", buf);
+    fflush(fp);
+    fclose(fp);
+
+    free(buf);
+}
+

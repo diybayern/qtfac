@@ -5,52 +5,55 @@
 Control::Control():QObject()
 {
     _funcBase[MEM]          = new MemTest(this);
-	_funcBase[USB]          = new UsbTest(this);
-	_funcBase[CPU]          = new CpuTest(this);
-	_funcBase[EDID]         = new EdidTest(this);
-	_funcBase[NET]          = new NetTest(this);
-	_funcBase[HDD]          = new HddTest(this);
-	_funcBase[FAN]          = new FanTest(this);
-	_funcBase[WIFI]         = new WifiTest(this);
-	_funcBase[SOUND]        = new SoundTest(this);
-	_funcBase[BRIGHT]       = new SoundTest(this);
-	_funcBase[CAMERA]       = new SoundTest(this);
-	_funcBase[STRESS]       = new StressTest(this);
-	_funcBase[UPLOAD_LOG]   = new SoundTest(this);
-	_funcBase[NEXT_PROCESS] = new SoundTest(this);
+    _funcBase[USB]          = new UsbTest(this);
+    _funcBase[CPU]          = new CpuTest(this);
+    _funcBase[EDID]         = new EdidTest(this);
+    _funcBase[NET]          = new NetTest(this);
+    _funcBase[HDD]          = new HddTest(this);
+    _funcBase[FAN]          = new FanTest(this);
+    _funcBase[WIFI]         = new WifiTest(this);
+    _funcBase[SOUND]        = new SoundTest(this);
+    _funcBase[BRIGHT]       = new SoundTest(this);
+    _funcBase[CAMERA]       = new SoundTest(this);
+    _funcBase[STRESS]       = new StressTest(this);
+    _funcBase[UPLOAD_LOG]   = new StressTest(this);
+    _funcBase[NEXT_PROCESS] = new SoundTest(this);
     
     _uiHandle               = UiHandle::get_uihandle();
 
-	
+    
     _baseInfo               = new BaseInfo;
     _hwInfo                 = new HwInfo;
-	_facArg                 = new FacArg;
+    _facArg                 = new FacArg;
 
-	_funcFinishStatus                   = new FuncFinishStatus;
-	_funcFinishStatus->mem_finish       = false;
+    _funcFinishStatus                   = new FuncFinishStatus;
+	_funcFinishStatus->interface_finish = false;
+    _funcFinishStatus->mem_finish       = false;
     _funcFinishStatus->usb_finish       = false;
+	_funcFinishStatus->cpu_finish       = false;
     _funcFinishStatus->net_finish       = false;
     _funcFinishStatus->edid_finish      = false;
     _funcFinishStatus->hdd_finish       = false;
     _funcFinishStatus->fan_finish       = false;
     _funcFinishStatus->wifi_finish      = false;
     _funcFinishStatus->sound_finish     = false;
-    _funcFinishStatus->screen_finish    = false;
+    _funcFinishStatus->display_finish   = false;
     _funcFinishStatus->bright_finish    = false;
     _funcFinishStatus->camera_finish    = false;
 
-	_testStep = STEP_IDLE;
-	_stress_test_stage = "";
-	_autoUploadLog = true;
-	_mes_log_file = "";
+    _testStep = STEP_IDLE;
+    _stress_test_stage = "";
+    _autoUploadLog = true;
+    _mes_log_file = "";
     
     init_base_info();
     init_hw_info();
     ui_init();
-	init_func_test();
-	init_fac_config();
+    init_func_test();
+    init_fac_config();
+    init_mes_log();
 
-	auto_start_stress_test();
+    auto_start_stress_test();
 }
 
 Control* Control::_control = NULL;
@@ -91,15 +94,21 @@ void Control::ui_init()
     
     if (_baseInfo->hdd_cap != "0" || _baseInfo->hdd_cap != "") {
         _uiHandle->add_interface_test_button("HDD测试");
-    }
+    } else {
+        _funcFinishStatus->hdd_finish = true;
+	}
     
     if (_baseInfo->fan_speed != "0" || _baseInfo->fan_speed != "") {
         _uiHandle->add_interface_test_button("FAN测试");
-    }
+    } else {
+        _funcFinishStatus->fan_finish = true;
+	}
 
     if (_baseInfo->wifi_exist != "0" || _baseInfo->wifi_exist != "") {
         _uiHandle->add_interface_test_button("WIFI测试");
-    }
+    } else {
+        _funcFinishStatus->wifi_finish = true;
+	}
 
     _uiHandle->add_main_test_button("音频测试");
     _uiHandle->add_main_test_button("显示测试");
@@ -132,6 +141,7 @@ void Control::ui_init()
     _uiHandle->add_stress_test_label("Mem");
     _uiHandle->add_stress_test_label("Cpu");
     
+    connect(_uiHandle->get_qobject("接口测试"), SIGNAL(clicked()), this, SLOT(start_interface_test()));
     connect(_uiHandle->get_qobject("内存测试"), SIGNAL(clicked()), this, SLOT(start_mem_test()));
     connect(_uiHandle->get_qobject("USB测试"), SIGNAL(clicked()), this, SLOT(start_usb_test()));
     connect(_uiHandle->get_qobject("网口测试"), SIGNAL(clicked()), this, SLOT(start_net_test()));
@@ -166,20 +176,41 @@ void Control::ui_init()
 
 void Control::init_func_test()
 {
-	cout << "init func" << endl;
+    cout << "init func" << endl;
 }
 
 void Control::init_fac_config()
 {
     int ret = get_fac_config_from_conf(FAC_CONFIG_FILE, _facArg);
-	if (ret == NO_FTP_PATH) {
-		LOG_INFO("NO_FTP_PATH");
-	}
-	if (ret == NO_JOB_NUMBER) {
-		LOG_INFO("NO_JOB_NUMBER");
-	}
-	//_uiHandle->add_main_label("NO FTP INFO","NO INFO");
+    if (ret == NO_FTP_PATH) {
+        LOG_INFO("NO_FTP_PATH");
+    }
+    if (ret == NO_JOB_NUMBER) {
+        LOG_INFO("NO_JOB_NUMBER");
+    }
+    //_uiHandle->add_main_label("NO FTP INFO","NO INFO");
 }
+
+void Control::start_interface_test()
+{
+    LOG_INFO("start interface test");
+    _testStep = STEP_INTERFACE;
+    _funcBase[MEM]->start_test(_baseInfo);
+	_funcBase[USB]->start_test(_baseInfo);
+	_funcBase[CPU]->start_test(_baseInfo);
+	_funcBase[EDID]->start_test(_baseInfo);
+	_funcBase[NET]->start_test(_baseInfo);
+	if (_baseInfo->hdd_cap != "0" || _baseInfo->hdd_cap != "") {
+		_funcBase[HDD]->start_test(_baseInfo);
+	}
+	if (_baseInfo->fan_speed != "0" || _baseInfo->fan_speed!= "") {
+		_funcBase[FAN]->start_test(_baseInfo);
+	}
+	if (_baseInfo->wifi_exist!= "0" || _baseInfo->wifi_exist!= "") {
+		_funcBase[WIFI]->start_test(_baseInfo);
+	}
+}
+
 
 void Control::start_mem_test()
 {
@@ -229,8 +260,8 @@ void Control::start_fan_test()
 
 void Control::start_wifi_test()
 {    
-	_funcBase[WIFI]->start_test(_baseInfo);    
-	LOG_INFO("start wifi test");
+    _funcBase[WIFI]->start_test(_baseInfo);    
+    LOG_INFO("start wifi test");
 }
 
 
@@ -277,17 +308,18 @@ void Control::start_stress_test()
     cout << "start_stress_test" << endl;
 }
 
+void Control::start_next_process()
+{
+    
+    cout << "2" << endl;
+}
+
 void Control::start_upload_log()
 {
     
     cout << "2" << endl;
 }
 
-void Control::start_next_process()
-{
-    
-    cout << "2" << endl;
-}
 
 void Control::set_test_result(string func,string result,string ui_log)
 
@@ -296,7 +328,7 @@ void Control::set_test_result(string func,string result,string ui_log)
     cout << "result:" << result << endl;
     cout << "ui_log:" << ui_log << endl;
     _uiHandle->set_test_result(func, result);
-	_uiHandle->update_screen_log(ui_log);
+    _uiHandle->update_screen_log(ui_log);
 }
 
 void Control::show_main_test_ui()
@@ -306,7 +338,7 @@ void Control::show_main_test_ui()
 
 int Control::get_test_step()
 {
-	return _testStep;
+    return _testStep;
 }
 
 void Control::init_mes_log()
@@ -329,86 +361,75 @@ void Control::init_mes_log()
     new_mac_name[j] = '\0';
     char* mac_capital = (char*)malloc(128);
     char* sn_capital = (char*)malloc(128);
-	
+    
     mac_capital = lower_to_capital(new_mac_name, mac_capital);
     sn_capital = lower_to_capital(_hwInfo->sn.c_str(), sn_capital);
-	_mes_log_file = "/var/log/" + mac_capital + ".txt";
-      
-    if (access(_mes_log_file.c_str(), F_OK) == 0) {
-        remove(_mes_log_file.c_str());
+    //_mes_log_file = "/var/log/" + mac_capital + ".txt";
+    //sprintf(UPLOAD_MES_LOG,"/var/log/%s.txt",mac_capital);
+    
+    if (access("/var/log/mes.txt", F_OK) == 0) {
+        remove("/var/log/mes.txt");
     }
-	_facArg->ftp_dest_path = _facArg->ftp_dest_path + mac_capital + ".txt";
+
+    //sprintf(MES_FILE,"/var/log/%s.txt",mac_capital);
+    //_facArg->ftp_dest_path = _facArg->ftp_dest_path + mac_capital + ".txt";
+    sprintf(_facArg->ftp_dest_path,"%s%s.txt",_facArg->ftp_dest_path,mac_capital);
+    LOG_INFO("_facArg->ftp_dest_path:%s",_facArg->ftp_dest_path);
     
     time(&timep);
     timenow = localtime(&timep);
     strftime(date, 64, "%Y%m%d-%H:%M:%S", timenow);
 
-	/*
+
+
     LOG_MES("---------------------Product infomation-----------------------\n");
-    LOG_MES("Model: \t%s\n", info->product_name);
+    LOG_MES("Model: \t%s\n", _hwInfo->product_name.c_str());
     LOG_MES("SN: \t%s\n", sn_capital);
     LOG_MES("MAC: \t%s\n", mac_capital);
     LOG_MES("DATE: \t%s\n", date);
-    LOG_MES("OPERATION: \t%s\n", info->ftp->job_number);
+    LOG_MES("OPERATION: \t%s\n", _facArg->ftp_job_number);
     LOG_MES("---------------------Simple test result-----------------------\n");
     LOG_MES("MEMORY:    NULL\n");
     LOG_MES("USB:       NULL\n");
     LOG_MES("NET:       NULL\n");
     LOG_MES("EDID:      NULL\n");
- 
-    if (IS_PRODUCT_NEED_HDD_TEST(info->product_id)) {
-        LOG_MES("HDD:       NULL\n");
-    }
-    if (IS_PRODUCT_NEED_FAN_TEST(info->product_id)) {
-        LOG_MES("FAN:       NULL\n");
-    }
-    if (IS_PRODUCT_NEED_WIFI_TEST(info->product_id)) {
-        LOG_MES("WIFI:      NULL\n");
-    }
+    LOG_MES("HDD:       NULL\n");
+    LOG_MES("FAN:       NULL\n");
+    LOG_MES("WIFI:      NULL\n");
     LOG_MES("AUDIO:     NULL\n");
     LOG_MES("DISPLAY:   NULL\n");
-    if (info->product_id == PRODUCT_RAIN200V2_V1_0 || info->product_id == PRODUCT_RAIN200V2_V1_20
-	    || info->product_id == PRODUCT_RAIN200PRO_EXAM || info->product_id == PRODUCT_RAIN200PRO_EXAM_V1_20) {
-        LOG_MES("BRIGHTNESS:NULL\n");
-    }
-    if (info->product_id == PRODUCT_RAIN200PRO_EXAM || info->product_id == PRODUCT_RAIN200PRO_EXAM_V1_20) {
-        LOG_MES("CAMERA:    NULL\n");
-    }
-    
+    LOG_MES("BRIGHTNESS:NULL\n");
+    LOG_MES("CAMERA:    NULL\n");
     LOG_MES("STRESS:    NULL\n");
     LOG_MES("---------------------Detail test result-----------------------\n");
-    */
+
     free(mac_capital);
     free(sn_capital);
 }
 
-
-void Conrol::upload_mes_log() {
-	if (combine_fac_log_to_mes("/tmp/fac_config.conf")) {
-		sprintf(_facArg->ftp_dest_path,"%sfac_config.conf",_facArg->ftp_dest_path);
-		char* response = ftp_send_file("/tmp/fac_config.conf",_facArg);
-		response = response_to_chinese(response);
-		LOG_INFO("upload %s",response);
-	} else {
-		LOG_INFO("combine mes fail");
-	}
-	
-	
+void Control::upload_mes_log() {
+    if (combine_fac_log_to_mes("/var/log/mes.txt")) {
+        char* response = ftp_send_file("/var/log/mes.txt",_facArg);
+        response = response_to_chinese(response);
+        LOG_INFO("upload %s",response);
+    } else {
+        LOG_INFO("combine mes fail");
+    }
 }
 
 void Control::update_screen_log(string uiLog)
 {
-	_uiHandle->update_screen_log(uiLog);
+    _uiHandle->update_screen_log(uiLog);
 }
 
 
 void Control::auto_start_stress_test()
 {
     if (check_file_exit(STRESS_LOCK_FILE.c_str())) {
-		LOG_INFO("auto start stress test");
+        LOG_INFO("auto start stress test");
         _stress_test_stage = execute_command("cat " + STRESS_LOCK_FILE);
-		LOG_INFO("stress stage:%s",_stress_test_stage.c_str());
-		_funcBase[STRESS]->start_test(_baseInfo);
-	}
+        LOG_INFO("stress stage:%s",_stress_test_stage.c_str());
+        _funcBase[STRESS]->start_test(_baseInfo);
+    }
 }
 

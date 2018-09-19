@@ -24,6 +24,7 @@ private:
     Control* _control;
 };
 
+
 class FanTest : public FuncBase
 {
 public:

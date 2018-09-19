@@ -40,6 +40,7 @@ void MemTest::set_mem_test_result(string func,string result,string ui_log)
 {
     Control *control = Control::get_control();
     control->set_test_result(func,result,ui_log);
+	control->set_mem_test_finish();
 }
 
 void* MemTest::test_all(void *arg)
@@ -55,7 +56,6 @@ void* MemTest::test_all(void *arg)
 	} else {
         set_mem_test_result("内存测试","FAIL",log);
 	}
-	Control::get_control()->set_mem_test_finish();
 	return NULL;
 }
 
