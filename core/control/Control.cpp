@@ -20,6 +20,7 @@ Control::Control():QObject()
 	_funcBase[NEXT_PROCESS] = new SoundTest(this);
     
     _uiHandle               = UiHandle::get_uihandle();
+
 	
     _baseInfo               = new BaseInfo;
     _hwInfo                 = new HwInfo;
