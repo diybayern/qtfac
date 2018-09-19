@@ -40,6 +40,7 @@ Control::Control():QObject()
 
 	_testStep = STEP_IDLE;
 	_stress_test_stage = "";
+	_autoUploadLog = true;
     
     init_base_info();
     init_hw_info();
@@ -111,7 +112,7 @@ void Control::ui_init()
         _uiHandle->add_main_test_button("亮度测试");
     }
     
-    if (_baseInfo->camara_exist != "0" || _baseInfo->camara_exist != "") {
+    if (_baseInfo->camera_exist != "0" || _baseInfo->camera_exist != "") {
         _uiHandle->add_main_test_button("摄像头测试");
     }
     
@@ -158,7 +159,7 @@ void Control::ui_init()
     if (_baseInfo->bright_level != "0" || _baseInfo->bright_level != ""){
         connect(_uiHandle->get_qobject("亮度测试"), SIGNAL(clicked()), this, SLOT(start_bright_test()));
     }
-    if (_baseInfo->camara_exist != "0" || _baseInfo->camara_exist != "") {
+    if (_baseInfo->camera_exist != "0" || _baseInfo->camera_exist != "") {
         connect(_uiHandle->get_qobject("摄像头测试"), SIGNAL(clicked()), this, SLOT(start_camera_test()));
     }
     connect(_uiHandle->get_qobject("拷机测试"), SIGNAL(clicked()), this, SLOT(start_stress_test()));
@@ -174,12 +175,14 @@ void Control::init_func_test()
 
 void Control::init_fac_config()
 {
-    get_fac_config_from_conf(FAC_CONFIG_FILE, _facArg);
-	cout << _facArg->ftp_dest_path << endl;
-	cout << _facArg->ftp_dest_path << endl;
-	cout << _facArg->ftp_dest_path << endl;
-	cout << _facArg->ftp_dest_path << endl;
-	cout << _facArg->ftp_dest_path << endl;
+    int ret = get_fac_config_from_conf(FAC_CONFIG_FILE, _facArg);
+	if (ret == NO_FTP_PATH) {
+		LOG_INFO("NO_FTP_PATH");
+	}
+	if (ret == NO_JOB_NUMBER) {
+		LOG_INFO("NO_JOB_NUMBER");
+	}
+	//_uiHandle->add_main_label("NO FTP INFO","NO INFO");
 }
 
 void Control::start_mem_test()

@@ -14,9 +14,6 @@ netbuf* ftp_handle;
 #define DEFAULT_WIFI_PASSWD  "12345678"
 #define DEFAULT_WIFI_ENP     "WPA"
 
-#define NO_FTP_PATH          (1)
-#define NO_JOB_NUMBER        (2)
-
 /*
 **execute command and return output result
 */
@@ -260,7 +257,7 @@ void get_baseinfo(BaseInfo* baseInfo, const string baseinfo) {
 	baseInfo->wifi_exist    = tmap["WIFI"];
 	baseInfo->fan_speed     = tmap["FAN"];
 	baseInfo->bright_level  = tmap["BRT"];
-	baseInfo->camara_exist  = tmap["CAM"];
+	baseInfo->camera_exist  = tmap["CAM"];
 	baseInfo->vga_exist     = tmap["VGA"];
 	baseInfo->hdmi_exist    = tmap["HDMI"]; 
 	baseInfo->lcd_info      = tmap["LCD"];

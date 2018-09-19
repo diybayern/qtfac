@@ -101,6 +101,10 @@ public:
         return _stress_test_stage;
     }
 
+    bool get_auto_upload_log_status() {
+        return _autoUploadLog;
+    }
+
 private:
     void init_base_info();
     void init_hw_info();
@@ -120,6 +124,7 @@ private:
     FuncBase* _funcBase[FUNC_TYPE_NUM];
     FacArg* _facArg;
     string _stress_test_stage;
+    bool _autoUploadLog;
 
 signals:
 

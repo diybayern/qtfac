@@ -30,6 +30,10 @@ const string FAC_CONFIG_FILE      = "/tmp/fac_config.conf";
 #define FAIL            (1)
 #define TIME_MAX_LEN    (50)
 
+#define NO_FTP_PATH          (1)
+#define NO_JOB_NUMBER        (2)
+
+
 #define USB_MAX_NUM       (10)
 #define USB_BLOCK_LEN     (16)
 #define USB_VENDOR_LEN    (64)
@@ -49,7 +53,7 @@ struct BaseInfo {
         wifi_exist(""),
         fan_speed(""),
         bright_level(""),
-        camara_exist(""),
+        camera_exist(""),
         vga_exist(""),
         hdmi_exist(""),
         lcd_info("")
@@ -66,7 +70,7 @@ struct BaseInfo {
     string wifi_exist;
     string fan_speed;
     string bright_level;
-    string camara_exist;
+    string camera_exist;
     string vga_exist;
     string hdmi_exist;
     string lcd_info;
