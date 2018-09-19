@@ -94,7 +94,7 @@ bool NetTest::net_get_eth_name(char* eth_name, int size)
     return true;
 }
 
-bool NetTest::net_get_eth_index(char* eth_name, int* index) {
+bool NetTest::net_get_eth_index(char* eth_name, unsigned int* index) {
 
     int fd = -1;
     struct ifreq ifr;
@@ -125,7 +125,7 @@ bool NetTest::net_get_eth_index(char* eth_name, int* index) {
     return true;
 }
 
-bool NetTest::net_sprintf_mac_addr(char* src, char* dst) {
+bool NetTest::net_sprintf_mac_addr(unsigned char* src, char* dst) {
 
     int ret = 0;
     ret = sprintf((char *)dst, "%02x:%02x:%02x:%02x:%02x:%02x", src[0], src[1], src[2],
@@ -137,11 +137,11 @@ bool NetTest::net_sprintf_mac_addr(char* src, char* dst) {
     return true;
 }
 
-bool NetTest::net_get_mac_addr0(char* eth_name, char* hw_buf) {
+bool NetTest::net_get_mac_addr0(unsigned char* eth_name, unsigned char* hw_buf) {
 
     int fd = -1;
     struct ifreq ifr;
-    char buf[128] = { 0, };
+    unsigned char buf[128] = { 0, };
 
     if (NULL == eth_name || NULL == hw_buf) {
         return false;
@@ -298,7 +298,7 @@ inline int NetTest::net_eth_no(char *eth_name)
     return atoi(p);
 }
 
-bool NetTest::net_get_eth_status(int fd, char *eth_name, int *status) {
+bool NetTest::net_get_eth_status(int fd, char *eth_name, unsigned int *status) {
 
     struct ifreq ifr;
 
@@ -398,7 +398,7 @@ bool NetTest::net_get_eth_info(NetInfo *info)
     }
 }*/
 
-bool NetTest::net_send_msg(char* src_mac, char* dst_mac, int index, int seq) {
+bool NetTest::net_send_msg(char* src_mac, char* dst_mac, unsigned int index, unsigned int seq) {
 
     int fd = -1;
     int ret = 0;
@@ -459,43 +459,42 @@ bool NetTest::net_test_all() {
         return false;    
     }
     
-//    SCREEN_SIMPLE("\nnet test start: \n");
-//    SCREEN_SIMPLE("\tNetwork card name: \t\t\t%s \n", info->eth_name);
+    LOG_INFO("net test start: \n");
+    LOG_INFO("\tNetwork card name: \t\t\t%s \n", info->eth_name);
 
     ret = net_get_eth_info(info);
         if (ret == false) {
-//            LOG_ERROR("get eth status failed!\n");
+            LOG_ERROR("get eth status failed!\n");
             goto error;
         }
 
     if (info->eth_status == ETH_STATUS_UP) {
-//        SCREEN_SIMPLE("\tNetwork card status: \t\tup\n");
+        LOG_INFO("\tNetwork card status: \t\tup\n");
     } else {
-//        SCREEN_SIMPLE("\tNetwork card status: \t\tdown\n");
-//        SCREEN_SIMPLE("\tERROR: network is down!\n");
+        LOG_INFO("\tNetwork card status: \t\tdown\n");
         ret = false;
         goto error;
     }
 
     if (info->eth_link) {
-//        SCREEN_SIMPLE("\tNetwork link detected: \t\tyes\n");
+        LOG_INFO("\tNetwork link detected: \t\tyes\n");
     } else {
-//        SCREEN_SIMPLE("\tNetwork link detected: \t\tno\n");
-//        SCREEN_SIMPLE("\tERROR: network is not linked!\n");
+        LOG_INFO("\tNetwork link detected: \t\tno\n");
+        LOG_ERROR("\tERROR: network is not linked!\n");
         ret = false;
         goto error;
     }
 
     if (info->eth_speed == 0
-        || info->eth_speed == (short)(-1)
-        || info->eth_speed == (int)(-1)) {
-//        SCREEN_SIMPLE("\tNetwork card speed: \t\tUnknown!\n");
+        || info->eth_speed == (unsigned short)(-1)
+        || info->eth_speed == (unsigned int)(-1)) {
+        LOG_ERROR("\tNetwork card speed: \t\tUnknown!\n");
         ret = false;
     } else {
-//        SCREEN_SIMPLE("\tNetwork card speed: \t\t%uMbps\n", info->eth_speed);
+        LOG_INFO("\tNetwork card speed: \t\t%uMbps\n", info->eth_speed);
         if (info->eth_speed != ETH_LINK_SPEED) {
-//            SCREEN_SIMPLE("\tERROR: Network speed must be %uMbps but current is %uMbps\n",
-//                                        ETH_LINK_SPEED, info->eth_speed);
+            LOG_ERROR("\tERROR: Network speed must be %uMbps but current is %uMbps\n",
+                                        ETH_LINK_SPEED, info->eth_speed);
             ret = false;
         }
     }
@@ -525,11 +524,11 @@ bool NetTest::net_test_all() {
         ret = false;
     }
 
-//    SCREEN_SIMPLE("\tsend package num: \t\t%d\n",  100);
-//    SCREEN_SIMPLE("\trecv package num: \t\t%d\n",  info->recv_num);
+    LOG_INFO("\tsend package num: \t\t%d\n",  100);
+    LOG_INFO("\trecv package num: \t\t%d\n",  info->recv_num);
 
 error:
-//    SCREEN_SIMPLE("\nnet test result: \t\t\t\t%s\n",  PRINT_RESULT(ret));
+    //LOG_INFO("\nnet test result: \t\t\t\t%s\n",  PRINT_RESULT(ret));
 
     return ret;
 }
