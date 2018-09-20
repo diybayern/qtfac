@@ -200,6 +200,7 @@ void MainTestWindow::on_state_changed(int state)
             QPushButton *button = (QPushButton*)item.button;
             if (state == Qt::Checked) {
                 button->setEnabled(true);
+                button->click();
             } else {
                 button->setEnabled(false);
             }

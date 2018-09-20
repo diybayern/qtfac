@@ -38,8 +38,8 @@ MessageForm::MessageForm(QWidget *parent, const int mode, const int timeout) : Q
     lb_font.setPointSize(8);
 
     QFont font;
-    font.setPointSize(20);
-    font.setWeight(QFont::DemiBold);
+    font.setPointSize(18);
+    font.setWeight(QFont::Bold);
     lb_title->setFont(lb_font);
     lb_title->setStyleSheet("background-color: rgb(0, 255, 255);");
     lb_title->setAlignment(Qt::AlignCenter);
