@@ -15,6 +15,7 @@
 #include <QPainter>
 #include <QMouseEvent>
 #include <QKeyEvent>
+#include <QProgressBar>
 
 #include "VideoTestThread.h"
 #include "ImageTestThread.h"
@@ -50,9 +51,9 @@ class ItemCheck
 {
     public:
         QString name;
+        QCheckBox *checkbox;
         QObject *button;
         QObject *label;
-        int     mode;
 };
 
 class MainTestWindow : public QDialog
@@ -87,40 +88,43 @@ class MainTestWindow : public QDialog
         QDesktopWidget *_desktopWidget;
 
         //main label layout
-        QGridLayout *_main_label_layout;
-        QVBoxLayout *_main_label_QVLayout;
-        QHBoxLayout *_main_label_QHLayout;
+        QGridLayout *_grid_main_label_layout;
+        QHBoxLayout *_hbox_main_label_layout;
 
         //main test layout
-        QGridLayout *_main_test_layout;
-        QVBoxLayout *_main_test_QVLayout;
-        QHBoxLayout *_main_test_QHLayout;
+        QGridLayout *_grid_main_test_layout;
+        QVBoxLayout *_vbox_main_test_layout;
+        QHBoxLayout *_hbox_main_test_layout;
 
         //testcount and autoupload layout
-        QLineEdit *_test_count_edit;
+        QLineEdit *_lineedit_test_count;
         QCheckBox *_checkbox_auto_upload_log;
         QLabel *_lab_test_count;
-        QHBoxLayout *_test_count_layout;
-        QVBoxLayout *_test_count_auto_upload_layout;
+        QHBoxLayout *_hbox_test_count_layout;
+        QHBoxLayout *_hbox_checkbox_auto_upload_log;
+        QVBoxLayout *_vbox_test_count_auto_upload_layout;
 
         //bottom left layout
-        QHBoxLayout *_bottom_left_QHlayout;
+        QHBoxLayout *_hbox_bottom_left_layout;
 
         //screen log layout
         QTextEdit *_editInfo;
         QString _editloglist;
-        QVBoxLayout *_screenlog_layout;
+        QVBoxLayout *_vbox_screenlog_layout;
 
         //function layout
-        QVBoxLayout *_function_layout;
+        QVBoxLayout *_vbox_function_layout;
 
         //main test window layout
-        QGridLayout *_main_test_window_layout;
+        QGridLayout *_grid_main_test_window_layout;
         //others
         QFrame *_spilter_line;
 
         //lab of complete test or single board test
         QLabel *_lab_complete_or_single_test;
+
+        QProgressBar *_progressbar;
+        QLabel* _progressbar_label;
 
         void _prepare_main_label_layout();
         void _prepare_main_test_layout();
@@ -157,6 +161,9 @@ class MainTestWindow : public QDialog
         void update_screen_log(QString info);
         void update_stress_label_value(QString item, QString result);
 		void confirm_test_result_dialog(QString title);
+
+    private slots:
+        void on_state_changed(int state);
 };
 
 

@@ -44,8 +44,15 @@ void MainTestWindow::add_main_label(QString item, QString result)
 void MainTestWindow::add_main_test_button(QString item)
 {
     MainTestItem listitem;
-    listitem.itemname = item;
-    _main_test_item_list.append(listitem);
+    if (item.compare("音频测试") == 0) {
+        listitem.itemname = item;
+        _main_test_item_list.append(listitem);
+         listitem.itemname = "进度条";
+        _main_test_item_list.append(listitem);
+    } else {
+        listitem.itemname = item;
+        _main_test_item_list.append(listitem);
+    }
 }
 
 void MainTestWindow::add_stress_test_label(QString item)
@@ -139,21 +146,22 @@ void MainTestWindow::update_screen_log(QString textInfo)
 void MainTestWindow::setupUI()
 {
 
-    _bottom_left_QHlayout = new QHBoxLayout;
-    _bottom_left_QHlayout->addLayout(_main_test_QHLayout);
-    _bottom_left_QHlayout->addLayout(_test_count_auto_upload_layout);
+    _hbox_bottom_left_layout = new QHBoxLayout;
+    _hbox_bottom_left_layout->addLayout(_hbox_main_test_layout);
+    _hbox_bottom_left_layout->addStretch();
+    _hbox_bottom_left_layout->addLayout(_vbox_test_count_auto_upload_layout);
 
-    _function_layout = new QVBoxLayout;
-    _function_layout->addLayout(_main_label_QHLayout);
-    _function_layout->addWidget(_spilter_line);
-    _function_layout->addLayout(_bottom_left_QHlayout);
+    _vbox_function_layout = new QVBoxLayout;
+    _vbox_function_layout->addLayout(_hbox_main_label_layout);
+    _vbox_function_layout->addWidget(_spilter_line);
+    _vbox_function_layout->addLayout(_hbox_bottom_left_layout);
 
-    _main_test_window_layout = new QGridLayout(this);
-    _main_test_window_layout->setMargin(40);
-    _main_test_window_layout->addLayout(_function_layout, 0, 0);
-    _main_test_window_layout->addLayout(_screenlog_layout, 0, 1);
-    _main_test_window_layout->setColumnStretch(0, 3);
-    _main_test_window_layout->setColumnStretch(1, 4);
+    _grid_main_test_window_layout = new QGridLayout(this);
+    _grid_main_test_window_layout->setMargin(40);
+    _grid_main_test_window_layout->addLayout(_vbox_function_layout, 0, 0);
+    _grid_main_test_window_layout->addLayout(_vbox_screenlog_layout, 0, 1);
+    _grid_main_test_window_layout->setColumnStretch(0, 3);
+    _grid_main_test_window_layout->setColumnStretch(1, 4);
 }
 
 void MainTestWindow::_prepare_main_label_layout()
@@ -165,26 +173,39 @@ void MainTestWindow::_prepare_main_label_layout()
         return ;
     }
 
-    _main_label_layout = new QGridLayout;
-    _main_label_QVLayout = new QVBoxLayout;
-    _main_label_QHLayout = new QHBoxLayout;
+    _grid_main_label_layout = new QGridLayout;
+    _hbox_main_label_layout = new QHBoxLayout;
     for (i = 0 ; i < _main_label_item_list.count(); i++)
     {
         QString label = _main_label_item_list.at(i).itemname;
         QString result = _main_label_item_list.at(i).result;
-        _main_label_layout->addWidget(new QLabel(label), i, 0);
-        _main_label_layout->addWidget(new QLabel(result), i, 1);
+        _grid_main_label_layout->addWidget(new QLabel(label), i, 0);
+        _grid_main_label_layout->addWidget(new QLabel(result), i, 1);
     }
 
     if (_lab_complete_or_single_test != NULL)
     {
-        _main_label_layout->addWidget(_lab_complete_or_single_test, i , 7);
+        _grid_main_label_layout->addWidget(_lab_complete_or_single_test, i , 7);
+    }
+    _hbox_main_label_layout->addLayout(_grid_main_label_layout);
+    _hbox_main_label_layout->addStretch();
+}
+
+void MainTestWindow::on_state_changed(int state)
+{
+
+    foreach (ItemCheck item, itemlist) {
+
+        if (item.name == sender()->objectName()) {
+            QPushButton *button = (QPushButton*)item.button;
+            if (state == Qt::Checked) {
+                button->setEnabled(true);
+            } else {
+                button->setEnabled(false);
+            }
+        }
     }
 
-    _main_label_QVLayout->addLayout(_main_label_layout);
-    _main_label_QVLayout->addStretch();
-    _main_label_QHLayout->addLayout(_main_label_QVLayout);
-    _main_label_QHLayout->addStretch();
 }
 
 void MainTestWindow::_prepare_main_test_layout()
@@ -194,25 +215,32 @@ void MainTestWindow::_prepare_main_test_layout()
         return ;
     }
 
-    _main_test_layout = new QGridLayout;
-    _main_test_QVLayout = new QVBoxLayout;
-    _main_test_QHLayout = new QHBoxLayout;
+    _grid_main_test_layout = new QGridLayout;
+    _vbox_main_test_layout = new QVBoxLayout;
+    _hbox_main_test_layout = new QHBoxLayout;
 
     if (_interface_test_list.isEmpty())
     {
         for (int i = 0 ; i < _main_test_item_list.count(); i++)
         {
             QString name = _main_test_item_list.at(i).itemname;
-            QPushButton *button = new QPushButton(name);
-            QLabel *label = new QLabel;
-            _main_test_layout->addWidget(button, i, 0);
-            _main_test_layout->addWidget(label, i, 1);
 
             iteminfo.name = name;
-            iteminfo.button = button;
-            iteminfo.label = label;
-            iteminfo.mode = MAINFUNC;
-            _insert_item_record(iteminfo);
+            if (name.compare("进度条") == 0) {
+                _progressbar_label = new QLabel("record");
+                _progressbar = new QProgressBar;
+                _grid_main_test_layout->addWidget(_progressbar_label, i, 0);
+                _grid_main_test_layout->addWidget(_progressbar, i, 1, 1, 3);
+
+            } else {
+                QPushButton *button = new QPushButton(name);
+                QLabel *label = new QLabel;
+                _grid_main_test_layout->addWidget(button, i, 0);
+                _grid_main_test_layout->addWidget(label, i, 1);
+                iteminfo.button = button;
+                iteminfo.label = label;
+                _insert_item_record(iteminfo);
+            }
         }
 
     } else {
@@ -225,69 +253,95 @@ void MainTestWindow::_prepare_main_test_layout()
              {
                 button = new QPushButton(_main_test_item_list.at(0).itemname);
                 label = new QLabel;
-                _main_test_layout->addWidget(button, 0, 0);
-                _main_test_layout->addWidget(label, 0, 1);
+                _grid_main_test_layout->addWidget(button, 0, 0);
+                _grid_main_test_layout->addWidget(label, 0, 1);
                 iteminfo.name = _main_test_item_list.at(0).itemname;
                 iteminfo.button = button;
                 iteminfo.label = label;
-                iteminfo.mode = MAINFUNC;
                 _insert_item_record(iteminfo);
 
                 for (int j = 0 ; j < _interface_test_list.count(); j++)
                 {
-                    QCheckBox*r_button = new QCheckBox(_interface_test_list.at(j).itemname);
-                    r_button->setObjectName(_interface_test_list.at(j).itemname);
+                    QCheckBox*checkbox = new QCheckBox;
+                    checkbox->setChecked(true);
+                    checkbox->setObjectName(_interface_test_list.at(j).itemname);
+                    connect(checkbox, SIGNAL(stateChanged(int)), this, SLOT(on_state_changed(int)));
                     label = new QLabel;
-                    _main_test_layout->addWidget(r_button, j+1, 1);
-                    _main_test_layout->addWidget(label, j+1, 2);
+                    button = new QPushButton(_interface_test_list.at(j).itemname);
+
+                    _grid_main_test_layout->addWidget(checkbox, j+1, 1);
+                    _grid_main_test_layout->addWidget(button, j+1, 2);
+                    _grid_main_test_layout->addWidget(label, j+1, 3);
                     iteminfo.name = _interface_test_list.at(j).itemname;
-                    iteminfo.button = r_button;
+                    iteminfo.checkbox = checkbox;
+                    iteminfo.button = button;
                     iteminfo.label = label;
-                    iteminfo.mode = INTERFACE;
                     _insert_item_record(iteminfo);
                 }
 
              } else {
-                 button = new QPushButton(_main_test_item_list.at(i).itemname);
-                 label = new QLabel;
-                 _main_test_layout->addWidget(button, i + _interface_test_list.count(), 0);
-                 _main_test_layout->addWidget(label, i + _interface_test_list.count(), 1);
-                 iteminfo.name = _main_test_item_list.at(i).itemname;
-                 iteminfo.button = button;
-                 iteminfo.label = label;
-                 iteminfo.mode = MAINFUNC;
-                 _insert_item_record(iteminfo);
+                 if (_main_test_item_list.at(i).itemname.compare("进度条") == 0) {
+                     _progressbar_label = new QLabel("record");
+                     _progressbar = new QProgressBar;
+                     //_progressbar->setStyleSheet("QProgressBar::chunk{background-color: #CD96CD;width: 10px;margin: 0.5px;}");
+                     _grid_main_test_layout->addWidget(_progressbar_label, i + _interface_test_list.count(), 0);
+                     _grid_main_test_layout->addWidget(_progressbar, i + _interface_test_list.count(), 1, 1, 3);
+
+                 } else {
+                     button = new QPushButton(_main_test_item_list.at(i).itemname);
+                     label = new QLabel;
+                     _grid_main_test_layout->addWidget(button, i + _interface_test_list.count(), 0);
+                     _grid_main_test_layout->addWidget(label, i + _interface_test_list.count(), 1);
+                     iteminfo.name = _main_test_item_list.at(i).itemname;
+                     iteminfo.button = button;
+                     iteminfo.label = label;
+                     _insert_item_record(iteminfo);
+                 }
              }
          }
     }
 
-    _main_test_QVLayout->addLayout(_main_test_layout);
-    _main_test_QVLayout->addStretch();
-    _main_test_QHLayout->addLayout(_main_test_QVLayout);
-    _main_test_QHLayout->addStretch();
+    _vbox_main_test_layout->addLayout(_grid_main_test_layout);
+    _vbox_main_test_layout->addStretch();
+    _hbox_main_test_layout->addLayout(_vbox_main_test_layout);
+    _hbox_main_test_layout->addStretch();
 }
 
 void MainTestWindow::_prepare_screen_log_layout()
 {
-    _screenlog_layout = new QVBoxLayout;
+    _vbox_screenlog_layout = new QVBoxLayout;
+    QFont font;
+    font.setWeight(QFont::Light);
+    font.setPointSize(10);
     _editInfo = new QTextEdit;
     _editInfo->setReadOnly(true);
+    _editInfo->setFont(font);
     _editInfo->setFrameStyle(QFrame::Panel|QFrame::Sunken);
-    _screenlog_layout->addWidget(_editInfo);
+    _vbox_screenlog_layout->addWidget(_editInfo);
 }
 
 void MainTestWindow::_prepare_test_count_and_upload_layout()
 {
     _lab_test_count = new QLabel(tr("测试次数:"));
-    _test_count_edit = new QLineEdit;
-    _test_count_layout = new QHBoxLayout;
-    _test_count_auto_upload_layout = new QVBoxLayout;
-    _test_count_layout->addWidget(_lab_test_count);
-    _test_count_layout->addWidget(_test_count_edit);
+    _lineedit_test_count = new QLineEdit;
+    _lineedit_test_count->setText("1");
+    _lineedit_test_count->setFixedWidth(50);
+
+    _hbox_test_count_layout = new QHBoxLayout;
+    _hbox_checkbox_auto_upload_log = new QHBoxLayout;
+    _vbox_test_count_auto_upload_layout = new QVBoxLayout;
+    _hbox_test_count_layout->addStretch();
+    _hbox_test_count_layout->addWidget(_lab_test_count);
+    _hbox_test_count_layout->addWidget(_lineedit_test_count);
+
     _checkbox_auto_upload_log = new QCheckBox(tr("自动上传"));
-    _test_count_auto_upload_layout->addLayout(_test_count_layout);
-    _test_count_auto_upload_layout->addStretch();
-    _test_count_auto_upload_layout->addWidget(_checkbox_auto_upload_log);
+    _checkbox_auto_upload_log->setChecked(true);
+    _hbox_checkbox_auto_upload_log->addStretch();
+    _hbox_checkbox_auto_upload_log->addWidget(_checkbox_auto_upload_log);
+
+    _vbox_test_count_auto_upload_layout->addLayout(_hbox_test_count_layout);
+    _vbox_test_count_auto_upload_layout->addStretch();
+    _vbox_test_count_auto_upload_layout->addLayout(_hbox_checkbox_auto_upload_log);
 }
 
 void MainTestWindow::_prepare_spilter_line_layout()

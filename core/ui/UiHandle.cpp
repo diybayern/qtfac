@@ -106,40 +106,12 @@ QObject* UiHandle::get_qobject(string name)
     for (int i = 0 ; i < MainTestWindow::get_main_test_window()->itemlist.count(); i++)
     {
         string objname = (MainTestWindow::get_main_test_window()->itemlist.at(i).name).toStdString();
-        if (objname == name)
+        if (objname.compare(name) == 0)
         {
-            if (MainTestWindow::MAINFUNC == MainTestWindow::get_main_test_window()->itemlist.at(i).mode) {
-                obj = MainTestWindow::get_main_test_window()->itemlist.at(i).button;
-                QPushButton *p_b = qobject_cast<QPushButton*>(obj);
-                return p_b;
-            } else {
-                obj = MainTestWindow::get_main_test_window()->itemlist.at(i).button;
-                QCheckBox *c_b = qobject_cast<QCheckBox*>(obj);
-                return c_b;
-            }
+            obj = MainTestWindow::get_main_test_window()->itemlist.at(i).button;
+            QPushButton *p_b = qobject_cast<QPushButton*>(obj);
+            return p_b;
         }
     }
     return obj;
 }
-/*
-QCheckBox* UiHandle::get_qobject_interface(string name)
-{
-    QObject *obj = new QObject;
-    for (int i = 0 ; i < MainTestWindow::get_main_test_window()->itemlist.count(); i++)
-    {
-        string objname = (MainTestWindow::get_main_test_window()->itemlist.at(i).name).toStdString();
-        if (objname == name)
-        {
-            if (MainTestWindow::INTERFACE == MainTestWindow::get_main_test_window()->itemlist.at(i).mode) {
-                obj = MainTestWindow::get_main_test_window()->itemlist.at(i).button;
-                QCheckBox *r_b = qobject_cast<QCheckBox*>(obj);
-                return r_b;
-            }
-        }
-    }
-    return qobject_cast<QCheckBox*>(obj);
-}*/
-
-
-
-
