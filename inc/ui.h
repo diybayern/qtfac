@@ -71,7 +71,6 @@ class MainTestWindow : public QDialog
         void add_main_label(QString item, QString result);
         void add_main_test_button(QString item);
         void add_stress_test_label(QString item);
-        void confirm_test_result_dialog(QString title);
         void add_complete_or_single_test_label(QString config);
         void show_sn_mac_message_box();
         QList<ItemCheck> itemlist;
@@ -157,7 +156,7 @@ class MainTestWindow : public QDialog
         void slot_finish_show_display_window();
         void update_screen_log(QString info);
         void update_stress_label_value(QString item, QString result);
-
+		void confirm_test_result_dialog(QString title);
 };
 
 
