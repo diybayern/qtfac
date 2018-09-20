@@ -71,6 +71,7 @@ public:
     //explicit Control(QObject *parent = 0);
     Control();
     void set_test_result(string func,string result,string ui_log);
+    void confirm_test_result(string func);
     static Control* get_control();
     void show_main_test_ui();
     void update_screen_log(string uiLog);

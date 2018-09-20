@@ -535,19 +535,16 @@ bool SoundTest::init()
 
 void* SoundTest::test_all(void* arg)
 {
-	SoundTest* _this = (SoundTest*)arg;
-	
-	cout<<"record start..."<<endl;
-    _this->start_record();
+	Control *control = Control::get_control();
+
+    start_record();
     sleep(3);
-    _this->stop_record();
-	
-    cout<<"playback start..."<<endl;
-    _this->start_playback();
+    stop_record();
+    start_playback();
     sleep(3);
-    _this->stop_playback();
+    stop_playback();
 	
-	cout<<"end of the test!"<<endl;
+	control->confirm_test_result("音频测试");
 	
 	return NULL;
 }
@@ -555,7 +552,7 @@ void* SoundTest::test_all(void* arg)
 void SoundTest::start_test(BaseInfo* baseInfo)
 {	
     pthread_t tid;
-    pthread_create(&tid,NULL,test_all,(void*)this);
+    pthread_create(&tid,NULL,test_all,baseInfo);
 }
 
 

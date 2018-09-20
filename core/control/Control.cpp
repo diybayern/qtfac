@@ -214,13 +214,14 @@ void Control::start_interface_test()
 
 void Control::start_mem_test()
 {
-    _testStep = STEP_MEM;
+    _testStep = STEP_INTERFACE;
     _funcBase[MEM]->start_test(_baseInfo);
     LOG_INFO("start mem test");
 }
 
 void Control::start_cpu_test()
 {
+	_testStep = STEP_INTERFACE;
     _funcBase[CPU]->start_test(_baseInfo);
     LOG_INFO("start cpu test");
 }
@@ -228,38 +229,43 @@ void Control::start_cpu_test()
 
 void Control::start_usb_test()
 {
+	_testStep = STEP_INTERFACE;
     _funcBase[USB]->start_test(_baseInfo);
     LOG_INFO("start usb test");
 }
 
 void Control::start_net_test()
 {
+	_testStep = STEP_INTERFACE;
     _funcBase[NET]->start_test(_baseInfo);
     LOG_INFO("start net test");
 }
 
 void Control::start_edid_test()
 {
+    _testStep = STEP_INTERFACE;
     _funcBase[EDID]->start_test(_baseInfo);
     LOG_INFO("start edid test");
 }
 
 void Control::start_hdd_test()
 {    
-     _funcBase[HDD]->start_test(_baseInfo);   
-     LOG_INFO("start hdd test");
+	_testStep = STEP_INTERFACE;
+    _funcBase[HDD]->start_test(_baseInfo);   
+    LOG_INFO("start hdd test");
 }
 
 
 void Control::start_fan_test()
 {
-    _testStep = STEP_FAN;
+	_testStep = STEP_INTERFACE;
     _funcBase[FAN]->start_test(_baseInfo);
     LOG_INFO("start fan test");
 }
 
 void Control::start_wifi_test()
-{    
+{   
+	_testStep = STEP_INTERFACE;
     _funcBase[WIFI]->start_test(_baseInfo);    
     LOG_INFO("start wifi test");
 }
@@ -267,26 +273,27 @@ void Control::start_wifi_test()
 
 void Control::start_sound_test()
 {
-    
+    _testStep = STEP_SOUND;
     _funcBase[SOUND]->start_test(_baseInfo);
     LOG_INFO("start sound test");
 }
 
 void Control::start_display_test()
 {
+	_testStep = STEP_DISPLAY;
     _uiHandle->show_display_ui();
     cout << "2" << endl;
 }
 
 void Control::start_bright_test()
 {
-    
+    _testStep = STEP_BRIGHTNESS;
     cout << "2" << endl;
 }
 
 void Control::start_camera_test()
 {
-    
+    _testStep = STEP_CAMERA;
     cout << "2" << endl;
 }
 
@@ -324,11 +331,14 @@ void Control::start_upload_log()
 void Control::set_test_result(string func,string result,string ui_log)
 
 {
-    cout << "func:" << func << endl;
-    cout << "result:" << result << endl;
-    cout << "ui_log:" << ui_log << endl;
     _uiHandle->set_test_result(func, result);
     _uiHandle->update_screen_log(ui_log);
+}
+
+void Control::confirm_test_result(string func)
+{
+    LOG_INFO("confirm_test_result");
+	_uiHandle->confirm_test_result_dialog(func);
 }
 
 void Control::show_main_test_ui()

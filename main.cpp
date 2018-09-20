@@ -18,10 +18,8 @@ void* semi_auto_test_control(void* arg)
 			 && funcFinishStatus->edid_finish
 			 && funcFinishStatus->hdd_finish
 			 && funcFinishStatus->fan_finish
-			 && funcFinishStatus->wifi_finish
-			) {
-			    LOG_INFO("interface test over");
-			    funcFinishStatus->interface_finish == true;
+			 && funcFinishStatus->wifi_finish) {
+			    funcFinishStatus->interface_finish = true;
 	        }
 		
         if(testStep != STEP_IDLE){
@@ -34,7 +32,7 @@ void* semi_auto_test_control(void* arg)
                 {
                     if(funcFinishStatus->interface_finish){				
                         LOG_INFO("interface_finish OK.\n");
-                        control->start_fan_test();
+                        control->start_sound_test();
                     }
                 }break;
 				case STEP_SOUND:
