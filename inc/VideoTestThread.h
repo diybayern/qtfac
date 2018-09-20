@@ -39,7 +39,7 @@ public:
     explicit VideoTestThread(QThread *parent = 0);
     ~VideoTestThread();
     char* filepath;
-    unsigned int videoindex;
+    int videoindex;
     int error;
     int sws_width;
     int sws_height;

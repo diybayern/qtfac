@@ -68,9 +68,8 @@ void MainTestWindow::add_complete_or_single_test_label(QString config)
 }
 
 void MainTestWindow::confirm_test_result_dialog(QString title)
-{
-
-    //MessageBox(NULL, MessageForm::SNMAC, title, "SN序列号", 0);
+{	
+	MessageBox(NULL, MessageForm::Message, title + "结果确认", "请确认"+title+"结果是PASS 还是 FAIL", 0);
 }
 
 void MainTestWindow::show_sn_mac_message_box()
@@ -133,7 +132,7 @@ void MainTestWindow::update_screen_log(QString textInfo)
         return ;
     }
 
-    _editloglist.append(textInfo);
+    _editloglist.append(textInfo+"\n");
     _editInfo->setText(_editloglist);
 }
 

@@ -8,41 +8,54 @@ MessageForm::MessageForm(QWidget *parent, const int mode, const int timeout) : Q
     setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint);
     setWindowModality(Qt::ApplicationModal);
     setFocusPolicy(Qt::StrongFocus);
-    //setAttribute(Qt::WA_DeleteOnClose, false);
-    setAttribute(Qt::WA_TranslucentBackground,true);
+    setAttribute(Qt::WA_DeleteOnClose, false);
+    //setAttribute(Qt::WA_TranslucentBackground,true);
+    effect = new QGraphicsDropShadowEffect;
+    effect->setBlurRadius(8);
+    effect->setColor(Qt::gray);
+    effect->setOffset(-5, 5);
+
+    _main_w = MainTestWindow::get_main_test_window()->get_current_res_w;
+    _main_h = MainTestWindow::get_main_test_window()->get_current_res_h;
 
     if (this->objectName().isEmpty()) {
         this->setObjectName(QString::fromUtf8("MessageFormClass"));
     }
-    resize(600, 300);
+    QPalette pa;
+    pa.setColor(QPalette::Background,QColor(0xD6, 0xD6, 0xD6));
+    this->setPalette(pa);
+
+    resize(900, 220);
     frame = new QFrame(this);
     frame->setObjectName(QString::fromUtf8("frame"));
-    frame->setGeometry(QRect(0, 0, 600, 300));
-    frame->setStyleSheet("QFrame#frame{border-image:url(./img/dialog_600x300.jpg);}");
+    frame->setGeometry(QRect(0, 0, 900, 220));
+    frame->setGraphicsEffect(effect);
 
     lb_title = new QLabel(frame);
     lb_title->setObjectName(QString::fromUtf8("lb_title"));
-    lb_title->setGeometry(QRect(20, 16, 560, 40));
+    lb_title->setGeometry(QRect(0, 0, 900, 20));
+    QFont lb_font;
+    lb_font.setPointSize(8);
 
     QFont font;
-    font.setFamily(QString::fromUtf8("DejaVu Sans Mono"));
-    font.setPointSize(14);
-    lb_title->setFont(font);
+    font.setPointSize(20);
+    font.setWeight(QFont::DemiBold);
+    lb_title->setFont(lb_font);
     lb_title->setStyleSheet("background-color: rgb(0, 255, 255);");
     lb_title->setAlignment(Qt::AlignCenter);
     groupBox = new QGroupBox(frame);
     groupBox->setObjectName(QString::fromUtf8("groupBox"));
-
+    groupBox->setStyleSheet("QGroupBox{border:none}");
 
     this->mode = mode;
 
     if (mode != NOICON) {
-        groupBox->setGeometry(QRect(20, 60, 560, 140));
+        groupBox->setGeometry(QRect(0, 50, 900, 80));
         groupBox->setFont(font);
 
         lb_icon = new QLabel(groupBox);
         lb_icon->setObjectName(QString::fromUtf8("lb_icon"));
-        lb_icon->setGeometry(QRect(0, 40, 80, 80));
+        lb_icon->setGeometry(QRect(20, 0, 80, 80));
 
         if (mode == Message)
         {
@@ -56,14 +69,12 @@ MessageForm::MessageForm(QWidget *parent, const int mode, const int timeout) : Q
         {
             lb_icon->setPixmap(QPixmap("./img/error.png"));
         }
-
     }
 
     if (mode != SNMAC) {
         lb_text = new QLabel(groupBox);
         lb_text->setObjectName(QString::fromUtf8("lb_text"));
-        lb_text->setGeometry(QRect(95, 10, 500, 130));
-
+        lb_text->setGeometry(QRect(100, 0, 500, 80));
         lb_text->setFont(font);
         lb_text->setAlignment(Qt::AlignLeading|Qt::AlignCenter);
         lb_text->setWordWrap(true);
@@ -97,25 +108,24 @@ MessageForm::MessageForm(QWidget *parent, const int mode, const int timeout) : Q
             bt_ok = new QPushButton(frame);
             bt_ok->setObjectName(QString::fromUtf8("bt_ok"));
             if (mode == NOICON) {
-                bt_ok->setGeometry(QRect(350, 250, 100, 40));
+                bt_ok->setGeometry(QRect(600, 150, 100, 40));
             } else {
-                bt_ok->setGeometry(QRect(350, 230, 100, 40));
+                bt_ok->setGeometry(QRect(600, 150, 100, 40));
             }
 
             bt_ok->setFont(font);
             bt_ok->setText(tr("PASS"));
-
+                //bt_ok->setGraphicsEffect(effect);
             bt_fail = new QPushButton(frame);
             bt_fail->setObjectName(QString::fromUtf8("bt_fail"));
             if (mode == NOICON) {
-                bt_fail->setGeometry(QRect(350, 250, 100, 40));
+                bt_fail->setGeometry(QRect(750, 150, 100, 40));
             } else {
-                bt_fail->setGeometry(QRect(470, 230, 100, 40));
+                bt_fail->setGeometry(QRect(750, 150, 100, 40));
             }
 
             bt_fail->setFont(font);
             bt_fail->setText(tr("FAIL"));
-
             connect(bt_ok, SIGNAL(clicked()), this, SLOT(proButtonOK()));
             connect(bt_fail, SIGNAL(clicked()), this, SLOT(proButtonFail()));
         } else {
@@ -129,7 +139,6 @@ MessageForm::MessageForm(QWidget *parent, const int mode, const int timeout) : Q
     }
     this->timeout = timeout;
     timerId = 0;
-
 }
 
 MessageForm::~MessageForm()

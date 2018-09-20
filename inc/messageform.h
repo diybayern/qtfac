@@ -12,6 +12,7 @@
 #include <QKeyEvent>
 #include <QDebug>
 #include <QTimer>
+#include <QGraphicsDropShadowEffect>
 #include "../inc/ui.h"
 
 class MessageForm : public QDialog
@@ -59,11 +60,10 @@ public:
     QHBoxLayout     *ly_snmac;
     QLabel          *lb_snmac;
     QPushButton     *bt_snmac;
+    QGraphicsDropShadowEffect *effect;
 
 private:
    int             mode;
-
-  // QTimer          updatetimer;
 
    QString         m_sMsg;
 
@@ -72,7 +72,8 @@ private:
    int             timeout;
    QGroupBox       *groupBox;
    QLineEdit       *le_input;
-   QMovie          *movie;
+   int              _main_w;
+   int              _main_h;
 };
 
 extern QString g_sn_mac_message;
