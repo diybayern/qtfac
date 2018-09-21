@@ -41,7 +41,7 @@ class UiHandle: public QObject
         void to_show_stress_test_window();
         void to_show_display_test_window();
         void need_to_update_screen_log(QString info);
-	void to_confirm_test_result_dialog(QString title);
+        void to_confirm_test_result_dialog(QString title);
 };
 
 

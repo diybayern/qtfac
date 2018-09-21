@@ -78,22 +78,22 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     QFont font;
     font.setFamily("Microsoft YaHei");
-    font.setWeight(QFont::Normal);
+    font.setWeight(QFont::DemiBold);
 
     QDesktopWidget* dtw = QApplication::desktop();
 
     if ((dtw->height() <= 1080 && dtw->height() > 1050)
            && (dtw->width() <= 1920 && dtw->width() > 1680)) {
-       font.setPointSize(14);
+       font.setPointSize(10);
     } else if ((dtw->height() <= 1050 && dtw->height() > 1024)
            && (dtw->width() <= 1680 && dtw->width() > 1440)) {
-       font.setPointSize(13);
+       font.setPointSize(9);
     } else if ((dtw->height() <= 1024 && dtw->height() >= 900)
               && (dtw->width() <= 1440 && dtw->width() >= 1280)) {
-       font.setPointSize(12);
+       font.setPointSize(10);
     } else if ((dtw->height() < 900 && dtw->height() >= 720)
               && (dtw->width() <= 1280 && dtw->width() > 1024)) {
-       font.setPointSize(8);
+       font.setPointSize(6);
     } else {
        font.setPointSize(14);
     }
