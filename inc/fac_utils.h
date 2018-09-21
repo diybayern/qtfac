@@ -48,6 +48,8 @@ const string FAC_CONFIG_FILE      = "/tmp/fac_config.conf";
 #define MAC_ADDR_LEN      (6)
 #define CMD_BUF_SIZE      (256)
 
+#define MES_FILE          "/var/log/mes.txt"
+
 
 struct BaseInfo {
     BaseInfo():mem_cap(""),
@@ -84,6 +86,16 @@ struct BaseInfo {
 };
 
 struct HwInfo {
+    HwInfo():sn(""),
+        mac(""),
+        product_name(""),
+        product_hw_version(""),
+        product_id(""),
+        cpu_type(""),
+        cpu_fre(""),
+        mem_cap("")
+        {
+        }
     string sn;
     string mac;
     string product_name;

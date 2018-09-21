@@ -285,6 +285,7 @@ bool UsbTest::usb_test_all(int num) {
 
 void* UsbTest::test_all(void *arg)
 {
+    Control *control = Control::get_control();
 	BaseInfo* baseInfo = (BaseInfo *)arg;
     int num = get_int_value(baseInfo->usb_total_num);
 	bool result_num_test = false;
@@ -293,11 +294,14 @@ void* UsbTest::test_all(void *arg)
     if (result_num_test) {
         bool result_write_read = usb_test_all(num);
         if (result_write_read) {
+			control->update_mes_log("USB","PASS");
             set_usb_test_result("USB测试","PASS","USB测试成功");
         } else {
+        	control->update_mes_log("USB","FAIL");
             set_usb_test_result("USB测试","FAIL","USB读写异常");
         }
     } else {
+    	control->update_mes_log("USB","FAIL");
         set_usb_test_result("USB测试","FAIL","USB数量不对");
         
     }

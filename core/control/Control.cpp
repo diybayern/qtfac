@@ -323,8 +323,7 @@ void Control::start_next_process()
 
 void Control::start_upload_log()
 {
-    
-    cout << "2" << endl;
+    upload_mes_log();
 }
 
 
@@ -374,15 +373,11 @@ void Control::init_mes_log()
     
     mac_capital = lower_to_capital(new_mac_name, mac_capital);
     sn_capital = lower_to_capital(_hwInfo->sn.c_str(), sn_capital);
-    //_mes_log_file = "/var/log/" + mac_capital + ".txt";
-    //sprintf(UPLOAD_MES_LOG,"/var/log/%s.txt",mac_capital);
     
-    if (access("/var/log/mes.txt", F_OK) == 0) {
-        remove("/var/log/mes.txt");
+    if (access(MES_FILE, F_OK) == 0) {
+        remove(MES_FILE);
     }
 
-    //sprintf(MES_FILE,"/var/log/%s.txt",mac_capital);
-    //_facArg->ftp_dest_path = _facArg->ftp_dest_path + mac_capital + ".txt";
     sprintf(_facArg->ftp_dest_path,"%s%s.txt",_facArg->ftp_dest_path,mac_capital);
     LOG_INFO("_facArg->ftp_dest_path:%s",_facArg->ftp_dest_path);
     
@@ -403,13 +398,23 @@ void Control::init_mes_log()
     LOG_MES("USB:       NULL\n");
     LOG_MES("NET:       NULL\n");
     LOG_MES("EDID:      NULL\n");
-    LOG_MES("HDD:       NULL\n");
-    LOG_MES("FAN:       NULL\n");
-    LOG_MES("WIFI:      NULL\n");
+    if (_baseInfo->hdd_cap != "0" || _baseInfo->hdd_cap != "") {
+        LOG_MES("HDD:       NULL\n");
+    }
+    if (_baseInfo->fan_speed != "0" || _baseInfo->fan_speed != "") {
+        LOG_MES("FAN:       NULL\n");
+    }
+    if (_baseInfo->wifi_exist != "0" || _baseInfo->wifi_exist != "") {
+        LOG_MES("WIFI:      NULL\n");
+    }
     LOG_MES("AUDIO:     NULL\n");
     LOG_MES("DISPLAY:   NULL\n");
-    LOG_MES("BRIGHTNESS:NULL\n");
-    LOG_MES("CAMERA:    NULL\n");
+    if (_baseInfo->bright_level != "0" || _baseInfo->bright_level != "") {
+        LOG_MES("BRIGHTNESS:NULL\n");
+    }
+    if (_baseInfo->camera_exist != "0" || _baseInfo->camera_exist != "") {
+        LOG_MES("CAMERA:    NULL\n");
+    }
     LOG_MES("STRESS:    NULL\n");
     LOG_MES("---------------------Detail test result-----------------------\n");
 
@@ -417,14 +422,58 @@ void Control::init_mes_log()
     free(sn_capital);
 }
 
+void Control::update_mes_log(char* tag,char* value)
+{
+    FILE* fp;
+    char line[200];
+    char* sp = NULL;
+    int file_size;
+    int first=1;
+ 
+    bzero(line,sizeof(line));
+ 
+    if ((fp = fopen(MES_FILE,"r"))==NULL) {
+        LOG_ERROR("open %s failed",MES_FILE);
+    }
+ 
+    fseek(fp,0,SEEK_END);
+    file_size = ftell(fp);
+    fseek(fp,0,SEEK_SET);
+    char* buf = (char*)malloc(file_size+128);
+    bzero(buf,file_size);
+ 
+    while (fgets(line, sizeof(line), fp) != NULL) {
+        if (first &&((sp = strstr(line, tag)) != NULL)) {
+            char value_temp[128];
+            bzero(value_temp,128);
+            sprintf(value_temp,"%s\n",value);
+            memcpy(sp+11,value_temp,strlen(value_temp)+1);//修改标签内容，加TAG_OFFSET是为了对齐值
+            first = 0;
+        }
+        strcat(buf, line);
+    }
+ 
+    fclose(fp);
+    fp = fopen(MES_FILE, "w");
+    int len = strlen(buf);
+    fwrite(buf, 1, len, fp);
+    fclose(fp);
+ 
+    if (buf != NULL) {
+        free(buf);
+    }
+}
+
+
 void Control::upload_mes_log() {
-    if (combine_fac_log_to_mes("/var/log/mes.txt")) {
-        char* response = ftp_send_file("/var/log/mes.txt",_facArg);
+    if (combine_fac_log_to_mes(MES_FILE)) {
+        char* response = ftp_send_file(MES_FILE,_facArg);
         response = response_to_chinese(response);
         LOG_INFO("upload %s",response);
     } else {
         LOG_INFO("combine mes fail");
     }
+	_testStep = STEP_IDLE;
 }
 
 void Control::update_screen_log(string uiLog)

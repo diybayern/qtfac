@@ -26,12 +26,15 @@ bool MemTest::compare_men_cap(int mem_cap)
 
 bool MemTest::mem_stability_test()
 {
+    Control *control = Control::get_control();
 	string stable_result;
 	stable_result = execute_command("sh " + MEM_TEST_SCRIPT);
 	LOG_INFO("stable_result is:%s",stable_result.c_str());
 	if (stable_result == "SUCCESS") {
+		control->update_mes_log("MEM","PASS");
 		return true;
 	} else {
+		control->update_mes_log("MEM","FAIL");
 		return false;
 	}
 }

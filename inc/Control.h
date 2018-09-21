@@ -77,6 +77,7 @@ public:
     void update_screen_log(string uiLog);
     void upload_mes_log();
     void init_mes_log();
+    void update_mes_log(char* tag,char* value);
     
 
     int get_test_step();
