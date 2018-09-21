@@ -14,7 +14,7 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
     core/func/BrightTest.cpp \
-    core/func/CamaraTest.cpp \
+    core/func/CameraTest.cpp \
     core/func/EdidTest.cpp \
     core/func/FanTest.cpp \
     core/func/FuncBase.cpp \
@@ -53,6 +53,8 @@ HEADERS  += \
     inc/ui.h \
     inc/UploadMes.h \
     inc/WifiTest.h \
+    inc/BrightTest.h \
+    inc/CameraTest.h \
     inc/UiHandle.h \
     inc/messageform.h \
     inc/Control.h \

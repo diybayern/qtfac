@@ -10,8 +10,8 @@
 #include "EdidTest.h"
 #include "WifiTest.h"
 #include "HddTest.h"
-
-
+#include "BrightTest.h"
+#include "CameraTest.h"
 
 #include "FuncBase.h"
 #include "UiHandle.h"

@@ -23,7 +23,8 @@ const string FAN_TEST_SCRIPT      = FACTORY_PATH + "fan_test.sh";
 const string MEM_TEST_SCRIPT      = FACTORY_PATH + "mem_test.sh";
 const string WIFI_TEST_SCRIPT     = FACTORY_PATH + "wifi_test.sh";
 const string HDD_TEST_SCRIPT      = FACTORY_PATH + "hdd_test.sh";
-
+const string CAMERA_CHECK_SCRIPT  = FACTORY_PATH + "check_camera.sh";
+const string CAMERA_START_SCRIPT  = FACTORY_PATH + "start_xawtv.sh";
 
 const string MEM_UI_LOG           = FACTORY_PATH + "mem_ui_log";
 const string FAC_CONFIG_FILE      = "/tmp/fac_config.conf";

@@ -13,8 +13,8 @@ Control::Control():QObject()
     _funcBase[FAN]          = new FanTest(this);
     _funcBase[WIFI]         = new WifiTest(this);
     _funcBase[SOUND]        = new SoundTest(this);
-    _funcBase[BRIGHT]       = new SoundTest(this);
-    _funcBase[CAMERA]       = new SoundTest(this);
+    _funcBase[BRIGHT]       = new BrightTest(this);
+    _funcBase[CAMERA]       = new CameraTest(this);
     _funcBase[STRESS]       = new StressTest(this);
     _funcBase[UPLOAD_LOG]   = new StressTest(this);
     _funcBase[NEXT_PROCESS] = new SoundTest(this);
@@ -288,13 +288,15 @@ void Control::start_display_test()
 void Control::start_bright_test()
 {
     _testStep = STEP_BRIGHTNESS;
-    cout << "2" << endl;
+    _funcBase[BRIGHT]->start_test(_baseInfo);
+    LOG_INFO("start sound test");
 }
 
 void Control::start_camera_test()
 {
     _testStep = STEP_CAMERA;
-    cout << "2" << endl;
+	_funcBase[CAMERA]->start_test(_baseInfo);
+    LOG_INFO("start sound test");
 }
 
 void Control::start_stress_test()
