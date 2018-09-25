@@ -14,6 +14,7 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <time.h>
+#include <sys/sysinfo.h>
 
 using std::string;
 
@@ -51,6 +52,7 @@ const string FAC_CONFIG_FILE      = "/tmp/fac_config.conf";
 
 #define MES_FILE          "/var/log/mes.txt"
 
+typedef unsigned long long int uint64;
 
 struct BaseInfo {
     BaseInfo():mem_cap(""),
@@ -134,6 +136,20 @@ struct MacPacket {
     unsigned char data[100];
 };
 
+struct CpuStatus {
+    uint64 cpu_total;
+	uint64 cpu_user;
+	uint64 cpu_nice;
+	uint64 cpu_sys;
+	uint64 cpu_idle;
+	uint64 cpu_iowait;
+	uint64 cpu_steal;
+	uint64 cpu_hardirq;
+	uint64 cpu_softirq;
+	uint64 cpu_guest;
+	uint64 cpu_guest_nice;
+};
+
 
 typedef struct tagUdevInfo {
 	char block[USB_BLOCK_LEN];
@@ -166,12 +182,14 @@ int get_fac_config_from_conf(const string conf_path, FacArg *fac);
 char* ftp_send_file(const char* local_file_path, FacArg* fac);
 char* response_to_chinese(const char* response);
 bool combine_fac_log_to_mes(string sendLogPath);
-bool is_digit(char *str);
+bool is_digit(string str);
 char* delNL(char *line);
 char* lower_to_capital(const char* lower_str, char* capital_str);
+string get_current_cpu_freq();
+string get_mem_info();
+string get_cpu_info(CpuStatus* st_cpu);
 
-
-
+//string get_cpu_temp(string cmd, int num);
 
 
 #endif

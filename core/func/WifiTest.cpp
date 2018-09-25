@@ -156,7 +156,7 @@ bool WifiTest::wifi_sprintf_mac_addr(unsigned char* src, char* dst) {
 	 struct sockaddr_ll recv_sll;
 	 WifiInfo* info = NULL;
 	 unsigned char buf[128] = { 0, };
-	 char bc_mac[6] = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
+	 unsigned char bc_mac[6] = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
  
 	 pthread_detach(pthread_self());
 	 info = (WifiInfo*) arg;
@@ -301,7 +301,7 @@ bool WifiTest::wifi_send_broadcast_msg(WifiInfo* info, int num) {
 
     int i = 0;
     bool ret = true;
-    char dest_mac[6] = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
+    unsigned char dest_mac[6] = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
 
     for (i = 0; i < num; i++) {
         ret &= wifi_send_msg((char *)info->mac, (char *)dest_mac, info->wlan_index, info->seq++);
@@ -406,14 +406,13 @@ void WifiTest::set_wifi_test_result(string func,string result,string ui_log)
 
 void* WifiTest::test_all(void* arg)
 {
-	WifiTest* _this = (WifiTest*)arg;
 	bool is_pass = false;
 	string str = execute_command("bash " + WIFI_TEST_SCRIPT);
     if (str == "error"){
     	LOG_ERROR("wifi init error!\n");                        
     }else {
 		if (check_if_wifi_connect_pass()) {
-			is_pass = _this->wifi_test_send_msg();		 
+			is_pass = wifi_test_send_msg();		 
 		}
     }
 
@@ -428,7 +427,7 @@ void* WifiTest::test_all(void* arg)
 void WifiTest::start_test(BaseInfo* baseInfo)
 {
     pthread_t tid;
-    pthread_create(&tid,NULL,test_all,(void*)this);
+    pthread_create(&tid,NULL,test_all,baseInfo);
 }
 
 

@@ -182,7 +182,7 @@ void* NetTest::net_recv_loopback_msg(void *arg) {
 //	struct sockaddr_ll send_sll;
     NetInfo* info = NULL;
     char buf[128] = { 0, };
-    char bc_mac[6] = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
+    unsigned char bc_mac[6] = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
 
     pthread_detach(pthread_self());
     info = (NetInfo*) arg;
@@ -437,7 +437,7 @@ bool NetTest::net_send_broadcast_msg(NetInfo* info, int num) {
 
     int i = 0;
     bool ret = 0;
-    char dest_mac[6] = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
+    unsigned char dest_mac[6] = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
 
     for (i = 0; i < num; i++) {
         ret |= net_send_msg((char *)info->mac, (char *)dest_mac, info->eth_index, info->seq++);
@@ -542,8 +542,7 @@ void NetTest::set_net_test_result(string func,string result,string ui_log)
 
 void* NetTest::test_all(void* arg)
 {
-	NetTest* _this = (NetTest*)arg;
-	bool is_pass = _this->net_test_all();
+	bool is_pass = net_test_all();
 	if (is_pass) {
         set_net_test_result("网口测试","PASS","SUCCESS");
 	} else {
@@ -555,7 +554,7 @@ void* NetTest::test_all(void* arg)
 void NetTest::start_test(BaseInfo* baseInfo)
 {
     pthread_t tid;
-    pthread_create(&tid,NULL,test_all,(void*)this);
+    pthread_create(&tid,NULL,test_all,baseInfo);
 }
 
 

@@ -3,6 +3,7 @@
 
 #include <ftplib.h>
 #include <map>
+
 using namespace std;
 
 netbuf* ftp_handle;
@@ -263,20 +264,18 @@ void get_baseinfo(BaseInfo* baseInfo, const string baseinfo) {
 	baseInfo->lcd_info      = tmap["LCD"];
 }
 
-bool is_digit(char *str) {
-	size_t len = 0;
+bool is_digit(string str) {
+	int len = 0;
 
-	len = strlen(str);
+	len = str.size();
 	if (0 == len) {
 		return false;
 	}
 
-	while (len > 0) {
-		if (*str < '0' || *str > '9') {
+	for (int i=0; i < len; i++) {
+		if (str[i] < '0' || str[i] > '9') {
 			return false;
 		}
-		str++;
-		len--;
 	}
 
 	return true;
@@ -485,3 +484,154 @@ char* lower_to_capital(const char* lower_str, char* capital_str)
     capital_str[i] = '\0';
     return capital_str;
 }
+
+int get_cpu_freq_by_id(int id){
+
+    int ret = 0;
+	char cmd[128] = {0,};
+
+	sprintf(cmd, "cat /sys/devices/system/cpu/cpu%d/cpufreq/cpuinfo_cur_freq", id);
+	string str = execute_command(cmd);
+	if (str == "error") {
+		return 0;
+	}
+
+	ret = is_digit((char*)str.c_str());
+	if (false == ret){
+		return 0;
+	}
+
+	return get_int_value(str);   
+}
+
+string get_current_cpu_freq(){
+
+    int i = 0;
+    int cpu_cur = 0;
+    int cpu_max = 0;
+	string cpu_freq = "CPU频率:";
+	string str = execute_command("cat /proc/cpuinfo| grep processor| wc -l");
+	if(str == "error") {
+		return cpu_freq + "\n";
+	}
+
+	for (i = 0; i < get_int_value(str); i++){
+        cpu_cur = get_cpu_freq_by_id(i);
+
+        if (cpu_max < cpu_cur){
+            cpu_max = cpu_cur;
+        }        
+    }
+	cpu_freq += to_string(1.0 * cpu_max / 1000 / 1000) + "G\n";
+		
+    return cpu_freq;
+}
+
+string get_mem_info() {
+
+	int ret = 0;
+	string mem_info = "Mem:\n    ";
+	struct sysinfo si;
+
+	ret = sysinfo(&si);
+	if (-1 == ret) {
+		LOG_ERROR("get mem info failed\n");
+	}
+	string mem_used = to_string((si.totalram - si.freeram) >> 10);
+	string mem_free = to_string(si.freeram >> 10);
+	
+	mem_info += mem_used + "K used  " + mem_free + "K free\n";
+
+	return mem_info;
+}
+
+string change_float_to_string(float fla)
+{
+	string str = to_string(fla);
+	int i;
+	for(i = 0; i < str.size(); i++) {
+		if(str[i] == '.') {
+			break;
+		}
+	}
+	return str.substr(0, i + 3);
+}
+
+string get_cpu_info(CpuStatus* st_cpu) {
+
+	FILE* fp = NULL;
+	char line[8192] = { 0, };
+	CpuStatus cpu_info;
+	CpuStatus cpu_diff;
+	string cpu_str = "CPU:\n  ";
+	string str = "";
+	
+	if ((fp = fopen("/proc/stat", "r")) == NULL) {
+		LOG_ERROR("open %s failed\n", "/proc/stat");
+		return cpu_str;
+	}
+
+	memset(st_cpu, 0, sizeof(CpuStatus));
+
+	while (fgets(line, sizeof(line), fp) != NULL) {
+		if (!strncmp(line, "cpu ", 4)) {
+
+			sscanf(line + 5,
+					"%llu %llu %llu %llu %llu %llu %llu %llu %llu %llu",
+					&cpu_info.cpu_user, &cpu_info.cpu_nice, &cpu_info.cpu_sys,
+					&cpu_info.cpu_idle, &cpu_info.cpu_iowait,
+					&cpu_info.cpu_hardirq, &cpu_info.cpu_softirq,
+					&cpu_info.cpu_steal, &cpu_info.cpu_guest,
+					&cpu_info.cpu_guest_nice);
+			break;
+		}
+	}
+	fclose(fp);
+	
+	cpu_info.cpu_total = cpu_info.cpu_user + cpu_info.cpu_nice + cpu_info.cpu_sys
+			+ cpu_info.cpu_idle + cpu_info.cpu_iowait + cpu_info.cpu_hardirq 
+			+ cpu_info.cpu_softirq + cpu_info.cpu_steal;
+
+	cpu_diff.cpu_total = cpu_info.cpu_total - st_cpu->cpu_total;
+
+	cpu_diff.cpu_user = cpu_info.cpu_user - st_cpu->cpu_user;
+	cpu_diff.cpu_sys = cpu_info.cpu_sys - st_cpu->cpu_sys;
+	cpu_diff.cpu_idle = cpu_info.cpu_idle - st_cpu->cpu_idle;
+	cpu_diff.cpu_iowait = cpu_info.cpu_iowait - st_cpu->cpu_iowait;
+
+	str = change_float_to_string(100.0 * cpu_diff.cpu_user / cpu_diff.cpu_total);
+	cpu_str += str + "% usr\t";
+
+	str = change_float_to_string(100.0 * cpu_diff.cpu_sys / cpu_diff.cpu_total);
+	cpu_str += str + "% sys\n  ";
+
+	str = change_float_to_string(100.0 * cpu_diff.cpu_idle / cpu_diff.cpu_total);
+	cpu_str += str + "% idle\t";
+
+	str = change_float_to_string(100.0 * cpu_diff.cpu_iowait / cpu_diff.cpu_total);
+	cpu_str += str + "% iowait\n";
+
+	memcpy(st_cpu, &cpu_info, sizeof(CpuStatus));
+
+	return cpu_str;
+}
+
+#if 0
+float get_cpu_temp(string cmd, int num)
+{
+	int ret = 0;
+	int cpu_temp = 0;
+	for(int i = 0; i < num; i++) {
+		string str = execute_command(cmd);
+		if(str == "error"){
+			return 0.0
+		}
+		ret = get_int_value(str);
+		if(cpu_temp < ret){
+			cpu_temp = ret;
+		}		
+	}
+	return 1.0 * cpu_temp / 1000;
+}
+#endif
+
