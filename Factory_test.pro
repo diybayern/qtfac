@@ -5,6 +5,7 @@
 #-------------------------------------------------
 
 QT       += core gui
+CONFIG += c++11
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -39,7 +40,9 @@ SOURCES += main.cpp\
     core/ui/messageform.cpp \
     core/control/Control.cpp \
     core/ui/VideoTestThread.cpp \
-    core/ui/ImageTestThread.cpp
+    core/ui/ImageTestThread.cpp \
+    core/ui/myeventloop.cpp	
+
 
 HEADERS  += \
     inc/Control.h \
@@ -65,6 +68,13 @@ HEADERS  += \
     inc/modes.h \
 
 INCLUDEPATH += /usr/local/include/
+
+#QMAKE_CFLAGS = `pkg-config --cflags --libs gstreamer-video-1.0 gstreamer-1.0 glib-2.0`
+
+#QMAKE_CXXFLAGS = $$QMAKE_CFLAGS
+
+#LIBS += -L/usr/lib/x86_64-linux-gnu  -lgobject-2.0 -lglib-2.0
+#LIBS += `pkg-config --cflags --libs gstreamer-video-1.0 gstreamer-1.0 glib-2.0`
 
 LIBS += -L/usr/local/include \
         -lavcodec \

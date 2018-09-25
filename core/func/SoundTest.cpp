@@ -540,10 +540,11 @@ void* SoundTest::test_all(void* arg)
     start_record();
     sleep(3);
     stop_record();
+    sleep(1);
     start_playback();
     sleep(3);
     stop_playback();
-	
+    sleep(1);		
 	control->confirm_test_result("音频测试");
 	
 	return NULL;

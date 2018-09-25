@@ -274,6 +274,7 @@ void Control::start_wifi_test()
 void Control::start_sound_test()
 {
     _testStep = STEP_SOUND;
+    _uiHandle->start_audio_progress_dialog();	
     _funcBase[SOUND]->start_test(_baseInfo);
     LOG_INFO("start sound test");
 }
