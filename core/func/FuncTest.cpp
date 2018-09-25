@@ -3,6 +3,9 @@
 
 #define NEXT_LOCK     ("next")
 
+string cpu_screen_log = "";
+string fan_screen_log = "";
+
 pthread_mutex_t g_next_process_lock;
 
 CpuTest::CpuTest(Control* control)
@@ -21,23 +24,27 @@ void CpuTest::set_cpu_test_result(string func,string result,string ui_log)
 bool CpuTest::is_cpu_test_pass(BaseInfo* baseInfo)
 {
 	string hw_cpu_type = _control->get_hw_info()->cpu_type;
-	string base_cpu_type = baseInfo->cpu_type;
+	string base_cpu_type = baseInfo->cpu_type;	
 	string::size_type idx;
 	idx = hw_cpu_type.find(base_cpu_type);
     if (idx != string::npos) {
+		cpu_screen_log += "cpu type is\t\t" + hw_cpu_type;
         return true;
-    } else {
+    } else {    
+		cpu_screen_log += "cpu type should be\t\t" + base_cpu_type + "\nbut current is\t\t" + hw_cpu_type + "\n\n";
         return false;
     }
 }
 
 void CpuTest::start_test(BaseInfo* baseInfo)
 {
+	cpu_screen_log += "cpu test start:\n\n";
     if (is_cpu_test_pass(baseInfo)) {
-		set_cpu_test_result("CPU测试","PASS",_control->get_hw_info()->cpu_type);
+		set_cpu_test_result("CPU测试","PASS",cpu_screen_log);
 	} else {
-		set_cpu_test_result("CPU测试","FAIL",_control->get_hw_info()->cpu_type);
+		set_cpu_test_result("CPU测试","FAIL",cpu_screen_log);
 	}	
+	cpu_screen_log = "";
 }
 
 
@@ -56,20 +63,23 @@ void FanTest::set_fan_test_result(string func,string result,string ui_log)
 
 string FanTest::fan_speed_test(string speed)
 {
+	fan_screen_log += "fan speed should be\t" + speed + "\n";
     string fan_result = execute_command("bash " + FACTORY_PATH + "fan_test.sh " + speed);
     return fan_result;
 }
 
 void* FanTest::test_all(void *arg)
 {
+	fan_screen_log += "fan test start:\n\n";
 	BaseInfo* baseInfo = (BaseInfo *)arg;
 	string result = fan_speed_test(baseInfo->fan_speed);
-
+	fan_screen_log += "fan speed test result is\t" + result + "\n\n";
 	if (result == "SUCCESS") {
-        set_fan_test_result("FAN测试","PASS",result);
+        set_fan_test_result("FAN测试","PASS",fan_screen_log);
 	} else {
-        set_fan_test_result("FAN测试","FAIL",result);
+        set_fan_test_result("FAN测试","FAIL",fan_screen_log);
 	}
+	fan_screen_log = "";
 	return NULL;
 }
 
