@@ -3,6 +3,7 @@
 #include "../../inc/fac_utils.h"
 #include <math.h>
 
+string mem_screen_log = "";
 
 MemTest::MemTest(Control* control)
        :_control(control)
@@ -16,10 +17,10 @@ bool MemTest::compare_men_cap(int mem_cap)
 	float mem_cap_max = mem_cap * 1024;
     string real_mem_cap = execute_command("free -m | awk '/Mem/ {print $2}'");
     if (get_int_value(real_mem_cap) > mem_cap_min  && get_int_value(real_mem_cap) < mem_cap_max){
-		Control::get_control()->update_screen_log("mem cap is right\n");
+		mem_screen_log += "mem cap is right\n";
 		return true;
     } else {
-        Control::get_control()->update_screen_log("mem cap is wrong\n");
+    	mem_screen_log += "ERROR: mem cap should be " + to_string(mem_cap) + "G but current is " + real_mem_cap + "K\n\n";
         return false;
     }
 }
@@ -50,15 +51,16 @@ void* MemTest::test_all(void *arg)
 {
 	BaseInfo* baseInfo = (BaseInfo *)arg;
 	bool is_pass;
-	string log;
+	mem_screen_log += "mem test start:\n\n";
 	is_pass    = compare_men_cap(get_int_value(baseInfo->mem_cap));
 	is_pass   &= mem_stability_test();
-	log        = execute_command("cat " + MEM_UI_LOG);
+	mem_screen_log += execute_command("cat " + MEM_UI_LOG) + "\n\n";
 	if (is_pass) {
-        set_mem_test_result("内存测试","PASS",log);
+        set_mem_test_result("内存测试","PASS",mem_screen_log);
 	} else {
-        set_mem_test_result("内存测试","FAIL",log);
+        set_mem_test_result("内存测试","FAIL",mem_screen_log);
 	}
+	mem_screen_log = "";
 	return NULL;
 }
 
