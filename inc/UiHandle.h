@@ -30,6 +30,7 @@ class UiHandle: public QObject
         void add_complete_or_single_test_label(string config);
         void show_sn_mac_message_box();
         void start_audio_progress_dialog();
+        string get_test_count();
         QObject *get_qobject(string name);
 
     private:
@@ -48,10 +49,12 @@ class UiHandle: public QObject
         void to_confirm_test_result_warning(QString title);
         void to_show_test_confirm_dialog(string item);
         void sig_ui_handled_test_result(string test_item, string result);
+        void sig_ui_check_state_changed(string item, bool state);
 
     public slots:
         void quit_test_window(QString item);
         void slot_handled_test_result(QString test_item, QString result);
+        void slot_check_state_changed(QString item, bool state);
 };
 
 

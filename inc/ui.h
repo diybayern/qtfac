@@ -16,7 +16,7 @@
 #include <QMouseEvent>
 #include <QKeyEvent>
 #include <QProgressBar>
-#include <QProgressDialog>
+#include <QIntValidator>
 
 #include "VideoTestThread.h"
 #include "ImageTestThread.h"
@@ -102,7 +102,6 @@ class CustomProgressDialog: public QDialog
         QLabel          *lb_title;
     private:
         QFrame          *frame;
-
 };
 
 class MainTestWindow : public QDialog
@@ -129,6 +128,7 @@ class MainTestWindow : public QDialog
         void add_stress_test_label(QString item);
         void add_complete_or_single_test_label(QString config);
         void show_sn_mac_message_box();
+        QString ui_get_test_count();
         QList<ItemCheck> itemlist;
         void _get_sn_num();
         void _get_mac_addr();
@@ -209,6 +209,7 @@ class MainTestWindow : public QDialog
 
     signals:
         void to_quit_test_window(QString item);
+        void sig_check_state_changed(QString item, bool state);
 
     public slots:
         void draw_main_test_window();

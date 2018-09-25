@@ -200,6 +200,8 @@ void MainTestWindow::on_state_changed(int state)
             } else {
                 button->setEnabled(false);
             }
+
+            emit sig_check_state_changed(item.name, state == Qt::Checked ? true:false);
         }
     }
 }
@@ -216,6 +218,7 @@ CustomProgressDialog::CustomProgressDialog(QWidget *parent)
     if (this->objectName().isEmpty()) {
         this->setObjectName(QString::fromUtf8("CustomProgressDialog"));
     }
+
     resize(400, 60);
     frame = new QFrame(this);
     frame->setObjectName(QString::fromUtf8("CustomProgressDialogFrame"));
@@ -390,6 +393,7 @@ void MainTestWindow::_create_test_count_and_upload_layout()
     _lab_test_count = new QLabel(tr("测试次数:"));
     _lineedit_test_count = new QLineEdit;
     _lineedit_test_count->setText("1");
+    _lineedit_test_count->setValidator(new QIntValidator(0, 1000, this));
     _lineedit_test_count->setFixedWidth(50);
 
     _hbox_test_count_layout = new QHBoxLayout;
@@ -439,6 +443,15 @@ void MainTestWindow::show_main_test_window()
     get_current_res_w = _desktopWidget->width();
     this->resize(_desktopWidget->width(), _desktopWidget->height());
     this->show();
+}
+
+QString MainTestWindow::ui_get_test_count()
+{
+    if (NULL != _lineedit_test_count) {
+        return _lineedit_test_count->text();
+    }
+
+    return "";
 }
 
 void MainTestWindow::_get_sn_num()

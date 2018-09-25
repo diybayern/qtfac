@@ -185,6 +185,12 @@ void Control::ui_init()
     connect(_uiHandle->get_qobject("下道工序"), SIGNAL(clicked()), this, SLOT(start_next_process()));
     connect(_uiHandle, SIGNAL(to_show_test_confirm_dialog(string)), this, SLOT(show_test_confirm_dialog(string)));
     connect(_uiHandle, SIGNAL(sig_ui_handled_test_result(string, string)), this, SLOT(slot_handled_test_result(string, string)));
+    connect(_uiHandle, SIGNAL(sig_ui_check_state_changed(string, bool)), this, SLOT(slot_check_state_changed(string, bool)));
+}
+
+void Control::slot_check_state_changed(string item, bool state)
+{
+    cout<<item<<", "<<state<<endl;
 }
 
 void Control::show_test_confirm_dialog(string item)

@@ -13,6 +13,7 @@ UiHandle::UiHandle()
     connect(this, SIGNAL(to_start_audio_progress_dialog()), MainTestWindow::get_main_test_window(), SLOT(start_audio_progress_dialog()));
     connect(this, SIGNAL(to_confirm_test_result_warning(QString)), MainTestWindow::get_main_test_window(), SLOT(confim_test_result_warning(QString)));
     connect(MainTestWindow::get_main_test_window(), SIGNAL(to_quit_test_window(QString)), this, SLOT(quit_test_window(QString)));
+    connect(MainTestWindow::get_main_test_window(), SIGNAL(sig_check_state_changed(QString, bool)), this, SLOT(slot_check_state_changed(QString, bool)));
 }
 
 UiHandle::~UiHandle()
@@ -121,6 +122,17 @@ void UiHandle::quit_test_window(QString item)
 void UiHandle::slot_handled_test_result(QString test_item, QString result)
 {
     emit sig_ui_handled_test_result(test_item.toStdString(), result.toStdString());
+}
+
+void UiHandle::slot_check_state_changed(QString item, bool state)
+{
+    emit sig_ui_check_state_changed(item.toStdString(), state);
+}
+
+string UiHandle::get_test_count()
+{
+    QString count = MainTestWindow::get_main_test_window()->ui_get_test_count();
+    return count.toStdString();
 }
 
 QObject* UiHandle::get_qobject(string name)

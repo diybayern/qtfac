@@ -226,6 +226,7 @@ public slots:
     void set_interface_select_status(string func);
     void set_test_result_pass(string func);
     void set_test_result_fail(string func);
+	void slot_check_state_changed(string item, bool state);
     
 };
 
