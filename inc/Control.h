@@ -176,10 +176,6 @@ public:
     void set_auto_upload_mes_status(bool status) {
         _auto_upload_mes = status;
     }
-
-    void set_interface_select_status(string func);
-    void set_test_result_pass(string func);
-    void set_test_result_fail(string func);
     
 private:
     void init_base_info();
@@ -227,6 +223,9 @@ public slots:
     void start_next_process();
     void show_test_confirm_dialog(string item);
     void slot_handled_test_result(string item_test, string result);
+    void set_interface_select_status(string func);
+    void set_test_result_pass(string func);
+    void set_test_result_fail(string func);
     
 };
 
