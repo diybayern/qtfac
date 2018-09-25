@@ -78,5 +78,20 @@ private:
 };
 
 
+class NextProcess : public FuncBase
+{
+public:
+    NextProcess(Control* control);
+    static void* test_all(void *arg);
+    void start_test(BaseInfo* baseInfo);
+    static void next_process_handle();
+    static bool create_stress_test_lock();
+
+private:
+    Control* _control;
+    
+};
+
+
 #endif
 

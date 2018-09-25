@@ -17,7 +17,7 @@ Control::Control():QObject()
     _funcBase[CAMERA]       = new CameraTest(this);
     _funcBase[STRESS]       = new StressTest(this);
     _funcBase[UPLOAD_LOG]   = new StressTest(this);
-    _funcBase[NEXT_PROCESS] = new SoundTest(this);
+    _funcBase[NEXT_PROCESS] = new NextProcess(this);
     
     _uiHandle               = UiHandle::get_uihandle();
 
@@ -321,8 +321,8 @@ void Control::start_stress_test()
 
 void Control::start_next_process()
 {
-    
-    cout << "2" << endl;
+	_funcBase[NEXT_PROCESS]->start_test(_baseInfo);
+    LOG_INFO("start next process");
 }
 
 void Control::start_upload_log()

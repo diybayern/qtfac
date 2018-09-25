@@ -16,7 +16,7 @@
 #include "FuncBase.h"
 #include "UiHandle.h"
 
-#define   FUNC_TYPE_NUM     (13)
+#define   FUNC_TYPE_NUM     (14)
 
 enum FuncType
 {

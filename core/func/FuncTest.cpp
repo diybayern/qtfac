@@ -1,6 +1,9 @@
 #include "../../inc/FuncTest.h"
 #include "../../inc/fac_log.h"
 
+#define NEXT_LOCK     ("next")
+
+pthread_mutex_t g_next_process_lock;
 
 CpuTest::CpuTest(Control* control)
        :_control(control)
@@ -106,6 +109,77 @@ void* StressTest::test_all(void *arg)
 }
 
 void StressTest::start_test(BaseInfo* baseInfo)
+{
+    pthread_t tid;
+    pthread_create(&tid,NULL,test_all,baseInfo);
+}
+
+
+NextProcess::NextProcess(Control* control)
+       :_control(control)
+{
+    pthread_mutex_init(&g_next_process_lock, NULL);
+}
+
+bool NextProcess::create_stress_test_lock() 
+{
+    LOG_INFO("start creating stress lock\n");
+    write_local_data(STRESS_LOCK_FILE.c_str(), "w+", (char*)NEXT_LOCK, sizeof(NEXT_LOCK));
+    
+/*    if (system("sync") < 0) {
+        LOG_ERROR("system sync error\n");
+        return false;
+    }*/
+	
+    if (check_file_exit(STRESS_LOCK_FILE.c_str())) {
+        LOG_INFO("create stress test lock success\n");
+        return true;
+    } else {
+        LOG_ERROR("create stress test lock failed\n");
+        return false;
+    }
+}
+
+void NextProcess::next_process_handle() 
+{
+    int next_process_f = -1;
+
+    pthread_detach(pthread_self());    
+    if (pthread_mutex_trylock(&g_next_process_lock)) {
+        LOG_ERROR("g_next_process_lock has been locked\n");
+        return;
+    }
+
+    //g_idle_add(gtk_win_next_process, "正在处理，请等待...");
+    next_process_f = system("bash /etc/diskstatus_mgr.bash --product-detach");
+    usleep(1000000);
+
+    LOG_INFO("bache check result value is %d\n",WEXITSTATUS(next_process_f));
+    pthread_mutex_unlock(&g_next_process_lock);
+	
+    if (WEXITSTATUS(next_process_f) == 0) {
+        if (!create_stress_test_lock()) {
+            LOG_ERROR("create stress test lock fail!\n");			
+           // g_idle_add(gtk_win_next_process,"EMMC异常，无法关机！\n");
+        } else if (system("shutdown -h now") < 0) {
+            LOG_ERROR("shutdown cmd run error\n");			
+           // g_idle_add(gtk_win_next_process,"终端异常，无法关机！\n");
+        }
+    } else if (WEXITSTATUS(next_process_f) > 0) {
+        LOG_ERROR("The disk is abnormal and cannot enter the next process.\n");		
+		//g_idle_add(gtk_win_next_process,"终端异常，无法关机！\n");
+    }
+ 
+    return;
+}
+
+void* NextProcess::test_all(void *arg)
+{
+	next_process_handle();
+	return NULL;
+}
+
+void NextProcess::start_test(BaseInfo* baseInfo)
 {
     pthread_t tid;
     pthread_create(&tid,NULL,test_all,baseInfo);
