@@ -62,6 +62,18 @@ struct FuncFinishStatus {
     bool display_finish;
     bool bright_finish;
     bool camera_finish;
+    bool stress_finish;
+};
+
+struct InterfaceSelectStatus {
+    bool mem_select;
+    bool usb_select;
+    bool cpu_select;
+    bool net_select;
+    bool edid_select;
+    bool hdd_select;
+    bool fan_select;
+    bool wifi_select;
 };
 
 class Control : public QObject
@@ -165,6 +177,10 @@ public:
         _auto_upload_mes = status;
     }
 
+    void set_interface_select_status(string func);
+    void set_test_result_pass(string func);
+    void set_test_result_fail(string func);
+    
 private:
     void init_base_info();
     void init_hw_info();
@@ -180,6 +196,7 @@ private:
     BaseInfo* _baseInfo;
     HwInfo* _hwInfo;
     FuncFinishStatus* _funcFinishStatus;
+    InterfaceSelectStatus* _interfaceSelectStatus;
     int _testStep;
     FuncBase* _funcBase[FUNC_TYPE_NUM];
     FacArg* _facArg;
