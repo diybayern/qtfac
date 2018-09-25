@@ -5,7 +5,7 @@ MainTestWindow::MainTestWindow(QWidget *parent)
         : QDialog(parent)
 {
     _desktopWidget = QApplication::desktop();
-
+     connect(&updatetimer, SIGNAL(timeout()), this, SLOT(_record_play_audio()));
 }
 
 MainTestWindow::~MainTestWindow()
@@ -44,15 +44,8 @@ void MainTestWindow::add_main_label(QString item, QString result)
 void MainTestWindow::add_main_test_button(QString item)
 {
     MainTestItem listitem;
-    if (item.compare("音频测试") == 0) {
-        listitem.itemname = item;
-        _main_test_item_list.append(listitem);
-         listitem.itemname = "进度条";
-        _main_test_item_list.append(listitem);
-    } else {
-        listitem.itemname = item;
-        _main_test_item_list.append(listitem);
-    }
+    listitem.itemname = item;
+    _main_test_item_list.append(listitem);
 }
 
 void MainTestWindow::add_stress_test_label(QString item)
@@ -77,6 +70,11 @@ void MainTestWindow::add_complete_or_single_test_label(QString config)
 void MainTestWindow::confirm_test_result_dialog(QString title)
 {	
 	MessageBox(NULL, MessageForm::Message, title + "结果确认", "请确认"+title+"结果是PASS 还是 FAIL", 0);
+}
+
+void MainTestWindow::confim_test_result_warning(QString title)
+{
+    MessageBox(NULL, MessageForm::Warnning, "警告", title, 0);
 }
 
 void MainTestWindow::show_sn_mac_message_box()
@@ -145,7 +143,6 @@ void MainTestWindow::update_screen_log(QString textInfo)
 
 void MainTestWindow::setupUI()
 {
-
     _hbox_bottom_left_layout = new QHBoxLayout;
     _hbox_bottom_left_layout->addLayout(_hbox_main_test_layout);
     _hbox_bottom_left_layout->addStretch();
@@ -164,7 +161,7 @@ void MainTestWindow::setupUI()
     _grid_main_test_window_layout->setColumnStretch(1, 4);
 }
 
-void MainTestWindow::_prepare_main_label_layout()
+void MainTestWindow::_create_main_label_layout()
 {
     int i;
 
@@ -200,7 +197,6 @@ void MainTestWindow::on_state_changed(int state)
             QPushButton *button = (QPushButton*)item.button;
             if (state == Qt::Checked) {
                 button->setEnabled(true);
-                button->click();
             } else {
                 button->setEnabled(false);
             }
@@ -209,7 +205,47 @@ void MainTestWindow::on_state_changed(int state)
 
 }
 
-void MainTestWindow::_prepare_main_test_layout()
+void MainTestWindow::start_audio_progress_dialog()
+{
+    _progressbar.resize(400, 40);
+    _progressbar.move((_desktopWidget->width()-_desktopWidget->width()/2 - 400/2), (_desktopWidget->height()-_desktopWidget->height()/2));
+
+    _progressbar.setMaximum(3);
+    _progressbar.setMinimum(0);
+    _progressbar.setValue(0);
+    _progressbar.setFormat("00:0%v");
+    _progressbar.setWindowTitle("正在录音中....");
+    _progressbar.setWindowFlags(_progressbar.windowFlags() & ~Qt::WindowMinimizeButtonHint
+                                    & ~Qt::WindowMaximizeButtonHint & ~Qt::WindowCloseButtonHint);
+    this->_status = RECORD;
+    updatetimer.start(1000);
+    _progressbar.show();
+}
+
+void MainTestWindow::_record_play_audio()
+{
+
+    if (this->_status == RECORD) {
+
+        if (_progressbar.value()+1 <= _progressbar.maximum()) {
+            _progressbar.setValue(_progressbar.value()+1);
+        } else {
+            this->_status = PLAY;
+            _progressbar.setValue(0);
+        }
+    } else if (this->_status == PLAY) {
+        if (_progressbar.value()+1 <= _progressbar.maximum()) {
+            _progressbar.setValue(_progressbar.value()+1);
+        } else {
+            this->_status = PLAY_END;
+            _progressbar.hide();
+            updatetimer.stop();
+        }
+    }
+
+}
+
+void MainTestWindow::_create_main_test_layout()
 {
     if (_main_test_item_list.isEmpty())
     {
@@ -227,21 +263,14 @@ void MainTestWindow::_prepare_main_test_layout()
             QString name = _main_test_item_list.at(i).itemname;
 
             iteminfo.name = name;
-            if (name.compare("进度条") == 0) {
-                _progressbar_label = new QLabel("record");
-                _progressbar = new QProgressBar;
-                _grid_main_test_layout->addWidget(_progressbar_label, i, 0);
-                _grid_main_test_layout->addWidget(_progressbar, i, 1, 1, 3);
 
-            } else {
-                QPushButton *button = new QPushButton(name);
-                QLabel *label = new QLabel;
-                _grid_main_test_layout->addWidget(button, i, 0);
-                _grid_main_test_layout->addWidget(label, i, 1);
-                iteminfo.button = button;
-                iteminfo.label = label;
-                _insert_item_record(iteminfo);
-            }
+            QPushButton *button = new QPushButton(name);
+            QLabel *label = new QLabel;
+            _grid_main_test_layout->addWidget(button, i, 0);
+            _grid_main_test_layout->addWidget(label, i, 1);
+            iteminfo.button = button;
+            iteminfo.label = label;
+            _insert_item_record(iteminfo);
         }
 
     } else {
@@ -281,23 +310,15 @@ void MainTestWindow::_prepare_main_test_layout()
                 }
 
              } else {
-                 if (_main_test_item_list.at(i).itemname.compare("进度条") == 0) {
-                     _progressbar_label = new QLabel("record");
-                     _progressbar = new QProgressBar;
-                     //_progressbar->setStyleSheet("QProgressBar::chunk{background-color: #CD96CD;width: 10px;margin: 0.5px;}");
-                     _grid_main_test_layout->addWidget(_progressbar_label, i + _interface_test_list.count(), 0);
-                     _grid_main_test_layout->addWidget(_progressbar, i + _interface_test_list.count(), 1, 1, 3);
 
-                 } else {
-                     button = new QPushButton(_main_test_item_list.at(i).itemname);
-                     label = new QLabel;
-                     _grid_main_test_layout->addWidget(button, i + _interface_test_list.count(), 0);
-                     _grid_main_test_layout->addWidget(label, i + _interface_test_list.count(), 1);
-                     iteminfo.name = _main_test_item_list.at(i).itemname;
-                     iteminfo.button = button;
-                     iteminfo.label = label;
-                     _insert_item_record(iteminfo);
-                 }
+                 button = new QPushButton(_main_test_item_list.at(i).itemname);
+                 label = new QLabel;
+                 _grid_main_test_layout->addWidget(button, i + _interface_test_list.count(), 0);
+                 _grid_main_test_layout->addWidget(label, i + _interface_test_list.count(), 1);
+                 iteminfo.name = _main_test_item_list.at(i).itemname;
+                 iteminfo.button = button;
+                 iteminfo.label = label;
+                 _insert_item_record(iteminfo);
              }
          }
     }
@@ -308,7 +329,7 @@ void MainTestWindow::_prepare_main_test_layout()
     _hbox_main_test_layout->addStretch();
 }
 
-void MainTestWindow::_prepare_screen_log_layout()
+void MainTestWindow::_create_screen_log_layout()
 {
     _vbox_screenlog_layout = new QVBoxLayout;
     QFont font;
@@ -321,7 +342,7 @@ void MainTestWindow::_prepare_screen_log_layout()
     _vbox_screenlog_layout->addWidget(_editInfo);
 }
 
-void MainTestWindow::_prepare_test_count_and_upload_layout()
+void MainTestWindow::_create_test_count_and_upload_layout()
 {
     _lab_test_count = new QLabel(tr("测试次数:"));
     _lineedit_test_count = new QLineEdit;
@@ -345,7 +366,7 @@ void MainTestWindow::_prepare_test_count_and_upload_layout()
     _vbox_test_count_auto_upload_layout->addLayout(_hbox_checkbox_auto_upload_log);
 }
 
-void MainTestWindow::_prepare_spilter_line_layout()
+void MainTestWindow::_create_spilter_line_layout()
 {
     _spilter_line = new QFrame;
     _spilter_line->setFixedSize(_desktopWidget->width()*3/7, 3);
@@ -360,11 +381,11 @@ void MainTestWindow::_insert_item_record(ItemCheck &record)
 
 void MainTestWindow::draw_main_test_window()
 {
-    _prepare_screen_log_layout();
-    _prepare_test_count_and_upload_layout();
-    _prepare_main_test_layout();
-    _prepare_main_label_layout();
-    _prepare_spilter_line_layout();
+    _create_screen_log_layout();
+    _create_test_count_and_upload_layout();
+    _create_main_test_layout();
+    _create_main_label_layout();
+    _create_spilter_line_layout();
 }
 
 void MainTestWindow::show_main_test_window()

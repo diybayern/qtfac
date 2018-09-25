@@ -8,6 +8,53 @@ StressTestWindow* StressTestWindow::get_stress_test_window()
     }
     return _stress_test_window;
 }
+/*
+static void eos_cb (GstBus *bus, GstMessage *msg, CustomData *data) {
+    g_print ("End-Of-Stream reached.\n");
+    int ret = 0;
+
+    gst_element_set_state (data->playbin, GST_STATE_READY);
+
+    ret = gst_element_set_state (data->playbin, GST_STATE_PLAYING);
+    if (ret == GST_STATE_CHANGE_FAILURE) {
+        g_printerr ("Unable to set the pipeline to the playing state.\n");
+        gst_object_unref (data->playbin);
+    }
+}
+
+
+
+void StressTestWindow::mediaPlay()
+{
+    char file_buf[512];
+    int ret = 0;
+    GstBus *bus;
+    static CustomData data;
+    memset(file_buf,0,sizeof(file_buf));
+    strncpy(file_buf,"file:",strlen("file:"));
+    strcat(file_buf,"/home/rcd/qtfac/movie.mp4");
+
+    gst_init (0, NULL);
+    GstElement *playbin = gst_element_factory_make ("playbin", "playbin");
+    if (!playbin) {
+        g_printerr ("Not all elements could be created.\n");
+    }
+    g_object_set (playbin, "uri", file_buf, NULL);
+    data.playbin = playbin;
+    data.window = _lb_video;
+    del_data = data;
+    WId xwinid = _lb_video->winId();
+    gst_video_overlay_set_window_handle(GST_VIDEO_OVERLAY (playbin),xwinid);
+    bus = gst_element_get_bus (playbin);
+    gst_bus_add_signal_watch (bus);
+    g_signal_connect (G_OBJECT (bus), "message::eos", (GCallback)eos_cb, &data);
+
+    ret = gst_element_set_state (playbin, GST_STATE_PLAYING);
+    if (ret == GST_STATE_CHANGE_FAILURE) {
+        g_printerr ("Unable to set the pipeline to the playing state.\n");
+        gst_object_unref (playbin);
+    }
+}*/
 
 StressTestWindow::StressTestWindow(QWidget *parent)
     : QWidget(parent)
@@ -60,29 +107,29 @@ StressTestWindow::StressTestWindow(QWidget *parent)
     _lb_info->setObjectName(QString::fromUtf8("lb_info"));
     _lb_info->setGeometry(QRect(_if_a.info_start_x, _if_a.info_start_y, _if_a.info_w, _if_a.info_h));
 
-    _group_box = new QGroupBox(_lb_info);
-    _group_box->setObjectName(QString::fromUtf8("_group_box"));
-    _group_box->setStyleSheet("QGroupBox{border:none}");
-    _group_box->setGeometry(QRect(0, 0, _if_a.info_w, _if_a.info_h));
-    _grid_box = new QGridLayout(_group_box);
+    //_group_box = new QGroupBox(_lb_info);
+    //_group_box->setObjectName(QString::fromUtf8("_group_box"));
+    //_group_box->setStyleSheet("QGroupBox{border:none}");
+    //_group_box->setGeometry(QRect(0, 0, _if_a.info_w, _if_a.info_h));
+    _grid_box = new QGridLayout(_lb_info);
 
     QFont font;
     if ((st_h <= 1080 && st_h > 1050) && (st_w <= 1920 && st_w > 1680)) {
-        font.setPointSize(16);
+        font.setPointSize(12);
     } else if ((st_h <= 1050 && st_h > 1024) && (st_w <= 1680 && st_w > 1440)) {
-       font.setPointSize(16);
+       font.setPointSize(10);
     } else if ((st_h <= 1024 && st_h >= 900) && (st_w <= 1440 && st_w >= 1280)) {
-       font.setPointSize(14);
+       font.setPointSize(9);
     } else if ((st_h < 900 && st_h >= 720) && (st_w <= 1280 && st_w > 1024)) {
-       font.setPointSize(12);
+       font.setPointSize(8);
     } else {
-       font.setPointSize(18);
+       font.setPointSize(10);
     }
     font.setWeight(QFont::Black);
 
     for (int i = 0; i < MainTestWindow::get_main_test_window()->stress_test_item_list.count(); i++) {
         QString item = MainTestWindow::get_main_test_window()->stress_test_item_list.at(i).itemname;
-        QLabel* st_lab = new QLabel(item);
+        QLabel* st_lab = new QLabel(item+" : ");
         st_lab->setFont(font);
         QLabel* st_lab_value = new QLabel;
         st_lab_value->setFont(font);
@@ -93,9 +140,8 @@ StressTestWindow::StressTestWindow(QWidget *parent)
         info.label = st_lab_value;
         stress_test_info_list.append(info);
     }
-    //_grid_box->setSpacing(20);
     _grid_box->setColumnStretch(0, 1);
-    _grid_box->setColumnStretch(1, 3);
+    _grid_box->setColumnStretch(1, 7);
 
     //connect and start thread
     connect(ImageTestThread::get_image_test_thread(), SIGNAL(sig_send_one_pixmap(QPixmap)), this, SLOT(slot_get_one_pixmap(QPixmap)));
@@ -110,7 +156,9 @@ StressTestWindow::StressTestWindow(QWidget *parent)
 
 StressTestWindow::~StressTestWindow()
 {
-
+    qDebug()<<"~StressTestWindow";
+    //gst_element_set_state (del_data.playbin, GST_STATE_NULL);
+    //gst_object_unref (del_data.playbin);
 }
 
 void StressTestWindow::finish_stress_window()
@@ -127,10 +175,11 @@ void StressTestWindow::update_stress_label_value(QString item, QString result)
         return ;
     }
 
-    for (int i = 0; i < stress_test_info_list.count(); i++) {
-        QString tmp =  stress_test_info_list.at(i).name;
-        if (item.compare(tmp) == 0) {
-            QLabel* label = stress_test_info_list.at(i).label;
+    foreach (Stress_Test_Info item_info, stress_test_info_list) {
+
+        if (item.compare(item_info.name) == 0) {
+
+            QLabel* label = item_info.label;
             label->setText(result);
             label->update();
         }
@@ -177,8 +226,6 @@ void StressTestWindow::slot_get_one_frame(QImage img)
 
 void StressTestWindow::slot_get_one_pixmap(QPixmap pix)
 {
-    qDebug()<<"slot_get_one_pixmap ......";
-
     QPixmap fixtmp = pix.scaled(_lb_image_frame->width()/4, _lb_image_frame->height(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
     _set_picture(fixtmp);
 }
@@ -187,11 +234,10 @@ void StressTestWindow::mousePressEvent(QMouseEvent* event)
 {
     if (event->button() == Qt::RightButton) {
         if (NULL != _stress_test_window) {
-            emit sig_finish_show_stress_window();
             emit sig_finish_video_test_thread();
             emit sig_finish_image_test_thread();
+            emit sig_finish_show_stress_window();
         }
-        //MessageBox(NULL, MessageForm::Message, "GPU测试结果确认", "请确认GPU测试结果是PASS还是FAIL", 0);
     }
 }
 
@@ -201,8 +247,8 @@ void StressTestWindow::_set_picture(QPixmap& pix)
         return ;
     }
 
-    for (int i = 0; i < _image_label_list.count(); i++) {
-        QLabel* lb = _image_label_list.at(i).lb_image;
+    foreach (image_layout_attr item, _image_label_list) {
+        QLabel* lb = item.lb_image;
         lb->setPixmap(pix);
         lb->update();
     }
@@ -211,13 +257,12 @@ void StressTestWindow::_set_picture(QPixmap& pix)
 void StressTestWindow::keyPressEvent(QKeyEvent *event)
 {
 
-
 }
 
 bool start_stress_ui()
 {
     StressTestWindow::get_stress_test_window()->start_exec();
-
+    //StressTestWindow::get_stress_test_window()->mediaPlay();
     return true;
 }
 

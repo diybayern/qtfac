@@ -23,8 +23,6 @@ ImageTestThread::~ImageTestThread()
 
 void ImageTestThread::slot_finish_image_test_thread()
 {
-    qDebug()<<"ImageTestThread  slot_finish_image_test_thread";
-
     if (_image_test_thread->isRunning()) {
 
         if (NULL != _image_test_thread) {
@@ -61,7 +59,6 @@ void ImageTestThread::run()
         }
         _image_file_1.load(filepath);
         emit sig_send_one_pixmap(_image_file_1);
-
-        sleep(2);
+        QThread::sleep(2);
     }
 }

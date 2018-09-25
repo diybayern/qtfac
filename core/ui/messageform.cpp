@@ -104,7 +104,7 @@ MessageForm::MessageForm(QWidget *parent, const int mode, const int timeout) : Q
             lb_title->setStyleSheet("background-color: rgb(174, 238, 238);");
         }
 
-        if (mode != SNMAC) {
+        if (mode == Message) {
             bt_ok = new QPushButton(frame);
             bt_ok->setObjectName(QString::fromUtf8("bt_ok"));
             if (mode == NOICON) {
@@ -128,13 +128,25 @@ MessageForm::MessageForm(QWidget *parent, const int mode, const int timeout) : Q
             bt_fail->setText(tr("FAIL"));
             connect(bt_ok, SIGNAL(clicked()), this, SLOT(proButtonOK()));
             connect(bt_fail, SIGNAL(clicked()), this, SLOT(proButtonFail()));
-        } else {
+        } else if (mode == SNMAC){
             bt_snmac = new QPushButton(frame);
             bt_snmac->setObjectName(QString::fromUtf8("bt_snmac"));
             bt_snmac->setGeometry(QRect(470, 230, 100, 40));
             bt_snmac->setFont(font);
             bt_snmac->setText(tr("CANCEL"));
             connect(bt_snmac, SIGNAL(clicked()), this, SLOT(proButtonCancel()));
+        } else if (mode == Warnning){
+            bt_fail = new QPushButton(frame);
+            bt_fail->setObjectName(QString::fromUtf8("bt_fail"));
+            if (mode == NOICON) {
+                bt_fail->setGeometry(QRect(750, 150, 100, 40));
+            } else {
+                bt_fail->setGeometry(QRect(750, 150, 100, 40));
+            }
+
+            bt_fail->setFont(font);
+            bt_fail->setText(tr("CANCEL"));
+            connect(bt_fail, SIGNAL(clicked()), this, SLOT(proButtonCancel()));
         }
     }
     this->timeout = timeout;

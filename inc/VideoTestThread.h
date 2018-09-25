@@ -7,8 +7,6 @@
 #include <QLabel>
 #include <QDebug>
 #include <QMutexLocker>
-
-#include "unistd.h"
 #include "ui.h"
 
 extern "C"
@@ -61,6 +59,7 @@ public:
     static VideoTestThread* get_video_test_thread();
     void start_play();
     void stop_play();
+    char* filename;
 
 private:
     static VideoTestThread* _video_test_thread;

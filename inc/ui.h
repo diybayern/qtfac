@@ -16,11 +16,25 @@
 #include <QMouseEvent>
 #include <QKeyEvent>
 #include <QProgressBar>
+#include <QProgressDialog>
 
 #include "VideoTestThread.h"
 #include "ImageTestThread.h"
 #include "messageform.h"
 #include "UiHandle.h"
+/*
+extern "C" {
+    #include <glib.h>
+    #include <gst/video/videooverlay.h>
+    #include <gst/gst.h>
+    #include <string.h>
+}
+
+
+typedef struct _CustomData {
+        GstElement *playbin;
+        QWidget    *window;
+} CustomData;*/
 
 class InterfaceTestItem
 {
@@ -56,6 +70,26 @@ class ItemCheck
         QObject *label;
 };
 
+class MyEventLoop : public QObject
+{
+    Q_OBJECT
+    public:
+        MyEventLoop(QObject *parent = 0);
+        virtual ~MyEventLoop();
+
+        int exec(QEventLoop::ProcessEventsFlags = QEventLoop::AllEvents,bool hassignal=false);
+        void exit(int returnCode = 0);
+        bool isRunning() const;
+    signals:
+        void enterEventLoop();
+        void exitEventloop();
+    public slots:
+        void quit();
+    private:
+        bool    runflag;
+
+};
+
 class MainTestWindow : public QDialog
 {
     Q_OBJECT
@@ -65,6 +99,12 @@ class MainTestWindow : public QDialog
             MAINFUNC = 0,
             INTERFACE,
         };
+        enum {
+            RECORD = 0,
+            PLAY,
+            PLAY_END,
+        };
+
         explicit MainTestWindow(QWidget *parent = 0);
         ~MainTestWindow();
         void setupUI();
@@ -81,6 +121,7 @@ class MainTestWindow : public QDialog
         int get_current_res_h;
         int get_current_res_w;
         QList<StressTestItem> stress_test_item_list;
+        QTimer  updatetimer;
 
     private:
         static MainTestWindow* _main_test_window;
@@ -123,14 +164,11 @@ class MainTestWindow : public QDialog
         //lab of complete test or single board test
         QLabel *_lab_complete_or_single_test;
 
-        QProgressBar *_progressbar;
-        QLabel* _progressbar_label;
-
-        void _prepare_main_label_layout();
-        void _prepare_main_test_layout();
-        void _prepare_screen_log_layout();
-        void _prepare_test_count_and_upload_layout();
-        void _prepare_spilter_line_layout();
+        void _create_main_label_layout();
+        void _create_main_test_layout();
+        void _create_screen_log_layout();
+        void _create_test_count_and_upload_layout();
+        void _create_spilter_line_layout();
 
         //buffer
         QList<InterfaceTestItem> _interface_test_list;
@@ -149,6 +187,9 @@ class MainTestWindow : public QDialog
         QString _local_sn_num;
         QString _local_mac_addr;
 
+        QProgressBar _progressbar;
+        int _status;
+
     public slots:
         void draw_main_test_window();
         void show_main_test_window();
@@ -160,10 +201,13 @@ class MainTestWindow : public QDialog
         void slot_finish_show_display_window();
         void update_screen_log(QString info);
         void update_stress_label_value(QString item, QString result);
-		void confirm_test_result_dialog(QString title);
+        void confirm_test_result_dialog(QString title);
+        void confim_test_result_warning(QString title);
+        void start_audio_progress_dialog();
 
     private slots:
         void on_state_changed(int state);
+        void _record_play_audio();
 };
 
 
@@ -205,7 +249,6 @@ class Stress_Test_Info
 };
 
 
-
 class StressTestWindow : public QWidget
 {
     Q_OBJECT
@@ -218,6 +261,7 @@ public:
     void _set_picture(QPixmap& pix);
     QList<Stress_Test_Info> stress_test_info_list;
     void update_stress_label_value(QString item, QString result);
+    //void mediaPlay();
 
 protected:
     void mousePressEvent(QMouseEvent* event);
@@ -244,8 +288,8 @@ private:
     QGridLayout *_grid_box;
     int st_w;
     int st_h;
-
-
+	//CustomData del_data;
+    MyEventLoop eventloop;
 
 signals:
     void sig_finish_show_stress_window();
