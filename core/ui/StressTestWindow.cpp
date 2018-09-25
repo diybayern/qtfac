@@ -8,6 +8,12 @@ StressTestWindow* StressTestWindow::get_stress_test_window()
     }
     return _stress_test_window;
 }
+
+StressTestWindow* StressTestWindow::g_get_stress_test_window()
+{
+    return _stress_test_window;
+}
+
 /*
 static void eos_cb (GstBus *bus, GstMessage *msg, CustomData *data) {
     g_print ("End-Of-Stream reached.\n");
@@ -164,6 +170,7 @@ StressTestWindow::~StressTestWindow()
 void StressTestWindow::finish_stress_window()
 {
     if (NULL != _stress_test_window) {
+        hide();
         this->deleteLater();
         _stress_test_window = NULL;
     }

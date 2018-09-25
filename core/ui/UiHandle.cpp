@@ -12,6 +12,7 @@ UiHandle::UiHandle()
 	connect(this, SIGNAL(to_confirm_test_result_dialog(QString)), MainTestWindow::get_main_test_window(), SLOT(confirm_test_result_dialog(QString)));  
     connect(this, SIGNAL(to_start_audio_progress_dialog()), MainTestWindow::get_main_test_window(), SLOT(start_audio_progress_dialog()));
     connect(this, SIGNAL(to_confirm_test_result_warning(QString)), MainTestWindow::get_main_test_window(), SLOT(confim_test_result_warning(QString)));
+    connect(MainTestWindow::get_main_test_window(), SIGNAL(to_quit_test_window(QString)), this, SLOT(quit_test_window(QString)));
 }
 
 UiHandle::~UiHandle()
@@ -110,6 +111,16 @@ void UiHandle::update_stress_label_value(string item, string result)
 void UiHandle::show_sn_mac_message_box()
 {
     MainTestWindow::get_main_test_window()->show_sn_mac_message_box();
+}
+
+void UiHandle::quit_test_window(QString item)
+{
+    emit to_show_test_confirm_dialog(item.toStdString());
+}
+
+void UiHandle::slot_handled_test_result(QString test_item, QString result)
+{
+    emit sig_ui_handled_test_result(test_item.toStdString(), result.toStdString());
 }
 
 QObject* UiHandle::get_qobject(string name)

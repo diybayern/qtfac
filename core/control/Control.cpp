@@ -172,7 +172,19 @@ void Control::ui_init()
     connect(_uiHandle->get_qobject("拷机测试"), SIGNAL(clicked()), this, SLOT(start_stress_test()));
     connect(_uiHandle->get_qobject("上传日志"), SIGNAL(clicked()), this, SLOT(start_upload_log()));
     connect(_uiHandle->get_qobject("下道工序"), SIGNAL(clicked()), this, SLOT(start_next_process()));
-    
+    connect(_uiHandle, SIGNAL(to_show_test_confirm_dialog(string)), this, SLOT(show_test_confirm_dialog(string)));
+    connect(_uiHandle, SIGNAL(sig_ui_handled_test_result(string, string)), this, SLOT(slot_handled_test_result(string, string)));
+}
+
+void Control::show_test_confirm_dialog(string item)
+{
+    _uiHandle->confirm_test_result_dialog(item);
+}
+
+
+void Control::slot_handled_test_result(string item_test, string result)
+{
+    cout<<item_test <<", "<<result<<endl;
 }
 
 void Control::init_func_test()

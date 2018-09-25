@@ -115,7 +115,7 @@ MessageForm::MessageForm(QWidget *parent, const int mode, const int timeout) : Q
 
             bt_ok->setFont(font);
             bt_ok->setText(tr("PASS"));
-                //bt_ok->setGraphicsEffect(effect);
+
             bt_fail = new QPushButton(frame);
             bt_fail->setObjectName(QString::fromUtf8("bt_fail"));
             if (mode == NOICON) {
@@ -128,6 +128,7 @@ MessageForm::MessageForm(QWidget *parent, const int mode, const int timeout) : Q
             bt_fail->setText(tr("FAIL"));
             connect(bt_ok, SIGNAL(clicked()), this, SLOT(proButtonOK()));
             connect(bt_fail, SIGNAL(clicked()), this, SLOT(proButtonFail()));
+            connect(this, SIGNAL(sig_handled_test_result(QString, QString)), UiHandle::get_uihandle(), SLOT(slot_handled_test_result(QString, QString)));
         } else if (mode == SNMAC){
             bt_snmac = new QPushButton(frame);
             bt_snmac->setObjectName(QString::fromUtf8("bt_snmac"));
@@ -186,11 +187,13 @@ void MessageForm::timerEvent(QTimerEvent *evt)
 
 void MessageForm::proButtonOK()
 {
+    emit sig_handled_test_result(_m_test_item, "PASS");
     accept();
 }
 
 void MessageForm::proButtonFail()
 {
+    emit sig_handled_test_result(_m_test_item, "FAIL");
     reject();
 }
 
@@ -210,7 +213,7 @@ int MessageForm::startExec()
     return exec();
 }
 
-bool MessageBox(QWidget *parent,const int mode,const QString &title,const QString &text,const int timeout)
+bool MessageBox(QWidget *parent,const int mode,const QString &test_item, const QString &title,const QString &text,const int timeout)
 {
     int timeoutTemp = timeout;
     if (g_form != NULL)
@@ -228,7 +231,7 @@ bool MessageBox(QWidget *parent,const int mode,const QString &title,const QStrin
     } else {
         form->setLabel(text);
     }
-
+    form->setTestItem(test_item);
     int ret = form->startExec();
 
     delete form;

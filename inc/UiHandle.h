@@ -46,6 +46,12 @@ class UiHandle: public QObject
         void to_confirm_test_result_dialog(QString title);
         void to_start_audio_progress_dialog();
         void to_confirm_test_result_warning(QString title);
+        void to_show_test_confirm_dialog(string item);
+        void sig_ui_handled_test_result(string test_item, string result);
+
+    public slots:
+        void quit_test_window(QString item);
+        void slot_handled_test_result(QString test_item, QString result);
 };
 
 

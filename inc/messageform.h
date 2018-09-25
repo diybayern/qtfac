@@ -37,10 +37,14 @@ public slots:
     void setTitle(const QString &title)   {lb_title->setText(title);lb_title->update();}
     void setText(const QString &str)      {lb_text->setText(str);lb_text->update();}
     void setLabel(const QString &str)     {lb_snmac->setText(str);lb_snmac->update();}
+    void setTestItem(const QString &item) {_m_test_item = item;}
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event);
     void timerEvent(QTimerEvent *evt);
+
+signals:
+    void sig_handled_test_result(QString test_item, QString result);
 
 private slots:
     void proButtonOK();
@@ -66,6 +70,7 @@ private:
    int             mode;
 
    QString         m_sMsg;
+   QString         _m_test_item;
 
    int             timerId;
    int             errTimerId;
@@ -78,6 +83,6 @@ private:
 
 extern QString g_sn_mac_message;
 extern QPointer<MessageForm> g_form;
-extern bool MessageBox(QWidget *parent,const int mode,const QString &title,const QString &text,const int timeout);
+extern bool MessageBox(QWidget *parent,const int mode,const QString &test_item, const QString &title,const QString &text,const int timeout);
 
 #endif // MESSAGEFORM_H

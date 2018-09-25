@@ -190,6 +190,11 @@ class MainTestWindow : public QDialog
         QProgressBar _progressbar;
         int _status;
 
+        MyEventLoop eventloop;
+
+    signals:
+        void to_quit_test_window(QString item);
+
     public slots:
         void draw_main_test_window();
         void show_main_test_window();
@@ -256,6 +261,7 @@ public:
     explicit StressTestWindow(QWidget *parent = 0);
     ~StressTestWindow();
     void start_exec();
+    static StressTestWindow* g_get_stress_test_window();
     static StressTestWindow* get_stress_test_window();
     void finish_stress_window();
     void _set_picture(QPixmap& pix);
@@ -307,7 +313,7 @@ public:
         BLACK,
         WHITE
     };
-
+    static DisplayTestWindow* g_get_display_test_window();
     explicit DisplayTestWindow(QWidget *parent = 0);
     ~DisplayTestWindow();
     static DisplayTestWindow* get_display_test_window();

@@ -208,6 +208,8 @@ public slots:
     void start_stress_test();
     void start_upload_log();
     void start_next_process();
+    void show_test_confirm_dialog(string item);
+    void slot_handled_test_result(string item_test, string result);
     
 };
 

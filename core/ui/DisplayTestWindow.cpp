@@ -9,6 +9,11 @@ DisplayTestWindow* DisplayTestWindow::get_display_test_window()
     return _display_test_window;
 }
 
+DisplayTestWindow* DisplayTestWindow::g_get_display_test_window()
+{
+    return _display_test_window;
+}
+
 DisplayTestWindow::DisplayTestWindow(QWidget *parent)
     : QWidget(parent)
 {
@@ -32,6 +37,7 @@ DisplayTestWindow::~DisplayTestWindow()
 void DisplayTestWindow::finish_display_window()
 {
     if (NULL != _display_test_window) {
+        hide();
         this->deleteLater();
         _display_test_window = NULL;
     }

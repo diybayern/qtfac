@@ -69,12 +69,12 @@ void MainTestWindow::add_complete_or_single_test_label(QString config)
 
 void MainTestWindow::confirm_test_result_dialog(QString title)
 {	
-	MessageBox(NULL, MessageForm::Message, title + "结果确认", "请确认"+title+"结果是PASS 还是 FAIL", 0);
+    MessageBox(NULL, MessageForm::Message, title, title + "结果确认", "请确认"+title+"结果是PASS 还是 FAIL", 0);
 }
 
 void MainTestWindow::confim_test_result_warning(QString title)
 {
-    MessageBox(NULL, MessageForm::Warnning, "警告", title, 0);
+    MessageBox(NULL, MessageForm::Warnning, title, "警告", title, 0);
 }
 
 void MainTestWindow::show_sn_mac_message_box()
@@ -84,11 +84,11 @@ void MainTestWindow::show_sn_mac_message_box()
 
     if (_is_complete_test)
     {
-        MessageBox(NULL, MessageForm::SNMAC, _get_current_configs() + "测试", _get_current_configs(), 0);
+        MessageBox(NULL, MessageForm::SNMAC, "SN", _get_current_configs() + "测试", _get_current_configs(), 0);
     }
     else
     {
-        MessageBox(NULL, MessageForm::SNMAC, _get_current_configs() + "测试", _get_current_configs(), 0);
+        MessageBox(NULL, MessageForm::SNMAC, "MAC", _get_current_configs() + "测试", _get_current_configs(), 0);
     }
 
 
@@ -231,7 +231,9 @@ void MainTestWindow::_record_play_audio()
             _progressbar.setValue(_progressbar.value()+1);
         } else {
             this->_status = PLAY;
+            _progressbar.setWindowTitle("正在播放中....");
             _progressbar.setValue(0);
+            _progressbar.update();
         }
     } else if (this->_status == PLAY) {
         if (_progressbar.value()+1 <= _progressbar.maximum()) {
@@ -444,16 +446,16 @@ void MainTestWindow::resume_message_box()
     if (_is_complete_test) {
 
         if (g_sn_mac_message.compare(_local_sn_num) == 0) {
-            MessageBox(NULL, MessageForm::Message, "扫描成功", "SN比对成功", 1000);
+            MessageBox(NULL, MessageForm::Message, "SN", "扫描成功", "SN比对成功", 1000);
         } else {
-            MessageBox(NULL, MessageForm::Error, "警告", "SN比对失败,请重试！", 0);
+            MessageBox(NULL, MessageForm::Error, "SN", "警告", "SN比对失败,请重试！", 0);
         }
 
     } else {
         if (g_sn_mac_message.compare(_local_mac_addr) == 0) {
-            MessageBox(NULL, MessageForm::Message, "扫描成功", "MAC比对成功", 1000);
+            MessageBox(NULL, MessageForm::Message, "MAC", "扫描成功", "MAC比对成功", 1000);
         } else {
-            MessageBox(NULL, MessageForm::Error, "警告", "MAC比对失败,请重试！", 0);
+            MessageBox(NULL, MessageForm::Error, "MAC", "警告", "MAC比对失败,请重试！", 0);
         }
     }
 }
@@ -471,11 +473,33 @@ void MainTestWindow::show_display_test_window()
 void MainTestWindow::slot_finish_show_stress_window()
 {
     StressTestWindow::get_stress_test_window()->finish_stress_window();
+    while(true) {
+        if (NULL != StressTestWindow::g_get_stress_test_window()) {
+            eventloop.exec();
+        } else {
+            if (eventloop.isRunning()) {
+                eventloop.exit();
+            }
+            break;
+        }
+    }
+    emit to_quit_test_window("拷机测试");
 }
 
 void MainTestWindow::slot_finish_show_display_window()
 {
     DisplayTestWindow::get_display_test_window()->finish_display_window();
+    while(true) {
+        if (NULL != DisplayTestWindow::g_get_display_test_window()) {
+            eventloop.exec();
+        } else {
+            if (eventloop.isRunning()) {
+                eventloop.exit();
+            }
+            break;
+        }
+    }
+    emit to_quit_test_window("显示测试");
 }
 
 void MainTestWindow::update_stress_label_value(QString item, QString result)
