@@ -45,7 +45,7 @@ private:
     static int net_eth_no(char *eth_name);
     static bool net_get_eth_status(int fd, char *eth_name, unsigned int *status);
     static int net_test_ioctl(int fd, char *eth_name, void *cmd);
-//    static char *net_get_duplex_desc(char duplex);
+    static string net_get_duplex_desc(char duplex);
     static bool net_send_broadcast_msg(NetInfo* info, int num);
     static bool net_send_msg(char* src_mac, char* dst_mac, unsigned int index, unsigned int seq);
 };
