@@ -202,45 +202,86 @@ void MainTestWindow::on_state_changed(int state)
             }
         }
     }
+}
+
+/***********************progressbar dialog begin***********************/
+CustomProgressDialog::CustomProgressDialog(QWidget *parent)
+        : QDialog(parent)
+{
+    setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint);
+    setWindowModality(Qt::ApplicationModal);
+    setFocusPolicy(Qt::StrongFocus);
+    setAttribute(Qt::WA_DeleteOnClose, false);
+
+    if (this->objectName().isEmpty()) {
+        this->setObjectName(QString::fromUtf8("CustomProgressDialog"));
+    }
+    resize(400, 60);
+    frame = new QFrame(this);
+    frame->setObjectName(QString::fromUtf8("CustomProgressDialogFrame"));
+    frame->setGeometry(QRect(0, 0, 400, 60));
+
+    lb_title = new QLabel(frame);
+    lb_title->setObjectName(QString::fromUtf8("lb_title"));
+    lb_title->setGeometry(QRect(0, 0, 400, 20));
+    lb_title->setStyleSheet("background-color: rgb(0, 255, 255);");
+    lb_title->setAlignment(Qt::AlignCenter);
+    lb_title->setText("正在录音中....");
+
+
+    progressbar = new QProgressBar(frame);
+    progressbar->setObjectName(QString::fromUtf8("progressbar"));
+    progressbar->setGeometry(QRect(0, 20, 400, 40));
+    progressbar->setStyleSheet("background-color: rgb(214, 214, 214);");
+    progressbar->setMaximum(3);
+    progressbar->setMinimum(0);
+    progressbar->setValue(0);
+    progressbar->setFormat("00:0%v");
 
 }
 
+CustomProgressDialog::~CustomProgressDialog()
+{
+    qDebug()<<"~CustomProgressDialog";
+}
+
+void CustomProgressDialog::startExec()
+{
+    show();
+}
+
+/************************progressbar dialog end****************/
+
+
 void MainTestWindow::start_audio_progress_dialog()
 {
-    _progressbar.resize(400, 40);
-    _progressbar.move((_desktopWidget->width()-_desktopWidget->width()/2 - 400/2), (_desktopWidget->height()-_desktopWidget->height()/2));
-
-    _progressbar.setMaximum(3);
-    _progressbar.setMinimum(0);
-    _progressbar.setValue(0);
-    _progressbar.setFormat("00:0%v");
-    _progressbar.setWindowTitle("正在录音中....");
-    _progressbar.setWindowFlags(_progressbar.windowFlags() & ~Qt::WindowMinimizeButtonHint
-                                    & ~Qt::WindowMaximizeButtonHint & ~Qt::WindowCloseButtonHint);
+    _custom_progress_dialog = new CustomProgressDialog();
+    _custom_progress_dialog->startExec();
     this->_status = RECORD;
     updatetimer.start(1000);
-    _progressbar.show();
 }
 
 void MainTestWindow::_record_play_audio()
 {
-
     if (this->_status == RECORD) {
 
-        if (_progressbar.value()+1 <= _progressbar.maximum()) {
-            _progressbar.setValue(_progressbar.value()+1);
+        if (_custom_progress_dialog->progressbar->value()+1 <= _custom_progress_dialog->progressbar->maximum()) {
+            _custom_progress_dialog->progressbar->setValue(_custom_progress_dialog->progressbar->value()+1);
         } else {
             this->_status = PLAY;
-            _progressbar.setWindowTitle("正在播放中....");
-            _progressbar.setValue(0);
-            _progressbar.update();
+            _custom_progress_dialog->lb_title->setText("正在播放中....");
+            _custom_progress_dialog->progressbar->setValue(0);
+            _custom_progress_dialog->lb_title->update();
         }
     } else if (this->_status == PLAY) {
-        if (_progressbar.value()+1 <= _progressbar.maximum()) {
-            _progressbar.setValue(_progressbar.value()+1);
+        if (_custom_progress_dialog->progressbar->value()+1 <= _custom_progress_dialog->progressbar->maximum()) {
+            _custom_progress_dialog->progressbar->setValue(_custom_progress_dialog->progressbar->value()+1);
         } else {
             this->_status = PLAY_END;
-            _progressbar.hide();
+            if (NULL != _custom_progress_dialog) {
+                delete _custom_progress_dialog;
+                _custom_progress_dialog = NULL;
+            }
             updatetimer.stop();
         }
     }

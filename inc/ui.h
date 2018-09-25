@@ -90,6 +90,21 @@ class MyEventLoop : public QObject
 
 };
 
+class CustomProgressDialog: public QDialog
+{
+    Q_OBJECT
+
+    public:
+        explicit CustomProgressDialog(QWidget *parent = 0);
+        ~CustomProgressDialog();
+        void startExec();
+        QProgressBar    *progressbar;
+        QLabel          *lb_title;
+    private:
+        QFrame          *frame;
+
+};
+
 class MainTestWindow : public QDialog
 {
     Q_OBJECT
@@ -187,7 +202,7 @@ class MainTestWindow : public QDialog
         QString _local_sn_num;
         QString _local_mac_addr;
 
-        QProgressBar _progressbar;
+        CustomProgressDialog *_custom_progress_dialog;
         int _status;
 
         MyEventLoop eventloop;
