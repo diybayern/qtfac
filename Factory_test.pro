@@ -60,7 +60,6 @@ HEADERS  += \
     inc/CameraTest.h \
     inc/UiHandle.h \
     inc/messageform.h \
-    inc/Control.h \
     inc/VideoTestThread.h \
     inc/ImageTestThread.h \
     inc/i2c_dev.h \

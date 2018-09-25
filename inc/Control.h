@@ -149,6 +149,22 @@ public:
         return _autoUploadLog;
     }
 
+    int get_interface_test_times() {
+        return _interface_test_times;
+    }
+
+    void set_interface_test_times(string time) {
+        _interface_test_times = get_int_value(time);
+    }
+
+    bool get_auto_upload_mes_status() {
+        return _auto_upload_mes;
+    }
+
+    void set_auto_upload_mes_status(bool status) {
+        _auto_upload_mes = status;
+    }
+
 private:
     void init_base_info();
     void init_hw_info();
@@ -170,6 +186,8 @@ private:
     string _stress_test_stage;
     bool _autoUploadLog;
     string _mes_log_file;
+    int _interface_test_times;
+    bool _auto_upload_mes;
 
 signals:
 

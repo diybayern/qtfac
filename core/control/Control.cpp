@@ -45,6 +45,7 @@ Control::Control():QObject()
     _stress_test_stage = "";
     _autoUploadLog = true;
     _mes_log_file = "";
+	_interface_test_times = 1;
     
     init_base_info();
     init_hw_info();
