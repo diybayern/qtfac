@@ -52,6 +52,11 @@ const string FAC_CONFIG_FILE      = "/tmp/fac_config.conf";
 
 #define MES_FILE          "/var/log/mes.txt"
 
+#define NEXT_LOCK         ("next")
+#define PCBA_LOCK         ("PCBA")
+#define WHOLE_LOCK        ("whole")
+#define WHOLE_TEST_FILE   ("/tmp/whole_test")
+
 typedef unsigned long long int uint64;
 
 struct BaseInfo {
