@@ -44,20 +44,24 @@ void MemTest::set_mem_test_result(string func,string result,string ui_log)
 {
     Control *control = Control::get_control();
     control->set_test_result(func,result,ui_log);
-	control->set_mem_test_finish();
+	if (result == "PASS") {
+		control->set_mem_test_finish();
+	}
 }
 
 void* MemTest::test_all(void *arg)
 {
 	BaseInfo* baseInfo = (BaseInfo *)arg;
 	bool is_pass;
-	mem_screen_log += "mem test start:\n\n";
+	mem_screen_log += "==================== mem test =====================\n";
 	is_pass    = compare_men_cap(get_int_value(baseInfo->mem_cap));
 	is_pass   &= mem_stability_test();
-	mem_screen_log += execute_command("cat " + MEM_UI_LOG) + "\n\n";
+	mem_screen_log += execute_command("cat " + MEM_UI_LOG) + "\n\nmem test result:\t\t\t";
 	if (is_pass) {
+		mem_screen_log += "SUCCESS\n\n";
         set_mem_test_result("内存测试","PASS",mem_screen_log);
 	} else {
+		mem_screen_log += "FAIL\n\n";
         set_mem_test_result("内存测试","FAIL",mem_screen_log);
 	}
 	mem_screen_log = "";

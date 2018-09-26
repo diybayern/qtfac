@@ -18,7 +18,9 @@ void CpuTest::set_cpu_test_result(string func,string result,string ui_log)
 {
     Control *control = Control::get_control();
     control->set_test_result(func,result,ui_log);
-	control->set_cpu_test_finish();
+	if (result == "PASS") {
+		control->set_cpu_test_finish();
+	}
 }
 
 bool CpuTest::is_cpu_test_pass(BaseInfo* baseInfo)
@@ -28,7 +30,7 @@ bool CpuTest::is_cpu_test_pass(BaseInfo* baseInfo)
 	string::size_type idx;
 	idx = hw_cpu_type.find(base_cpu_type);
     if (idx != string::npos) {
-		cpu_screen_log += "cpu type is\t\t" + hw_cpu_type;
+		cpu_screen_log += "cpu type is right\n";
         return true;
     } else {    
 		cpu_screen_log += "cpu type should be\t\t" + base_cpu_type + "\nbut current is\t\t" + hw_cpu_type + "\n\n";
@@ -38,10 +40,12 @@ bool CpuTest::is_cpu_test_pass(BaseInfo* baseInfo)
 
 void CpuTest::start_test(BaseInfo* baseInfo)
 {
-	cpu_screen_log += "cpu test start:\n\n";
+	cpu_screen_log += "==================== cpu test ====================\n";
     if (is_cpu_test_pass(baseInfo)) {
+		cpu_screen_log += "cpu test result:\t\t\tSUCCESS\n\n";
 		set_cpu_test_result("CPU测试","PASS",cpu_screen_log);
-	} else {
+	} else {	
+		cpu_screen_log += "cpu test result:\t\t\tFAIL\n\n";
 		set_cpu_test_result("CPU测试","FAIL",cpu_screen_log);
 	}	
 	cpu_screen_log = "";
@@ -58,25 +62,28 @@ void FanTest::set_fan_test_result(string func,string result,string ui_log)
 {
     Control *control = Control::get_control();
     control->set_test_result(func,result,ui_log);
-	control->set_fan_test_finish();
+	if (result == "PASS") {
+		control->set_fan_test_finish();
+	}
 }
 
 string FanTest::fan_speed_test(string speed)
 {
-	fan_screen_log += "fan speed should be\t" + speed + "\n";
     string fan_result = execute_command("bash " + FACTORY_PATH + "fan_test.sh " + speed);
     return fan_result;
 }
 
 void* FanTest::test_all(void *arg)
 {
-	fan_screen_log += "fan test start:\n\n";
+	fan_screen_log += "==================== fan test ====================\n";
 	BaseInfo* baseInfo = (BaseInfo *)arg;
 	string result = fan_speed_test(baseInfo->fan_speed);
-	fan_screen_log += "fan speed test result is\t" + result + "\n\n";
-	if (result == "SUCCESS") {
+	if (result == "SUCCESS") {		
+		fan_screen_log += "fan test result:\t\t\t" + result + "\n\n";
         set_fan_test_result("FAN测试","PASS",fan_screen_log);
 	} else {
+		fan_screen_log += "fan speed should be\t" + baseInfo->fan_speed + "but current is\t" + result + "\n\n";		
+		fan_screen_log += "fan test result:\t\t\tFAIL\n\n";
         set_fan_test_result("FAN测试","FAIL",fan_screen_log);
 	}
 	fan_screen_log = "";
