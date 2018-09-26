@@ -22,7 +22,7 @@
 #include "ImageTestThread.h"
 #include "messageform.h"
 #include "UiHandle.h"
-/*
+#if 0
 extern "C" {
     #include <glib.h>
     #include <gst/video/videooverlay.h>
@@ -34,7 +34,8 @@ extern "C" {
 typedef struct _CustomData {
         GstElement *playbin;
         QWidget    *window;
-} CustomData;*/
+} CustomData;
+#endif
 
 class InterfaceTestItem
 {
@@ -284,8 +285,9 @@ public:
     QList<Stress_Test_Info> stress_test_info_list;
     void update_stress_label_value(QString item, QString result);
     QLabel *_lb_video;
-    //void mediaPlay();
-
+#if 0
+    void mediaPlay();
+#endif
 protected:
     void mousePressEvent(QMouseEvent* event);
     void keyPressEvent(QKeyEvent *event);
@@ -315,7 +317,9 @@ private:
     QGridLayout *_grid_box;
     int st_w;
     int st_h;
-	//CustomData del_data;
+#if 0
+    CustomData del_data;
+#endif
     MyEventLoop eventloop;
 
 signals:

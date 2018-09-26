@@ -92,6 +92,8 @@ public:
     void update_mes_log(char* tag,char* value);
     int get_screen_height();
     int get_screen_width();
+    bool is_stress_test_window_quit_safely();
+    bool stress_test_window_quit_status;
 
     int get_test_step();
     FuncFinishStatus* get_func_finish_status()
@@ -223,12 +225,8 @@ public slots:
     void start_upload_log();
     void start_next_process();
     void show_test_confirm_dialog(string item);
-    void slot_handled_test_result(string item_test, string result);
-    void set_interface_select_status(string func);
-    void set_test_result_pass(string func);
-    void set_test_result_fail(string func);
-	void slot_check_state_changed(string item, bool state);
-    
+    void set_interface_select_status(string func, bool state);
+    void set_test_result_pass_or_fail(string func, string result);
 };
 
 #endif // CONTROL_H

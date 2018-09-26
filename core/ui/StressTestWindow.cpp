@@ -14,7 +14,7 @@ StressTestWindow* StressTestWindow::g_get_stress_test_window()
     return _stress_test_window;
 }
 
-/*
+#if 0
 static void eos_cb (GstBus *bus, GstMessage *msg, CustomData *data) {
     g_print ("End-Of-Stream reached.\n");
     int ret = 0;
@@ -60,7 +60,8 @@ void StressTestWindow::mediaPlay()
         g_printerr ("Unable to set the pipeline to the playing state.\n");
         gst_object_unref (playbin);
     }
-}*/
+}
+#endif
 
 StressTestWindow::StressTestWindow(QWidget *parent)
     : QWidget(parent)
@@ -272,6 +273,8 @@ void StressTestWindow::keyPressEvent(QKeyEvent *event)
 bool start_stress_ui()
 {
     StressTestWindow::get_stress_test_window()->start_exec();
-    //StressTestWindow::get_stress_test_window()->mediaPlay();
+    #if 0
+    StressTestWindow::get_stress_test_window()->mediaPlay();
+    #endif
     return true;
 }

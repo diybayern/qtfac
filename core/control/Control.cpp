@@ -184,24 +184,16 @@ void Control::ui_init()
     connect(_uiHandle->get_qobject("上传日志"), SIGNAL(clicked()), this, SLOT(start_upload_log()));
     connect(_uiHandle->get_qobject("下道工序"), SIGNAL(clicked()), this, SLOT(start_next_process()));
     connect(_uiHandle, SIGNAL(to_show_test_confirm_dialog(string)), this, SLOT(show_test_confirm_dialog(string)));
-    connect(_uiHandle, SIGNAL(sig_ui_handled_test_result(string, string)), this, SLOT(slot_handled_test_result(string, string)));
-    connect(_uiHandle, SIGNAL(sig_ui_check_state_changed(string, bool)), this, SLOT(slot_check_state_changed(string, bool)));
-}
-
-void Control::slot_check_state_changed(string item, bool state)
-{
-    cout<<item<<", "<<state<<endl;
+    connect(_uiHandle, SIGNAL(sig_ui_handled_test_result(string, string)), this, SLOT(set_test_result_pass_or_fail(string, string)));
+    connect(_uiHandle, SIGNAL(sig_ui_check_state_changed(string, bool)), this, SLOT(set_interface_select_status(string, bool)));
 }
 
 void Control::show_test_confirm_dialog(string item)
 {
+    if (item.compare("拷机测试") == 0) {
+        stress_test_window_quit_status = false;
+    }
     _uiHandle->confirm_test_result_dialog(item);
-}
-
-
-void Control::slot_handled_test_result(string item_test, string result)
-{
-    cout<<item_test <<", "<<result<<endl;
 }
 
 void Control::init_func_test()
@@ -352,9 +344,10 @@ void Control::start_camera_test()
 
 void Control::start_stress_test()
 {
+    stress_test_window_quit_status = true;
     _funcBase[STRESS]->start_test(_baseInfo);
     _uiHandle->show_stress_test_ui();
-    _uiHandle->update_stress_label_value("运行时间","0天0时0分0秒");
+    /*_uiHandle->update_stress_label_value("运行时间","0天0时0分0秒");
     _uiHandle->update_stress_label_value("CPU温度","49.00°C");
     _uiHandle->update_stress_label_value("编码状态","PASS");
     _uiHandle->update_stress_label_value("解码状态","PASS");
@@ -364,7 +357,7 @@ void Control::start_stress_test()
     _uiHandle->update_stress_label_value("MAC地址","00:74:9c:5d:9f:45");
     _uiHandle->update_stress_label_value("CPU频率","2.30G");
     _uiHandle->update_stress_label_value("Mem","4309128K used 3853928K free");
-    _uiHandle->update_stress_label_value("Cpu","96.6% usr  3.4% sys \n0.0% idle  0.0% iowait");
+    _uiHandle->update_stress_label_value("Cpu","96.6% usr  3.4% sys \n0.0% idle  0.0% iowait");*/
     cout << "start_stress_test" << endl;
 }
 
@@ -511,7 +504,7 @@ void Control::update_mes_log(char* tag,char* value)
     int len = strlen(buf);
     fwrite(buf, 1, len, fp);
     fclose(fp);
- 
+
     if (buf != NULL) {
         free(buf);
     }
@@ -554,9 +547,9 @@ void Control::auto_start_stress_test()
     }
 }
 
-void Control::set_interface_select_status(string func) {
+void Control::set_interface_select_status(string func, bool state) {
     if (func == "内存测试") {
-        _interfaceSelectStatus->mem_select  = !_interfaceSelectStatus->mem_select;
+        _interfaceSelectStatus->mem_select  = state;
         if (_interfaceSelectStatus->mem_select) {
             _funcFinishStatus->mem_finish = false;
         } else {
@@ -564,7 +557,7 @@ void Control::set_interface_select_status(string func) {
         }
     }
     if (func ==  "USB测试") {
-        _interfaceSelectStatus->usb_select  = !_interfaceSelectStatus->usb_select;
+        _interfaceSelectStatus->usb_select  = state;
         if (_interfaceSelectStatus->usb_select) {
             _funcFinishStatus->usb_finish = false;
         } else {
@@ -572,7 +565,7 @@ void Control::set_interface_select_status(string func) {
         }
     }
     if (func == "网口测试") {
-        _interfaceSelectStatus->net_select  = !_interfaceSelectStatus->net_select;
+        _interfaceSelectStatus->net_select  = state;
         if (_interfaceSelectStatus->net_select) {
             _funcFinishStatus->net_finish = false;
         } else {
@@ -580,7 +573,7 @@ void Control::set_interface_select_status(string func) {
         }
     }
     if (func == "EDID测试") {
-        _interfaceSelectStatus->edid_select = !_interfaceSelectStatus->edid_select;
+        _interfaceSelectStatus->edid_select = state;
         if (_interfaceSelectStatus->edid_select) {
             _funcFinishStatus->edid_finish = false;
         } else {
@@ -588,7 +581,7 @@ void Control::set_interface_select_status(string func) {
         }
     }
     if (func == "CPU测试") {
-        _interfaceSelectStatus->cpu_select  = !_interfaceSelectStatus->cpu_select;
+        _interfaceSelectStatus->cpu_select  = state;
         if (_interfaceSelectStatus->cpu_select) {
             _funcFinishStatus->cpu_finish = false;
         } else {
@@ -596,7 +589,7 @@ void Control::set_interface_select_status(string func) {
         }
     }
     if (func == "HDD测试") {
-        _interfaceSelectStatus->hdd_select  = !_interfaceSelectStatus->hdd_select;
+        _interfaceSelectStatus->hdd_select  = state;
         if (_interfaceSelectStatus->mem_select) {
             _funcFinishStatus->hdd_finish = false;
         } else {
@@ -604,7 +597,7 @@ void Control::set_interface_select_status(string func) {
         }
     }
     if (func == "FAN测试") {
-        _interfaceSelectStatus->fan_select  = !_interfaceSelectStatus->fan_select;
+        _interfaceSelectStatus->fan_select  = state;
         if (_interfaceSelectStatus->fan_select) {
             _funcFinishStatus->fan_finish = false;
         } else {
@@ -612,7 +605,7 @@ void Control::set_interface_select_status(string func) {
         }
     }
     if (func == "WIFI测试") {
-        _interfaceSelectStatus->wifi_select = !_interfaceSelectStatus->wifi_select;
+        _interfaceSelectStatus->wifi_select = state;
         if (_interfaceSelectStatus->wifi_select) {
             _funcFinishStatus->wifi_finish = false;
         } else {
@@ -621,40 +614,49 @@ void Control::set_interface_select_status(string func) {
     }
 }
 
-void Control::set_test_result_pass(string func) {
-    if (func == "音频测试") {
-        _funcFinishStatus->sound_finish= true;
-    }
-    if (func == "显示测试") {
-        _funcFinishStatus->display_finish= true;
-    }
-    if (func == "亮度测试") {
-        _funcFinishStatus->bright_finish= true;
-    }
-    if (func == "摄像头测试") {
-        _funcFinishStatus->camera_finish= true;
-    }
-    if (func == "拷机测试") {
-        _funcFinishStatus->stress_finish= true;
+void Control::set_test_result_pass_or_fail(string func, string result)
+{
+    if (result == "PASS") {
+
+        if (func == "音频测试") {
+            _funcFinishStatus->sound_finish= true;
+        }
+        if (func == "显示测试") {
+            _funcFinishStatus->display_finish= true;
+        }
+        if (func == "亮度测试") {
+            _funcFinishStatus->bright_finish= true;
+        }
+        if (func == "摄像头测试") {
+            _funcFinishStatus->camera_finish= true;
+        }
+        if (func == "拷机测试") {
+            _funcFinishStatus->stress_finish= true;
+        }
+
+    } else {
+
+        if (func == "音频测试") {
+            _funcFinishStatus->sound_finish= false;
+        }
+        if (func == "显示测试") {
+            _funcFinishStatus->display_finish= false;
+        }
+        if (func == "亮度测试") {
+            _funcFinishStatus->bright_finish= false;
+        }
+        if (func == "摄像头测试") {
+            _funcFinishStatus->camera_finish= false;
+        }
+        if (func == "拷机测试") {
+            _funcFinishStatus->stress_finish= false;
+        }
     }
 }
 
-void Control::set_test_result_fail(string func) {
-    if (func == "音频测试") {
-        _funcFinishStatus->sound_finish= false;
-    }
-    if (func == "显示测试") {
-        _funcFinishStatus->display_finish= false;
-    }
-    if (func == "亮度测试") {
-        _funcFinishStatus->bright_finish= false;
-    }
-    if (func == "摄像头测试") {
-        _funcFinishStatus->camera_finish= false;
-    }
-    if (func == "拷机测试") {
-        _funcFinishStatus->stress_finish= false;
-    }
+bool Control::is_stress_test_window_quit_safely()
+{
+    return stress_test_window_quit_status;
 }
 
 

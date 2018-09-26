@@ -231,7 +231,6 @@ CustomProgressDialog::CustomProgressDialog(QWidget *parent)
     lb_title->setAlignment(Qt::AlignCenter);
     lb_title->setText("正在录音中....");
 
-
     progressbar = new QProgressBar(frame);
     progressbar->setObjectName(QString::fromUtf8("progressbar"));
     progressbar->setGeometry(QRect(0, 20, 400, 40));
@@ -240,7 +239,6 @@ CustomProgressDialog::CustomProgressDialog(QWidget *parent)
     progressbar->setMinimum(0);
     progressbar->setValue(0);
     progressbar->setFormat("00:0%v");
-
 }
 
 CustomProgressDialog::~CustomProgressDialog()
