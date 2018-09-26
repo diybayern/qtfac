@@ -193,6 +193,8 @@ char* lower_to_capital(const char* lower_str, char* capital_str);
 string get_current_cpu_freq();
 string get_mem_info();
 string get_cpu_info(CpuStatus* st_cpu);
+string change_float_to_string(float fla);
+
 
 //string get_cpu_temp(string cmd, int num);
 

@@ -108,6 +108,7 @@ void* StressTest::test_all(void *arg)
     TimeInfo init_time = {0,0,0,0};
     TimeInfo tmp_dst = {0,0,0,0};
     char datebuf[CMD_BUF_SIZE] = {0};
+	CpuStatus st_cpu = {0,};
 
 	if (check_file_exit(STRESS_LOCK_FILE.c_str())) {
 		string stress_stage = control->get_stress_test_stage();		
@@ -128,24 +129,46 @@ void* StressTest::test_all(void *arg)
 		write_local_data(STRESS_LOCK_FILE.c_str(),"w+",PCBA_LOCK,sizeof(PCBA_LOCK));
 	}
 
-    get_current_open_time(&init_time);
+	if (!check_file_exit(STRESS_LOCK_FILE.c_str())) {
+		return NULL;
+	}
+	control->stress_test_window_quit_status = true;
+	UiHandle::get_uihandle()->show_stress_test_ui();
 
+    UiHandle::get_uihandle()->update_stress_label_value("编码状态","PASS");
+    UiHandle::get_uihandle()->update_stress_label_value("解码状态","PASS");
+    UiHandle::get_uihandle()->update_stress_label_value("产品型号",(control->get_hw_info())->product_name);
+    UiHandle::get_uihandle()->update_stress_label_value("硬件版本",(control->get_hw_info())->product_hw_version);
+    UiHandle::get_uihandle()->update_stress_label_value("SN序列号",(control->get_hw_info())->sn);
+    UiHandle::get_uihandle()->update_stress_label_value("MAC地址",(control->get_hw_info())->mac);
+    
+    get_current_open_time(&init_time);
     while(true)
     {
         if (!Control::get_control()->is_stress_test_window_quit_safely()) {
             break;
         }
-
+		
+        get_current_open_time(&tmp_dst);
         diff_running_time(&tmp_dst, &init_time);
+		if (tmp_dst.hour == 4) {
+			remove_local_file(STRESS_LOCK_FILE.c_str());
+		}
         snprintf(datebuf, CMD_BUF_SIZE, "%d天%d时%d分%d秒", tmp_dst.day, tmp_dst.hour, tmp_dst.minute, tmp_dst.second);
         UiHandle::get_uihandle()->update_stress_label_value("运行时间", datebuf);
-        get_current_open_time(&tmp_dst);
 
-
+		UiHandle::get_uihandle()->update_stress_label_value("CPU温度","  ");
+        
+        UiHandle::get_uihandle()->update_stress_label_value("CPU频率",get_current_cpu_freq());		
+        UiHandle::get_uihandle()->update_stress_label_value("Mem",get_mem_info());		
+        UiHandle::get_uihandle()->update_stress_label_value("Cpu",get_cpu_info(&st_cpu));
 
         sleep(1);
     }
 	
+	if (check_file_exit(STRESS_LOCK_FILE.c_str())) {
+		remove_local_file(STRESS_LOCK_FILE.c_str());
+	}
 	return NULL;
 }
 
@@ -166,12 +189,7 @@ bool NextProcess::create_stress_test_lock()
 {
     LOG_INFO("start creating stress lock\n");
     write_local_data(STRESS_LOCK_FILE.c_str(), "w+", (char*)NEXT_LOCK, sizeof(NEXT_LOCK));
-    
-/*    if (system("sync") < 0) {
-        LOG_ERROR("system sync error\n");
-        return false;
-    }*/
-	
+
     if (check_file_exit(STRESS_LOCK_FILE.c_str())) {
         LOG_INFO("create stress test lock success\n");
         return true;

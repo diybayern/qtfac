@@ -509,7 +509,7 @@ string get_current_cpu_freq(){
     int i = 0;
     int cpu_cur = 0;
     int cpu_max = 0;
-	string cpu_freq = "CPU频率:";
+	string cpu_freq = "";
 	string str = execute_command("cat /proc/cpuinfo| grep processor| wc -l");
 	if(str == "error") {
 		return cpu_freq + "\n";
@@ -522,7 +522,7 @@ string get_current_cpu_freq(){
             cpu_max = cpu_cur;
         }        
     }
-	cpu_freq += to_string(1.0 * cpu_max / 1000 / 1000) + "G\n";
+	cpu_freq += change_float_to_string(1.0 * cpu_max / 1000 / 1000) + "G\n";
 		
     return cpu_freq;
 }
@@ -530,7 +530,7 @@ string get_current_cpu_freq(){
 string get_mem_info() {
 
 	int ret = 0;
-	string mem_info = "Mem:\n    ";
+	string mem_info = "";
 	struct sysinfo si;
 
 	ret = sysinfo(&si);
@@ -563,15 +563,13 @@ string get_cpu_info(CpuStatus* st_cpu) {
 	char line[8192] = { 0, };
 	CpuStatus cpu_info;
 	CpuStatus cpu_diff;
-	string cpu_str = "CPU:\n  ";
+	string cpu_str = "";
 	string str = "";
 	
 	if ((fp = fopen("/proc/stat", "r")) == NULL) {
 		LOG_ERROR("open %s failed\n", "/proc/stat");
 		return cpu_str;
 	}
-
-	memset(st_cpu, 0, sizeof(CpuStatus));
 
 	while (fgets(line, sizeof(line), fp) != NULL) {
 		if (!strncmp(line, "cpu ", 4)) {
@@ -603,7 +601,7 @@ string get_cpu_info(CpuStatus* st_cpu) {
 	cpu_str += str + "% usr\t";
 
 	str = change_float_to_string(100.0 * cpu_diff.cpu_sys / cpu_diff.cpu_total);
-	cpu_str += str + "% sys\n  ";
+	cpu_str += str + "% sys\n";
 
 	str = change_float_to_string(100.0 * cpu_diff.cpu_idle / cpu_diff.cpu_total);
 	cpu_str += str + "% idle\t";
