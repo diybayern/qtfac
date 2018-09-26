@@ -319,7 +319,7 @@ bool WifiTest::wifi_test_send_msg() {
     info = g_wifi_info;
     if (info == NULL){
         LOG_ERROR("wifi info is null");
-		wifi_screen_log += "wifi info is null\n\n"
+		wifi_screen_log += "wifi info is null\n\n";
         return false;    
     }
     
@@ -334,7 +334,7 @@ bool WifiTest::wifi_test_send_msg() {
 
     LOG_INFO("send package num: \t\t%d\n",  TOTAL_SEND_NUM);
     LOG_INFO("recv package num: \t\t%d\n",  info->recv_num);
-	wifi_screen_log += "send package num:\t\t100\nrecv package num:\t\t" + to_string(info->recv_num) + "\n";
+	wifi_screen_log += "send package num:\t\t100\nrecv package num:\t\t" + to_string(info->recv_num); + "\n";
     if (info->recv_num < RECEIVE_NUM) {
         ret = false;
         LOG_ERROR("WIFI test failed!\n");
@@ -389,7 +389,7 @@ bool WifiTest::check_if_wifi_connect_pass(void)
 			return false;
 		}
         LOG_INFO("WIFI SSID mac:\t%s\n",wifi_ssid_mac);
-		wifi_screen_log += "WIFI ssid mac:\t\t" + wifi_ssid_mac + "\n";
+		//wifi_screen_log += "WIFI ssid mac:\t\t" + wifi_ssid_mac + "\n";
         
         return true;
     } else {
