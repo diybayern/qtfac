@@ -1,8 +1,6 @@
 #include "../../inc/FuncTest.h"
 #include "../../inc/fac_log.h"
 
-#define NEXT_LOCK     ("next")
-
 string cpu_screen_log = "";
 string fan_screen_log = "";
 
@@ -107,20 +105,24 @@ void* StressTest::test_all(void *arg)
 {
 	BaseInfo* baseInfo = (BaseInfo *)arg;
 	Control *control = Control::get_control();
-	bool is_lock_exist = check_file_exit(STRESS_LOCK_FILE.c_str());
-	if (is_lock_exist) {
-		if (control->get_stress_test_stage() == "whole") {
-			LOG_INFO("whole");
-	    } else if (control->get_stress_test_stage() == "PCBA") {
-	    	LOG_INFO("PCBA");
-	    } else if (control->get_stress_test_stage() == "next") {
-	    	LOG_INFO("next");
+	if (check_file_exit(STRESS_LOCK_FILE.c_str())) {
+		string stress_stage = control->get_stress_test_stage();		
+		remove_local_file(STRESS_LOCK_FILE.c_str());
+		if (stress_stage == "whole" || stress_stage == "PCBA") {
+			LOG_INFO("last stress test exit error\n");			
+	    } else if (stress_stage == "next") {
+			LOG_INFO("next process -> stress test\n");
 	    } else {
-	    	LOG_INFO("error");
+			LOG_ERROR("stress test lock file wrong\n");
 	    }
+		remove_local_file(STRESS_LOCK_FILE.c_str());
 	}
-	remove_local_file(STRESS_LOCK_FILE.c_str());
 	
+	if (check_file_exit(WHOLE_TEST_FILE)) {
+		write_local_data(STRESS_LOCK_FILE.c_str(),"w+",WHOLE_LOCK,sizeof(WHOLE_LOCK));
+	} else {
+		write_local_data(STRESS_LOCK_FILE.c_str(),"w+",PCBA_LOCK,sizeof(PCBA_LOCK));
+	}
 	
 	return NULL;
 }
