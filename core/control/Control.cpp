@@ -104,19 +104,19 @@ void Control::ui_init()
     _uiHandle->add_interface_test_button("EDID测试");
     _uiHandle->add_interface_test_button("CPU测试");
     
-    if (_baseInfo->hdd_cap != "0" || _baseInfo->hdd_cap != "") {
+    if (_baseInfo->hdd_cap != "0" && _baseInfo->hdd_cap != "") {
         _uiHandle->add_interface_test_button("HDD测试");
     } else {
         _funcFinishStatus->hdd_finish = true;
     }
     
-    if (_baseInfo->fan_speed != "0" || _baseInfo->fan_speed != "") {
+    if (_baseInfo->fan_speed != "0" && _baseInfo->fan_speed != "") {
         _uiHandle->add_interface_test_button("FAN测试");
     } else {
         _funcFinishStatus->fan_finish = true;
     }
 
-    if (_baseInfo->wifi_exist != "0" || _baseInfo->wifi_exist != "") {
+    if (_baseInfo->wifi_exist != "0" && _baseInfo->wifi_exist != "") {
         _uiHandle->add_interface_test_button("WIFI测试");
     } else {
         _funcFinishStatus->wifi_finish = true;
@@ -125,17 +125,26 @@ void Control::ui_init()
     _uiHandle->add_main_test_button("音频测试");
     _uiHandle->add_main_test_button("显示测试");
     
-    if (_baseInfo->bright_level != "0" || _baseInfo->bright_level != ""){
+    if (_baseInfo->bright_level != "0" && _baseInfo->bright_level != ""){
         _uiHandle->add_main_test_button("亮度测试");
-    }
+    } else {
+        _funcFinishStatus->bright_finish = true;
+	}
     
-    if (_baseInfo->camera_exist != "0" || _baseInfo->camera_exist != "") {
+    if (_baseInfo->camera_exist != "0" && _baseInfo->camera_exist != "") {
         _uiHandle->add_main_test_button("摄像头测试");
-    }
+    } else {
+        _funcFinishStatus->camera_finish = true;
+	}
     
     _uiHandle->add_main_test_button("拷机测试");
     _uiHandle->add_main_test_button("上传日志");
-    _uiHandle->add_main_test_button("下道工序");
+    
+    if (_baseInfo->hdd_cap != "0" && _baseInfo->hdd_cap != "") {
+        if (check_file_exit(WHOLE_TEST_FILE)) {
+             _uiHandle->add_main_test_button("下道工序");
+        }
+    }    
     
     _uiHandle->add_complete_or_single_test_label("整机测试");
     
@@ -159,31 +168,36 @@ void Control::ui_init()
     connect(_uiHandle->get_qobject("网口测试"), SIGNAL(clicked()), this, SLOT(start_net_test()));
     connect(_uiHandle->get_qobject("EDID测试"), SIGNAL(clicked()), this, SLOT(start_edid_test()));
     connect(_uiHandle->get_qobject("CPU测试"), SIGNAL(clicked()), this, SLOT(start_cpu_test()));
-    if (_baseInfo->hdd_cap != "0" || _baseInfo->hdd_cap != "") {
+    if (_baseInfo->hdd_cap != "0" && _baseInfo->hdd_cap != "") {
         connect(_uiHandle->get_qobject("HDD测试"), SIGNAL(clicked()), this, SLOT(start_hdd_test()));
     }
     
-    if (_baseInfo->fan_speed != "0" || _baseInfo->fan_speed != "") {
+    if (_baseInfo->fan_speed != "0" && _baseInfo->fan_speed != "") {
         connect(_uiHandle->get_qobject("FAN测试"), SIGNAL(clicked()), this, SLOT(start_fan_test()));
     }
 
-    if (_baseInfo->wifi_exist != "0" || _baseInfo->wifi_exist != "") {
+    if (_baseInfo->wifi_exist != "0" && _baseInfo->wifi_exist != "") {
         connect(_uiHandle->get_qobject("WIFI测试"), SIGNAL(clicked()), this, SLOT(start_wifi_test()));
     }
 
     connect(_uiHandle->get_qobject("音频测试"), SIGNAL(clicked()), this, SLOT(start_sound_test()));
     connect(_uiHandle->get_qobject("显示测试"), SIGNAL(clicked()), this, SLOT(start_display_test()));
 
-    if (_baseInfo->bright_level != "0" || _baseInfo->bright_level != ""){
+    if (_baseInfo->bright_level != "0" && _baseInfo->bright_level != ""){
         connect(_uiHandle->get_qobject("亮度测试"), SIGNAL(clicked()), this, SLOT(start_bright_test()));
     }
-    if (_baseInfo->camera_exist != "0" || _baseInfo->camera_exist != "") {
+    if (_baseInfo->camera_exist != "0" && _baseInfo->camera_exist != "") {
         connect(_uiHandle->get_qobject("摄像头测试"), SIGNAL(clicked()), this, SLOT(start_camera_test()));
     }
     connect(_uiHandle->get_qobject("拷机测试"), SIGNAL(clicked()), this, SLOT(start_stress_test()));
     connect(_uiHandle->get_qobject("上传日志"), SIGNAL(clicked()), this, SLOT(start_upload_log()));
-    connect(_uiHandle->get_qobject("下道工序"), SIGNAL(clicked()), this, SLOT(start_next_process()));
-    connect(_uiHandle, SIGNAL(to_show_test_confirm_dialog(string)), this, SLOT(show_test_confirm_dialog(string)));
+
+	if (_baseInfo->hdd_cap != "0" && _baseInfo->hdd_cap != "") {
+        if (check_file_exit(WHOLE_TEST_FILE)) {
+    		connect(_uiHandle->get_qobject("下道工序"), SIGNAL(clicked()), this, SLOT(start_next_process()));
+        }
+	}
+	connect(_uiHandle, SIGNAL(to_show_test_confirm_dialog(string)), this, SLOT(show_test_confirm_dialog(string)));
     connect(_uiHandle, SIGNAL(sig_ui_handled_test_result(string, string)), this, SLOT(set_test_result_pass_or_fail(string, string)));
     connect(_uiHandle, SIGNAL(sig_ui_check_state_changed(string, bool)), this, SLOT(set_interface_select_status(string, bool)));
 }
