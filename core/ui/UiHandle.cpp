@@ -34,6 +34,16 @@ UiHandle* UiHandle::get_uihandle()
     return _ui_handle;
 }
 
+int UiHandle::get_screen_width()
+{
+    return QApplication::desktop()->width();
+}
+
+int UiHandle::get_screen_height()
+{
+    return QApplication::desktop()->height();
+}
+
 void UiHandle::add_interface_test_button(string item)
 {
     MainTestWindow::get_main_test_window()->add_interface_test_button(QString::fromStdString(item));

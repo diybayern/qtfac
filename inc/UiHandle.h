@@ -30,6 +30,8 @@ class UiHandle: public QObject
         void add_complete_or_single_test_label(string config);
         void show_sn_mac_message_box();
         void start_audio_progress_dialog();
+        int get_screen_width();
+        int get_screen_height();
         string get_test_count();
         QObject *get_qobject(string name);
 

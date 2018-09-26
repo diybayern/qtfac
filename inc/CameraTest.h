@@ -18,10 +18,10 @@ public:
 private:
     Control* _control;
     static void start_camera_xawtv();
-//    static void close_xawtv_welcome_window();
     static unsigned long get_window_id(const char *winid_file);
     static bool check_if_xawtv_started();
-    
+    static void move_xawtv_window(int new_x, int new_y);
+    static void move_xawtv_window_on_func_test(void);
 };
 
 #endif

@@ -534,6 +534,15 @@ void Control::update_screen_log(string uiLog)
     _uiHandle->update_screen_log(uiLog);
 }
 
+int Control::get_screen_height()
+{
+    return _uiHandle->get_screen_height();
+}
+
+int Control::get_screen_width()
+{
+    return _uiHandle->get_screen_width();
+}
 
 void Control::auto_start_stress_test()
 {

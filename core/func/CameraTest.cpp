@@ -43,43 +43,58 @@ unsigned long CameraTest::get_window_id(const char *winid_file)
     return winid;
 }
 
-#if 0
-void CameraTest::close_xawtv_welcome_window()
+void CameraTest::move_xawtv_window(int new_x, int new_y)
 {
-
-    char wincmdbuf[CMD_BUF_SIZE];
+    Display *display;
     unsigned long winid;
 
-    winid = get_window_id("/tmp/xawtv_welcome.winid");
+    winid = get_window_id("/tmp/xawtv.winid");
     if (winid == 0) {
-        LOG_ERROR("Failed to close xawtv welcome window!\n");
+        LOG_ERROR("Failed to move xawtv window to right-top!\n");
         return;
     }
 
-    memset(wincmdbuf, 0, CMD_BUF_SIZE);
-    snprintf(wincmdbuf, CMD_BUF_SIZE, "xdotool key --window 0x%lx Return", winid);
-	
-    if (execute_command(wincmdbuf) == "error"){
-    	LOG_ERROR("run %s error\n", wincmdbuf);
-    }
-	else { 
-    	LOG_ERROR("xawtv welcome window has been closed.\n");
-	}
+    display = XOpenDisplay(getenv("DISPLAY"));
+    XMoveWindow(display, winid, new_x, new_y);
+    XRaiseWindow(display, winid);
+    XFlush(display);
+    usleep(20000);
+    XCloseDisplay(display);
+    LOG_ERROR("Move xawtv window to (%d)x(%d) location.\n", new_x, new_y);
 }
-#endif
+
+void CameraTest::move_xawtv_window_on_func_test(void)
+{
+    int screen_width;
+    int new_x, new_y;
+
+    screen_width = Control::get_control()->get_screen_width();
+
+    /* xawtv window size: 384 x 288 */
+    new_x = screen_width - 395;
+    new_y = 50;
+    move_xawtv_window(new_x, new_y);
+}
+
 
 void CameraTest::start_camera_xawtv()
 {
-	string result = execute_command("sh " + CAMERA_START_SCRIPT);
-    if (result == "error"){
-    	LOG_ERROR("system run error!\n");
-    }
-    usleep(50000);
+    if (system("/usr/local/bin/factory/start_xawtv.sh") < 0) {
+            LOG_ERROR("system run start_xawtv.sh error!\n");
+            return ;
+        }
+        usleep(50000);
 
-#if 0    /* close welcome window */
-    close_xawtv_welcome_window();
-    usleep(5000);
-#endif
+        if (system("/usr/local/bin/factory/close_xawtv.sh") ==  0) {
+            LOG_ERROR("system run close_xawtv.sh error!\n");
+            return ;
+        }
+        usleep(5000);
+
+        /* move xawtv window to right-top */
+        move_xawtv_window_on_func_test();
+        usleep(5000);
+
 }
 
 bool CameraTest::check_if_xawtv_started()
