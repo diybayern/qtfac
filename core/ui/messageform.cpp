@@ -25,15 +25,26 @@ MessageForm::MessageForm(QWidget *parent, const int mode, const int timeout) : Q
     pa.setColor(QPalette::Background,QColor(0xD6, 0xD6, 0xD6));
     this->setPalette(pa);
 
-    resize(900, 220);
+    if (mode == Message) {
+        _dialog_w = 900;
+        _dialog_h = 220;
+        _lb_text_w = 500;
+
+    } else if (mode == Warnning || mode == Success) {
+        _dialog_w = 400;
+        _dialog_h = 220;
+        _lb_text_w = 200;
+    }
+
+    resize(_dialog_w, _dialog_h);
     frame = new QFrame(this);
     frame->setObjectName(QString::fromUtf8("frame"));
-    frame->setGeometry(QRect(0, 0, 900, 220));
+    frame->setGeometry(QRect(0, 0, _dialog_w, _dialog_h));
     frame->setGraphicsEffect(effect);
 
     lb_title = new QLabel(frame);
     lb_title->setObjectName(QString::fromUtf8("lb_title"));
-    lb_title->setGeometry(QRect(0, 0, 900, 20));
+    lb_title->setGeometry(QRect(0, 0, _dialog_w, 20));
     QFont lb_font;
     lb_font.setPointSize(8);
 
@@ -50,7 +61,7 @@ MessageForm::MessageForm(QWidget *parent, const int mode, const int timeout) : Q
     this->mode = mode;
 
     if (mode != NOICON) {
-        groupBox->setGeometry(QRect(0, 50, 900, 80));
+        groupBox->setGeometry(QRect(0, 50, _dialog_w, 80));
         groupBox->setFont(font);
 
         lb_icon = new QLabel(groupBox);
@@ -61,7 +72,7 @@ MessageForm::MessageForm(QWidget *parent, const int mode, const int timeout) : Q
         {
             lb_icon->setPixmap(QPixmap("./img/message.png"));
         }
-        else if (mode == Warnning)
+        else if (mode == Warnning || mode == Success)
         {
             lb_icon->setPixmap(QPixmap("./img/warning.png"));
         }
@@ -74,7 +85,7 @@ MessageForm::MessageForm(QWidget *parent, const int mode, const int timeout) : Q
     if (mode != SNMAC) {
         lb_text = new QLabel(groupBox);
         lb_text->setObjectName(QString::fromUtf8("lb_text"));
-        lb_text->setGeometry(QRect(100, 0, 500, 80));
+        lb_text->setGeometry(QRect(100, 0, _lb_text_w, 80));
         lb_text->setFont(font);
         lb_text->setAlignment(Qt::AlignLeading|Qt::AlignCenter);
         lb_text->setWordWrap(true);
@@ -92,14 +103,12 @@ MessageForm::MessageForm(QWidget *parent, const int mode, const int timeout) : Q
         le_snmac->installEventFilter(this);
     }
 
-    if (mode == Message || mode == Error || mode == Warnning || mode == Confirm || mode == NOICON || mode == SNMAC)
+    if (mode == Message || mode == Error || mode == Warnning || mode == NOICON || mode == SNMAC || mode == Success)
     {
-        if (mode == Warnning) {
+        if (mode == Warnning || mode == Success) {
             lb_title->setStyleSheet("background-color: rgb(255, 255, 0);");
         } else if (mode == Error) {
-            lb_title->setStyleSheet("background-color: rgb(255, 0, 0);");
-        } else if (mode == Confirm) {
-            lb_title->setStyleSheet("background-color: rgb(255, 255, 127);");
+            lb_title->setStyleSheet("background-color: rgb(255, 0, 0);");        
         } else if (mode == Message || mode == SNMAC) {
             lb_title->setStyleSheet("background-color: rgb(174, 238, 238);");
         }
@@ -129,25 +138,36 @@ MessageForm::MessageForm(QWidget *parent, const int mode, const int timeout) : Q
             connect(bt_ok, SIGNAL(clicked()), this, SLOT(proButtonOK()));
             connect(bt_fail, SIGNAL(clicked()), this, SLOT(proButtonFail()));
             connect(this, SIGNAL(sig_handled_test_result(QString, QString)), UiHandle::get_uihandle(), SLOT(slot_handled_test_result(QString, QString)));
-        } else if (mode == SNMAC){
+        } else if (mode == SNMAC) {
             bt_snmac = new QPushButton(frame);
             bt_snmac->setObjectName(QString::fromUtf8("bt_snmac"));
             bt_snmac->setGeometry(QRect(470, 230, 100, 40));
             bt_snmac->setFont(font);
             bt_snmac->setText(tr("CANCEL"));
             connect(bt_snmac, SIGNAL(clicked()), this, SLOT(proButtonCancel()));
-        } else if (mode == Warnning){
-            bt_fail = new QPushButton(frame);
-            bt_fail->setObjectName(QString::fromUtf8("bt_fail"));
+        } else if (mode == Warnning) {
+            bt_cancle = new QPushButton(frame);
+            bt_cancle->setObjectName(QString::fromUtf8("bt_cancel"));
             if (mode == NOICON) {
-                bt_fail->setGeometry(QRect(750, 150, 100, 40));
+                bt_cancle->setGeometry(QRect(250, 150, 100, 40));
             } else {
-                bt_fail->setGeometry(QRect(750, 150, 100, 40));
+                bt_cancle->setGeometry(QRect(250, 150, 100, 40));
             }
 
-            bt_fail->setFont(font);
-            bt_fail->setText(tr("CANCEL"));
-            connect(bt_fail, SIGNAL(clicked()), this, SLOT(proButtonCancel()));
+            bt_cancle->setFont(font);
+            bt_cancle->setText(tr("退出"));
+            connect(bt_cancle, SIGNAL(clicked()), this, SLOT(proButtonQuit()));
+        } else if (mode == Success) {
+            bt_confirm = new QPushButton(frame);
+            bt_confirm->setObjectName(QString::fromUtf8("bt_confirm"));
+            bt_confirm->setGeometry(QRect(250, 150, 100, 40));
+            bt_confirm->setFont(font);
+            if (MainTestWindow::get_main_test_window()->is_complete_test) {
+                bt_confirm->setText(tr("关机"));
+            } else {
+                bt_confirm->setText(tr("下道工序"));
+            }
+            connect(bt_confirm, SIGNAL(clicked()), this, SLOT(proButtonConfirm()));
         }
     }
     this->timeout = timeout;
@@ -197,9 +217,19 @@ void MessageForm::proButtonFail()
     reject();
 }
 
+void MessageForm::proButtonQuit()
+{
+    reject();
+}
+
 void MessageForm::proButtonCancel()
 {
     reject();
+}
+
+void MessageForm::proButtonConfirm()
+{
+    accept();
 }
 
 int MessageForm::startExec()

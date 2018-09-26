@@ -23,10 +23,8 @@ public:
         Message = 0,
         Warnning,
         Error,
-        Doing,
-        Input,
-        Confirm,
         SNMAC,
+        Success,
         NOICON
     };
     MessageForm(QWidget *parent = 0,const int mode=0,const int timeout = 0);
@@ -50,7 +48,8 @@ private slots:
     void proButtonOK();
     void proButtonFail();
     void proButtonCancel();
-    //void updateText();
+    void proButtonQuit();
+    void proButtonConfirm();
 
 public:
     QFrame          *frame;
@@ -59,6 +58,7 @@ public:
     QPushButton     *bt_ok;
     QPushButton     *bt_fail;
     QPushButton     *bt_cancle;
+    QPushButton     *bt_confirm;
     QLabel          *lb_icon;
     QLineEdit       *le_snmac;
     QHBoxLayout     *ly_snmac;
@@ -79,6 +79,9 @@ private:
    QLineEdit       *le_input;
    int              _main_w;
    int              _main_h;
+   int              _dialog_w;
+   int              _dialog_h;
+   int              _lb_text_w;
 };
 
 extern QString g_sn_mac_message;

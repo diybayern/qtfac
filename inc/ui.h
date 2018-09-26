@@ -138,6 +138,7 @@ class MainTestWindow : public QDialog
         int get_current_res_w;
         QList<StressTestItem> stress_test_item_list;
         QTimer  updatetimer;
+        bool is_complete_test;
 
     private:
         static MainTestWindow* _main_test_window;
@@ -198,8 +199,7 @@ class MainTestWindow : public QDialog
         QPalette _get_label_color(QString result);
 
         //sn mac check
-        bool _is_complete_test = true;
-        QString _get_current_configs() {return _is_complete_test ?"SN" : "MAC";}
+        QString _get_current_configs() {return is_complete_test ?"SN" : "MAC";}
         QString _local_sn_num;
         QString _local_mac_addr;
 
@@ -224,7 +224,8 @@ class MainTestWindow : public QDialog
         void update_screen_log(QString info);
         void update_stress_label_value(QString item, QString result);
         void confirm_test_result_dialog(QString title);
-        void confim_test_result_warning(QString title);
+        void confirm_test_result_warning(QString title);
+        void confirm_test_result_success(QString title);
         void start_audio_progress_dialog();
 
     private slots:

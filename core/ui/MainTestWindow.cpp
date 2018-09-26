@@ -72,9 +72,14 @@ void MainTestWindow::confirm_test_result_dialog(QString title)
     MessageBox(NULL, MessageForm::Message, title, title + "结果确认", "请确认"+title+"结果是PASS 还是 FAIL", 0);
 }
 
-void MainTestWindow::confim_test_result_warning(QString title)
+void MainTestWindow::confirm_test_result_warning(QString title)
 {
     MessageBox(NULL, MessageForm::Warnning, title, "警告", title, 0);
+}
+
+void MainTestWindow::confirm_test_result_success(QString title)
+{
+    MessageBox(NULL, MessageForm::Success, title, "提示", title, 0);
 }
 
 void MainTestWindow::show_sn_mac_message_box()
@@ -82,7 +87,8 @@ void MainTestWindow::show_sn_mac_message_box()
     this->_get_sn_num();
     this->_get_mac_addr();
 
-    if (_is_complete_test)
+    is_complete_test = true;
+    if (is_complete_test)
     {
         MessageBox(NULL, MessageForm::SNMAC, "SN", _get_current_configs() + "测试", _get_current_configs(), 0);
     }
@@ -90,8 +96,6 @@ void MainTestWindow::show_sn_mac_message_box()
     {
         MessageBox(NULL, MessageForm::SNMAC, "MAC", _get_current_configs() + "测试", _get_current_configs(), 0);
     }
-
-
 }
 
 void MainTestWindow::get_result_string(QString func, QString result)
@@ -495,7 +499,7 @@ void MainTestWindow::resume_message_box()
     qDebug()<<"message = " << g_sn_mac_message;
     qDebug()<<"localsn = " << _local_sn_num;
     qDebug()<<"localmac = " << _local_mac_addr;
-    if (_is_complete_test) {
+    if (is_complete_test) {
 
         if (g_sn_mac_message.compare(_local_sn_num) == 0) {
             MessageBox(NULL, MessageForm::Message, "SN", "扫描成功", "SN比对成功", 1000);

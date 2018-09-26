@@ -20,6 +20,7 @@ class UiHandle: public QObject
         void add_stress_test_label(string item);
         void confirm_test_result_dialog(string title);
         void confirm_test_result_warning(string title);
+        void confirm_test_result_success(string title);
         void set_test_result(string item, string result);
         void show_display_ui();
         void show_stress_test_ui();
@@ -49,6 +50,7 @@ class UiHandle: public QObject
         void to_confirm_test_result_dialog(QString title);
         void to_start_audio_progress_dialog();
         void to_confirm_test_result_warning(QString title);
+        void to_confirm_test_result_success(QString title);
         void to_show_test_confirm_dialog(string item);
         void sig_ui_handled_test_result(string test_item, string result);
         void sig_ui_check_state_changed(string item, bool state);
