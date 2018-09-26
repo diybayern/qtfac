@@ -283,21 +283,26 @@ public:
     void _set_picture(QPixmap& pix);
     QList<Stress_Test_Info> stress_test_info_list;
     void update_stress_label_value(QString item, QString result);
+    QLabel *_lb_video;
     //void mediaPlay();
 
 protected:
     void mousePressEvent(QMouseEvent* event);
     void keyPressEvent(QKeyEvent *event);
+#if 0
     bool eventFilter(QObject *obj, QEvent *event);
+#endif
 
 private slots:
+    #if 0
     void slot_get_one_frame(QImage img);
+    #endif
     void slot_get_one_pixmap(QPixmap pix);
 
 private:
     static StressTestWindow* _stress_test_window;
     QFrame *_frame;
-    QLabel *_lb_video;
+
     QLabel *_lb_image_frame;
     QFrame *_lb_info;
     QList<image_layout_attr> _image_label_list;

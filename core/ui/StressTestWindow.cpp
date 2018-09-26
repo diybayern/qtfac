@@ -84,7 +84,7 @@ StressTestWindow::StressTestWindow(QWidget *parent)
     _v_a.video_h = st_h - st_h/3;
     _lb_video->setObjectName(QString::fromUtf8("lb_video"));
     _lb_video->setGeometry(QRect(_v_a.video_start_x, _v_a.video_start_y, _v_a.video_w, _v_a.video_h));
-    _lb_video->installEventFilter(this);
+    //_lb_video->installEventFilter(this);
 
     // image layout
     _lb_image_frame = new QLabel(_frame);
@@ -151,8 +151,9 @@ StressTestWindow::StressTestWindow(QWidget *parent)
 
     //connect and start thread
     connect(ImageTestThread::get_image_test_thread(), SIGNAL(sig_send_one_pixmap(QPixmap)), this, SLOT(slot_get_one_pixmap(QPixmap)));
+#if 0
     connect(VideoTestThread::get_video_test_thread(), SIGNAL(sig_send_one_frame(QImage)), this, SLOT(slot_get_one_frame(QImage)));
-
+#endif
     ImageTestThread::get_image_test_thread()->start_run();
     VideoTestThread::get_video_test_thread()->start_play();
     connect(this, SIGNAL(sig_finish_video_test_thread()), VideoTestThread::get_video_test_thread(), SLOT(slot_finish_video_test_thread()));
@@ -192,7 +193,7 @@ void StressTestWindow::update_stress_label_value(QString item, QString result)
         }
     }
 }
-
+#if 0
 bool StressTestWindow::eventFilter(QObject *obj, QEvent *event)
 {
 
@@ -219,17 +220,19 @@ bool StressTestWindow::eventFilter(QObject *obj, QEvent *event)
 
     return QObject::eventFilter(obj,event);
 }
+#endif
 
 void StressTestWindow::start_exec()
 {
     show();
 }
-
+#if 0
 void StressTestWindow::slot_get_one_frame(QImage img)
 {
     mImage = img.copy();
     update();
 }
+#endif
 
 void StressTestWindow::slot_get_one_pixmap(QPixmap pix)
 {
@@ -272,6 +275,3 @@ bool start_stress_ui()
     //StressTestWindow::get_stress_test_window()->mediaPlay();
     return true;
 }
-
-
-

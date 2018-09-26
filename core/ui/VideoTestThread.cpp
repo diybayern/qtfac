@@ -130,8 +130,9 @@ int VideoTestThread::ffmpeg_video_change_format(AVFrame* frame, int dst_w, int d
 
     QImage tmpImg((uchar *)buffer, dst_w, dst_h, QImage::Format_RGB888);
     finalImage = tmpImg.convertToFormat(QImage::Format_RGB888,Qt::NoAlpha);
+    QPixmap pixmap2(QPixmap::fromImage (finalImage));
 
-    emit sig_send_one_frame(finalImage);
+    StressTestWindow::get_stress_test_window()->_lb_video->setPixmap(pixmap2);
 
     av_free(buffer);
     av_frame_unref(pFrameRGB);
