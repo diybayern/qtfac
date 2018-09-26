@@ -19,7 +19,7 @@ void* semi_auto_test_control(void* arg)
 			 && funcFinishStatus->hdd_finish
 			 && funcFinishStatus->fan_finish
 			 && funcFinishStatus->wifi_finish) {
-			    funcFinishStatus->interface_finish = true;
+			     funcFinishStatus->interface_finish = true;
 	        }
 		
         if(testStep != STEP_IDLE){

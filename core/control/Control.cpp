@@ -516,8 +516,14 @@ void Control::upload_mes_log() {
         char* response = ftp_send_file(MES_FILE,_facArg);
         response = response_to_chinese(response);
         LOG_INFO("upload %s",response);
+		if (!strcmp(response,"上传成功")) {
+			_uiHandle->confirm_test_result_warning("upload success");
+		} else {
+			_uiHandle->confirm_test_result_warning("upload fail");
+		}
     } else {
         LOG_INFO("combine mes fail");
+		
     }
     _testStep = STEP_IDLE;
 }
@@ -617,7 +623,6 @@ void Control::set_interface_select_status(string func, bool state) {
 void Control::set_test_result_pass_or_fail(string func, string result)
 {
     if (result == "PASS") {
-
         if (func == "音频测试") {
             _funcFinishStatus->sound_finish= true;
         }
@@ -633,7 +638,6 @@ void Control::set_test_result_pass_or_fail(string func, string result)
         if (func == "拷机测试") {
             _funcFinishStatus->stress_finish= true;
         }
-
     } else {
 
         if (func == "音频测试") {
@@ -652,6 +656,7 @@ void Control::set_test_result_pass_or_fail(string func, string result)
             _funcFinishStatus->stress_finish= false;
         }
     }
+    _uiHandle->set_test_result(func, result);
 }
 
 bool Control::is_stress_test_window_quit_safely()
