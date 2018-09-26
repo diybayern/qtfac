@@ -114,11 +114,11 @@ StressTestWindow::StressTestWindow(QWidget *parent)
     _lb_info->setObjectName(QString::fromUtf8("lb_info"));
     _lb_info->setGeometry(QRect(_if_a.info_start_x, _if_a.info_start_y, _if_a.info_w, _if_a.info_h));
 
-    //_group_box = new QGroupBox(_lb_info);
-    //_group_box->setObjectName(QString::fromUtf8("_group_box"));
-    //_group_box->setStyleSheet("QGroupBox{border:none}");
-    //_group_box->setGeometry(QRect(0, 0, _if_a.info_w, _if_a.info_h));
-    _grid_box = new QGridLayout(_lb_info);
+    _group_box = new QGroupBox(_lb_info);
+    _group_box->setObjectName(QString::fromUtf8("_group_box"));
+    _group_box->setStyleSheet("QGroupBox{border:none}");
+    _group_box->setGeometry(QRect(0, 0, _if_a.info_w, _if_a.info_h));
+    _form_box = new QFormLayout;
 
     QFont font;
     if ((st_h <= 1080 && st_h > 1050) && (st_w <= 1920 && st_w > 1680)) {
@@ -140,15 +140,15 @@ StressTestWindow::StressTestWindow(QWidget *parent)
         st_lab->setFont(font);
         QLabel* st_lab_value = new QLabel;
         st_lab_value->setFont(font);
-        _grid_box->addWidget(st_lab, i, 0);
-        _grid_box->addWidget(st_lab_value, i, 1);
+        _form_box->addRow(st_lab, st_lab_value);
         Stress_Test_Info info;
         info.name = item;
         info.label = st_lab_value;
         stress_test_info_list.append(info);
     }
-    _grid_box->setColumnStretch(0, 1);
-    _grid_box->setColumnStretch(1, 7);
+    _form_box->setSpacing(20);
+    _form_box->setMargin(20);
+    _group_box->setLayout(_form_box);
 
     //connect and start thread
     connect(ImageTestThread::get_image_test_thread(), SIGNAL(sig_send_one_pixmap(QPixmap)), this, SLOT(slot_get_one_pixmap(QPixmap)));

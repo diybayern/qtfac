@@ -522,7 +522,7 @@ string get_current_cpu_freq(){
             cpu_max = cpu_cur;
         }        
     }
-	cpu_freq += change_float_to_string(1.0 * cpu_max / 1000 / 1000) + "G\n";
+    cpu_freq += change_float_to_string(1.0 * cpu_max / 1000 / 1000) + "G";
 		
     return cpu_freq;
 }
@@ -540,7 +540,7 @@ string get_mem_info() {
 	string mem_used = to_string((si.totalram - si.freeram) >> 10);
 	string mem_free = to_string(si.freeram >> 10);
 	
-	mem_info += mem_used + "K used  " + mem_free + "K free\n";
+    mem_info += mem_used + "K used  " + mem_free + "K free";
 
 	return mem_info;
 }
@@ -607,7 +607,7 @@ string get_cpu_info(CpuStatus* st_cpu) {
 	cpu_str += str + "% idle\t";
 
 	str = change_float_to_string(100.0 * cpu_diff.cpu_iowait / cpu_diff.cpu_total);
-	cpu_str += str + "% iowait\n";
+    cpu_str += str + "% iowait";
 
 	memcpy(st_cpu, &cpu_info, sizeof(CpuStatus));
 

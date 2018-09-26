@@ -17,6 +17,7 @@
 #include <QKeyEvent>
 #include <QProgressBar>
 #include <QIntValidator>
+#include <QFormLayout>
 
 #include "VideoTestThread.h"
 #include "ImageTestThread.h"
@@ -316,7 +317,7 @@ private:
     QImage mImage;
     QPixmap _m_pixmap;
     QGroupBox *_group_box;
-    QGridLayout *_grid_box;
+    QFormLayout *_form_box;
     int st_w;
     int st_h;
 #if 0
