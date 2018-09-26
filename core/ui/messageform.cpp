@@ -155,7 +155,7 @@ MessageForm::MessageForm(QWidget *parent, const int mode, const int timeout) : Q
             }
 
             bt_cancle->setFont(font);
-            bt_cancle->setText(tr("ÍË³ö"));
+            bt_cancle->setText(tr("é€€å‡º"));
             connect(bt_cancle, SIGNAL(clicked()), this, SLOT(proButtonQuit()));
         } else if (mode == Success) {
             bt_confirm = new QPushButton(frame);
@@ -163,9 +163,9 @@ MessageForm::MessageForm(QWidget *parent, const int mode, const int timeout) : Q
             bt_confirm->setGeometry(QRect(250, 150, 100, 40));
             bt_confirm->setFont(font);
             if (MainTestWindow::get_main_test_window()->is_complete_test) {
-                bt_confirm->setText(tr("¹Ø»ú"));
+                bt_confirm->setText(tr("å…³æœº"));
             } else {
-                bt_confirm->setText(tr("ÏÂµÀ¹¤Ğò"));
+                bt_confirm->setText(tr("ä¸‹é“å·¥åº"));
             }
             connect(bt_confirm, SIGNAL(clicked()), this, SLOT(proButtonConfirm()));
         }

@@ -347,9 +347,9 @@ void MainTestWindow::_create_main_test_layout()
                     label = new QLabel;
                     button = new QPushButton(_interface_test_list.at(j).itemname);
 
-                    _grid_main_test_layout->addWidget(checkbox, j+1, 1);
-                    _grid_main_test_layout->addWidget(button, j+1, 2);
-                    _grid_main_test_layout->addWidget(label, j+1, 3);
+                    _grid_main_test_layout->addWidget(checkbox, j+1, 0, Qt::AlignRight);
+                    _grid_main_test_layout->addWidget(button, j+1, 1);
+                    _grid_main_test_layout->addWidget(label, j+1, 2);
                     iteminfo.name = _interface_test_list.at(j).itemname;
                     iteminfo.checkbox = checkbox;
                     iteminfo.button = button;
@@ -387,7 +387,13 @@ void MainTestWindow::_create_screen_log_layout()
     _editInfo->setReadOnly(true);
     _editInfo->setFont(font);
     _editInfo->setFrameStyle(QFrame::Panel|QFrame::Sunken);
+    connect(_editInfo, SIGNAL(textChanged()), this, SLOT(_slot_text_changed()));
     _vbox_screenlog_layout->addWidget(_editInfo);
+}
+
+void MainTestWindow::_slot_text_changed()
+{
+    _editInfo->moveCursor(QTextCursor::End);
 }
 
 void MainTestWindow::_create_test_count_and_upload_layout()

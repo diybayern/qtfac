@@ -231,6 +231,7 @@ class MainTestWindow : public QDialog
     private slots:
         void on_state_changed(int state);
         void _record_play_audio();
+        void _slot_text_changed();
 };
 
 

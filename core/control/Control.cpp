@@ -154,13 +154,13 @@ void Control::ui_init()
     _uiHandle->add_stress_test_label("CPU温度");
     _uiHandle->add_stress_test_label("编码状态");
     _uiHandle->add_stress_test_label("解码状态");
-    _uiHandle->add_stress_test_label("产品型号");
-    _uiHandle->add_stress_test_label("硬件版本");
-    _uiHandle->add_stress_test_label("SN序列号");
-    _uiHandle->add_stress_test_label("MAC地址");
-    _uiHandle->add_stress_test_label("CPU频率");
     _uiHandle->add_stress_test_label("Mem");
     _uiHandle->add_stress_test_label("Cpu");
+    _uiHandle->add_stress_test_label("CPU频率");
+    _uiHandle->add_stress_test_label("SN序列号");
+    _uiHandle->add_stress_test_label("MAC地址");
+    _uiHandle->add_stress_test_label("产品型号");
+    _uiHandle->add_stress_test_label("硬件版本");
     
     connect(_uiHandle->get_qobject("接口测试"), SIGNAL(clicked()), this, SLOT(start_interface_test()));
     connect(_uiHandle->get_qobject("内存测试"), SIGNAL(clicked()), this, SLOT(start_mem_test()));
