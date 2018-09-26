@@ -105,6 +105,10 @@ void* StressTest::test_all(void *arg)
 {
 	BaseInfo* baseInfo = (BaseInfo *)arg;
 	Control *control = Control::get_control();
+    TimeInfo init_time = {0,0,0,0};
+    TimeInfo tmp_dst = {0,0,0,0};
+    char datebuf[CMD_BUF_SIZE] = {0};
+
 	if (check_file_exit(STRESS_LOCK_FILE.c_str())) {
 		string stress_stage = control->get_stress_test_stage();		
 		remove_local_file(STRESS_LOCK_FILE.c_str());
@@ -123,6 +127,24 @@ void* StressTest::test_all(void *arg)
 	} else {
 		write_local_data(STRESS_LOCK_FILE.c_str(),"w+",PCBA_LOCK,sizeof(PCBA_LOCK));
 	}
+
+    get_current_open_time(&init_time);
+
+    while(true)
+    {
+        if (!Control::get_control()->is_stress_test_window_quit_safely()) {
+            break;
+        }
+
+        diff_running_time(&tmp_dst, &init_time);
+        snprintf(datebuf, CMD_BUF_SIZE, "%d天%d时%d分%d秒", tmp_dst.day, tmp_dst.hour, tmp_dst.minute, tmp_dst.second);
+        UiHandle::get_uihandle()->update_stress_label_value("运行时间", datebuf);
+        get_current_open_time(&tmp_dst);
+
+
+
+        sleep(1);
+    }
 	
 	return NULL;
 }
