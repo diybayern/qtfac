@@ -21,6 +21,7 @@
 #define TEST_MAGIC   (0xffffeeee)
 
 WifiInfo* g_wifi_info = NULL;
+string wifi_screen_log = "";
 
 WifiTest::WifiTest(Control* control)
        :_control(control)
@@ -318,10 +319,12 @@ bool WifiTest::wifi_test_send_msg() {
     info = g_wifi_info;
     if (info == NULL){
         LOG_ERROR("wifi info is null");
+		wifi_screen_log += "wifi info is null\n\n"
         return false;    
     }
     
     LOG_INFO("wifi send package test start: \n");
+	wifi_screen_log += "wifi send package test start: \n\n";
 
     info->recv_num = 0;
     wifi_send_broadcast_msg(info, TOTAL_SEND_NUM);
@@ -329,14 +332,16 @@ bool WifiTest::wifi_test_send_msg() {
     //waiting for receiving msg
     usleep(20000 * TOTAL_SEND_NUM);
 
-    LOG_INFO("\tsend package num: \t\t%d\n",  TOTAL_SEND_NUM);
-    LOG_INFO("\trecv package num: \t\t%d\n",  info->recv_num);
+    LOG_INFO("send package num: \t\t%d\n",  TOTAL_SEND_NUM);
+    LOG_INFO("recv package num: \t\t%d\n",  info->recv_num);
+	wifi_screen_log += "send package num:\t\t100\nrecv package num:\t\t" + to_string(info->recv_num) + "\n";
     if (info->recv_num < RECEIVE_NUM) {
         ret = false;
         LOG_ERROR("WIFI test failed!\n");
     }
     if (system("ifconfig wlan0 down") < 0){
         LOG_ERROR("wifi down error!\n");
+		wifi_screen_log += "wifi down error!\n";
         ret = false;
     }
     
@@ -384,6 +389,7 @@ bool WifiTest::check_if_wifi_connect_pass(void)
 			return false;
 		}
         LOG_INFO("WIFI SSID mac:\t%s\n",wifi_ssid_mac);
+		wifi_screen_log += "WIFI ssid mac:\t\t" + wifi_ssid_mac + "\n";
         
         return true;
     } else {
@@ -401,11 +407,14 @@ void WifiTest::set_wifi_test_result(string func,string result,string ui_log)
 {
     Control *control = Control::get_control();
     control->set_test_result(func,result,ui_log);
-	control->set_wifi_test_finish();
+	if (result == "PASS") {
+		control->set_wifi_test_finish();
+	}
 }
 
 void* WifiTest::test_all(void* arg)
 {
+	wifi_screen_log += "==================== wifi test ====================\n";
 	bool is_pass = false;
 	string str = execute_command("bash " + WIFI_TEST_SCRIPT);
     if (str == "error"){
@@ -417,10 +426,13 @@ void* WifiTest::test_all(void* arg)
     }
 
 	if (is_pass) {
-        set_wifi_test_result("WIFI测试","PASS","SUCCESS");
+		wifi_screen_log += "wifi test result:\t\t\tSUCCESS\n\n";
+        set_wifi_test_result("WIFI测试","PASS",wifi_screen_log);
 	} else {
-        set_wifi_test_result("WIFI测试","FAIL","FAIL");
+		wifi_screen_log += "wifi test result:\t\t\tFAIL\n\n";
+        set_wifi_test_result("WIFI测试","FAIL",wifi_screen_log);
 	}
+	wifi_screen_log = "";
 	return NULL;
 }
 

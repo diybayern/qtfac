@@ -10,8 +10,10 @@ HddTest::HddTest(Control* control)
 void HddTest::set_hdd_test_result(string func,string result,string ui_log)
 {
     Control *control = Control::get_control();
-    control->set_test_result(func,result,ui_log);
-	control->set_hdd_test_finish();
+    control->set_test_result(func,result,ui_log);	
+	if (result == "PASS") {
+		control->set_hdd_test_finish();
+	}
 }
 
 string HddTest::hdd_test_all(string hdd_cap)
@@ -53,7 +55,6 @@ void* HddTest::test_all(void *arg)
 	} else {
         set_hdd_test_result("HDD测试","FAIL",result);
 	}
-    //Control::get_control()->set_hdd_test_finish();
 	return NULL;
 }
 

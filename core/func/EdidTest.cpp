@@ -217,7 +217,9 @@ void EdidTest::set_edid_test_result(string func,string result,string ui_log)
 {
     Control *control = Control::get_control();
     control->set_test_result(func,result,ui_log);
-	control->set_edid_test_finish();
+	if (result == "PASS") {
+		control->set_edid_test_finish();
+	}
 }
 
 void* EdidTest::test_all(void *arg)
