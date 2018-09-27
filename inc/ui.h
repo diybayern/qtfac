@@ -145,8 +145,6 @@ class MainTestWindow : public QDialog
         void add_complete_or_single_test_label(QString config);
         QString ui_get_test_count();
         QList<ItemCheck> itemlist;
-        void _get_sn_num();
-        void _get_mac_addr();
         bool get_auto_upload_check_state();
         static MainTestWindow* get_main_test_window();
         int get_current_res_h;
@@ -154,7 +152,6 @@ class MainTestWindow : public QDialog
         QList<StressTestItem> stress_test_item_list;
         QTimer  updatetimer;
         bool is_complete_test = true;
-
 
     private:
         static MainTestWindow* _main_test_window;
@@ -214,11 +211,6 @@ class MainTestWindow : public QDialog
         //label color
         QPalette _get_label_color(QString result);
 
-        //sn mac check
-        QString _get_current_configs() {return is_complete_test ?"SN" : "MAC";}
-        QString _local_sn_num;
-        QString _local_mac_addr;
-
         CustomProgressDialog *_custom_progress_dialog;
         int _status;
 
@@ -233,15 +225,16 @@ class MainTestWindow : public QDialog
     signals:
         void to_quit_test_window(QString item);
         void sig_check_state_changed(QString item, bool state);
+        void sig_get_message_from_scangun(QString message);
 
     public slots:
         void draw_main_test_window();
         void show_main_test_window();
-        void resume_message_box();
+        void compute_result();
         void get_result_string(QString func, QString result);
         void show_stress_test_window();
         void show_display_test_window();
-        void show_sn_mac_message_box();
+        void show_sn_mac_message_box(QString sn_mac);
         void slot_finish_show_stress_window();
         void slot_finish_show_display_window();
         void update_screen_log(QString info);
@@ -251,6 +244,7 @@ class MainTestWindow : public QDialog
         void confirm_test_result_success(QString title);
         void start_audio_progress_dialog();
         void slot_set_interface_test_state(int state);
+        void slot_show_sn_mac_comparison_result(QString sn_mac, QString result);
 
     private slots:
         void on_state_changed(int state);

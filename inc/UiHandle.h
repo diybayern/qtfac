@@ -29,9 +29,10 @@ class UiHandle: public QObject
         void sync_main_test_ui();
         void to_show_main_test_ui();
         void add_complete_or_single_test_label(string config);
-        void show_sn_mac_message_box();
+        void show_sn_mac_message_box(string sn_mac);
         void start_audio_progress_dialog();
         void ui_set_interface_test_state(int state);
+        void show_sn_mac_comparison_result(string sn_mac, string result);
         int get_screen_width();
         int get_screen_height();
         bool get_auto_upload_check_state();
@@ -48,7 +49,7 @@ class UiHandle: public QObject
         void to_update_stress_label_value(QString item, QString result);
         void to_show_stress_test_window();
         void to_show_display_test_window();
-        void to_show_sn_mac_message_box();
+        void to_show_sn_mac_message_box(QString sn_mac);
         void need_to_update_screen_log(QString info);
         void to_confirm_test_result_dialog(QString title);
         void to_start_audio_progress_dialog();
@@ -59,12 +60,15 @@ class UiHandle: public QObject
         void sig_ui_handled_sn_mac_test_result(string sn_mac, string result);
         void sig_ui_check_state_changed(string item, bool state);
         void sig_set_interface_test_state(int state);
+        void sig_show_sn_mac_comparison_result(QString sn_mac, QString result);
+        void sig_ui_get_message_from_scangun(string message);
 
     public slots:
         void quit_test_window(QString item);
         void slot_handled_test_result(QString test_item, QString result);
         void slot_check_state_changed(QString item, bool state);
         void slot_recv_sn_mac_test_result(QString sn_mac, QString result);
+        void slot_get_message_from_scangun(QString message);
 };
 
 

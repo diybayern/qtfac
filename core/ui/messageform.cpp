@@ -208,8 +208,7 @@ bool MessageForm::eventFilter(QObject *obj, QEvent *event)
         {
             QString str = le_snmac->text();
             g_sn_mac_message = str;
-            qDebug()<<"message form m_sn_mac_msg = " << g_sn_mac_message;
-            QTimer::singleShot(1000, MainTestWindow::get_main_test_window(), SLOT(resume_message_box()));
+            QTimer::singleShot(1000, MainTestWindow::get_main_test_window(), SLOT(compute_result()));
         }
     }
 

@@ -209,6 +209,12 @@ void Control::ui_init()
     connect(_uiHandle, SIGNAL(sig_ui_handled_test_result(string, string)), this, SLOT(set_test_result_pass_or_fail(string, string)));
     connect(_uiHandle, SIGNAL(sig_ui_handled_sn_mac_test_result(string, string)), this, SLOT(set_sn_mac_test_result(string, string)));
     connect(_uiHandle, SIGNAL(sig_ui_check_state_changed(string, bool)), this, SLOT(set_interface_select_status(string, bool)));
+    connect(_uiHandle, SIGNAL(sig_ui_get_message_from_scangun(string)), this, SLOT(check_sn_mac_compare_result(string)));
+}
+
+void Control::check_sn_mac_compare_result(string message)
+{
+    cout<<"message = "<<message<<endl;
 }
 
 void Control::show_test_confirm_dialog(string item)

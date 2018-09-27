@@ -82,20 +82,9 @@ void MainTestWindow::confirm_test_result_success(QString title)
     MessageBox(NULL, MessageForm::Success, title, "提示", title, 0);
 }
 
-void MainTestWindow::show_sn_mac_message_box()
+void MainTestWindow::show_sn_mac_message_box(QString sn_mac)
 {
-    this->_get_sn_num();
-    this->_get_mac_addr();
-
-    is_complete_test = true;
-    if (is_complete_test)
-    {
-        MessageBox(NULL, MessageForm::SNMAC, "SN", _get_current_configs() + "测试", _get_current_configs(), 0);
-    }
-    else
-    {
-        MessageBox(NULL, MessageForm::SNMAC, "MAC", _get_current_configs() + "测试", _get_current_configs(), 0);
-    }
+    MessageBox(NULL, MessageForm::SNMAC, sn_mac,  sn_mac + "测试", sn_mac, 0);
 }
 
 void MainTestWindow::get_result_string(QString func, QString result)
@@ -484,64 +473,9 @@ QString MainTestWindow::ui_get_test_count()
     return "";
 }
 
-void MainTestWindow::_get_sn_num()
+void MainTestWindow::compute_result()
 {
-    if (_main_label_item_list.isEmpty())
-    {
-        return ;
-    }
-
-    for (int i = 0 ; i < _main_label_item_list.count(); i++)
-    {
-        QString str = _main_label_item_list.at(i).itemname;
-        if (str.contains("SN"))
-        {
-            _local_sn_num = _main_label_item_list.at(i).result;
-            break;
-        }
-    }
-    return ;
-}
-
-void MainTestWindow::_get_mac_addr()
-{
-    if (_main_label_item_list.isEmpty())
-    {
-        return ;
-    }
-
-    for (int i = 0 ; i < _main_label_item_list.count(); i++)
-    {
-        QString str = _main_label_item_list.at(i).itemname;
-        if (str.contains("MAC"))
-        {
-            _local_mac_addr = _main_label_item_list.at(i).result;
-            break;
-        }
-    }
-    return ;
-}
-
-void MainTestWindow::resume_message_box()
-{
-    qDebug()<<"message = " << g_sn_mac_message;
-    qDebug()<<"localsn = " << _local_sn_num;
-    qDebug()<<"localmac = " << _local_mac_addr;
-    if (is_complete_test) {
-
-        if (g_sn_mac_message.compare(_local_sn_num) == 0) {
-            MessageBox(NULL, MessageForm::SNMAC_Success, "SN", "扫描成功", "SN比对成功", 1000);
-        } else {
-            MessageBox(NULL, MessageForm::SNMAC_Error, "SN", "警告", "SN比对失败,请重试！", 0);
-        }
-
-    } else {
-        if (g_sn_mac_message.compare(_local_mac_addr) == 0) {
-            MessageBox(NULL, MessageForm::SNMAC_Success, "MAC", "扫描成功", "MAC比对成功", 1000);
-        } else {
-            MessageBox(NULL, MessageForm::SNMAC_Error, "MAC", "警告", "MAC比对失败,请重试！", 0);
-        }
-    }
+    emit sig_get_message_from_scangun(g_sn_mac_message);
 }
 
 void MainTestWindow::show_stress_test_window()
@@ -635,6 +569,17 @@ void MainTestWindow::slot_set_interface_test_state(int state)
     } else { //UI_INF_BREAK
         _get_interface_test_button()->setEnabled(false);
         _set_interface_test_item_enable(false);
+    }
+}
+
+void MainTestWindow::slot_show_sn_mac_comparison_result(QString sn_mac, QString result)
+{
+    if (result.compare("PASS") == 0) {
+        MessageBox(NULL, MessageForm::SNMAC_Success, sn_mac, "扫描成功", sn_mac + "比对成功", 1000);
+
+    } else {
+        MessageBox(NULL, MessageForm::SNMAC_Error, sn_mac, "警告", sn_mac + "比对失败,请重试！", 0);
+
     }
 }
 
