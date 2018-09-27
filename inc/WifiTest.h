@@ -29,10 +29,7 @@ class WifiTest : public FuncBase
 public:
     WifiTest(Control* control);
     static bool init();
-    
-
     static void* test_all(void* arg);
-    static void set_wifi_test_result(string func,string result,string ui_log);
     void start_test(BaseInfo* baseInfo);
 
 private:

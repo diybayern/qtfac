@@ -403,17 +403,10 @@ bool WifiTest::check_if_wifi_connect_pass(void)
     }
 }
 
-void WifiTest::set_wifi_test_result(string func,string result,string ui_log)
-{
-    Control *control = Control::get_control();
-    control->set_test_result(func,result,ui_log);
-	if (result == "PASS") {
-		control->set_wifi_test_finish();
-	}
-}
-
 void* WifiTest::test_all(void* arg)
 {
+	Control *control = Control::get_control();
+	control->set_wifi_test_status(false);
 	wifi_screen_log += "==================== wifi test ====================\n";
 	bool is_pass = false;
 	string str = execute_command("bash " + WIFI_TEST_SCRIPT);
@@ -427,11 +420,13 @@ void* WifiTest::test_all(void* arg)
 
 	if (is_pass) {
 		wifi_screen_log += "wifi test result:\t\t\tSUCCESS\n\n";
-        set_wifi_test_result("WIFI测试","PASS",wifi_screen_log);
+		control->set_wifi_test_result(true); 
 	} else {
 		wifi_screen_log += "wifi test result:\t\t\tFAIL\n\n";
-        set_wifi_test_result("WIFI测试","FAIL",wifi_screen_log);
+		control->set_wifi_test_result(false); 
 	}
+	control->update_screen_log(wifi_screen_log);
+	control->set_wifi_test_status(true);
 	wifi_screen_log = "";
 	return NULL;
 }
