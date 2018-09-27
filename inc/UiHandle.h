@@ -31,6 +31,7 @@ class UiHandle: public QObject
         void add_complete_or_single_test_label(string config);
         void show_sn_mac_message_box();
         void start_audio_progress_dialog();
+        void ui_set_interface_test_state(int state);
         int get_screen_width();
         int get_screen_height();
         bool get_auto_upload_check_state();
@@ -57,6 +58,7 @@ class UiHandle: public QObject
         void sig_ui_handled_test_result(string test_item, string result);
         void sig_ui_handled_sn_mac_test_result(string sn_mac, string result);
         void sig_ui_check_state_changed(string item, bool state);
+        void sig_set_interface_test_state(int state);
 
     public slots:
         void quit_test_window(QString item);
