@@ -295,11 +295,8 @@ public:
     }
 
     int get_interface_test_times() {
-        return _interface_test_times;
-    }
-
-    void set_interface_test_times(string time) {
-        _interface_test_times = get_int_value(time);
+        string times = _uiHandle->get_test_count();
+        return get_int_value(times);
     }
 
     bool get_auto_upload_mes_status() {
@@ -364,7 +361,6 @@ private:
     string _stress_test_stage;
     bool _autoUploadLog;
     string _mes_log_file;
-    int _interface_test_times;
     bool _auto_upload_mes;
     int _interfaceRunStatus;
 

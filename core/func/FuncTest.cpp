@@ -272,7 +272,7 @@ void* InterfaceTest::test_all(void *arg)
     interfaceTestFailNum->fan_test_fail_num = 0;
     interfaceTestFailNum->wifi_test_fail_num = 0;
     
-    int test_num = 2;
+    int test_num = control->get_interface_test_times();
 	int real_test_num = 0;
     int interface_run_status = INF_RUNNING;
     for (int i = 0; i < test_num || test_num == 0; i++) {
@@ -450,8 +450,8 @@ void* InterfaceTest::test_all(void *arg)
     }
     
     if (baseInfo->hdd_cap != "0" && baseInfo->hdd_cap != "") {
-		string hdd_total_result = "HDD       ";
         if (interfaceSelectStatus->hdd_select) {
+			string hdd_total_result = "HDD       ";
             if(interfaceTestFailNum->hdd_test_fail_num == 0) {
                 control->set_func_test_result("HDD测试","PASS");
 				control->set_hdd_test_finish();
@@ -461,13 +461,13 @@ void* InterfaceTest::test_all(void *arg)
 				hdd_total_result = hdd_total_result + "FAIL(Time:" + to_string(real_test_num) + ",ERROR:" 
 				               + to_string(interfaceTestFailNum->hdd_test_fail_num) + ")";
             }
+			control->update_screen_log(hdd_total_result);
         }
-		control->update_screen_log(hdd_total_result);
     }
      
     if (baseInfo->fan_speed != "0" && baseInfo->fan_speed!= "") {
-		string fan_total_result = "FAN       ";
         if (interfaceSelectStatus->fan_select) {
+			string fan_total_result = "FAN       ";
             if(interfaceTestFailNum->fan_test_fail_num == 0) {
                 control->set_func_test_result("FAN测试","PASS");
 				control->set_fan_test_finish();
@@ -477,13 +477,13 @@ void* InterfaceTest::test_all(void *arg)
 				fan_total_result = fan_total_result + "FAIL(Time:" + to_string(real_test_num) + ",ERROR:" 
 				               + to_string(interfaceTestFailNum->fan_test_fail_num) + ")";
             }
+			control->update_screen_log(fan_total_result);
         }
-		control->update_screen_log(fan_total_result);
     }
     
     if (baseInfo->wifi_exist!= "0" && baseInfo->wifi_exist!= "") {
-		string wifi_total_result = "WIFI       ";
         if (interfaceSelectStatus->wifi_select) {
+			string wifi_total_result = "WIFI       ";
             if(interfaceTestFailNum->wifi_test_fail_num == 0) {
                 control->set_func_test_result("WIFI测试","PASS");
 				control->set_wifi_test_finish();
@@ -493,8 +493,8 @@ void* InterfaceTest::test_all(void *arg)
 				wifi_total_result = wifi_total_result + "FAIL(Time:" + to_string(real_test_num) + ",ERROR:" 
 				               + to_string(interfaceTestFailNum->wifi_test_fail_num) + ")";
             }
+			control->update_screen_log(wifi_total_result);
         }
-		control->update_screen_log(wifi_total_result);
     }
 	control->update_screen_log("===============================================");
     

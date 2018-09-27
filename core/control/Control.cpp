@@ -70,7 +70,6 @@ Control::Control():QObject()
     _stress_test_stage = "";
     _autoUploadLog = true;
     _mes_log_file = "";
-    _interface_test_times = 1;
 	_auto_upload_mes = true;
     
     init_base_info();
