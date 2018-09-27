@@ -134,12 +134,14 @@ class MainTestWindow : public QDialog
         QList<ItemCheck> itemlist;
         void _get_sn_num();
         void _get_mac_addr();
+        bool get_auto_upload_check_state();
         static MainTestWindow* get_main_test_window();
         int get_current_res_h;
         int get_current_res_w;
         QList<StressTestItem> stress_test_item_list;
         QTimer  updatetimer;
         bool is_complete_test;
+
 
     private:
         static MainTestWindow* _main_test_window;
@@ -209,6 +211,8 @@ class MainTestWindow : public QDialog
 
         MyEventLoop eventloop;
 
+        bool _is_auto_upload_checked = true;
+
     signals:
         void to_quit_test_window(QString item);
         void sig_check_state_changed(QString item, bool state);
@@ -233,6 +237,7 @@ class MainTestWindow : public QDialog
         void on_state_changed(int state);
         void _record_play_audio();
         void _slot_text_changed();
+        void _auto_upload_state_changed(int state);
 };
 
 

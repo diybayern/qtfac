@@ -145,6 +145,11 @@ void UiHandle::slot_check_state_changed(QString item, bool state)
     emit sig_ui_check_state_changed(item.toStdString(), state);
 }
 
+bool UiHandle::get_auto_upload_check_state()
+{
+    return MainTestWindow::get_main_test_window()->get_auto_upload_check_state();
+}
+
 string UiHandle::get_test_count()
 {
     QString count = MainTestWindow::get_main_test_window()->ui_get_test_count();

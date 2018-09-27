@@ -396,6 +396,22 @@ void MainTestWindow::_slot_text_changed()
     _editInfo->moveCursor(QTextCursor::End);
 }
 
+bool MainTestWindow::get_auto_upload_check_state()
+{
+    return _is_auto_upload_checked;
+}
+
+
+void MainTestWindow::_auto_upload_state_changed(int state)
+{
+    if (state == Qt::Checked) {
+        _is_auto_upload_checked = true;
+
+    } else {
+        _is_auto_upload_checked = false;
+    }
+}
+
 void MainTestWindow::_create_test_count_and_upload_layout()
 {
     _lab_test_count = new QLabel(tr("测试次数:"));
@@ -413,6 +429,7 @@ void MainTestWindow::_create_test_count_and_upload_layout()
 
     _checkbox_auto_upload_log = new QCheckBox(tr("自动上传"));
     _checkbox_auto_upload_log->setChecked(true);
+    connect(_checkbox_auto_upload_log, SIGNAL(stateChanged(int)), this, SLOT(_auto_upload_state_changed(int)));
     _hbox_checkbox_auto_upload_log->addStretch();
     _hbox_checkbox_auto_upload_log->addWidget(_checkbox_auto_upload_log);
 

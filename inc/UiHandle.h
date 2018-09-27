@@ -33,6 +33,7 @@ class UiHandle: public QObject
         void start_audio_progress_dialog();
         int get_screen_width();
         int get_screen_height();
+        bool get_auto_upload_check_state();
         string get_test_count();
         QObject *get_qobject(string name);
 
