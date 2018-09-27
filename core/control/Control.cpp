@@ -4,6 +4,7 @@
 
 Control::Control():QObject()
 {
+    _funcBase[INTERFACE]    = new InterfaceTest(this);
     _funcBase[MEM]          = new MemTest(this);
     _funcBase[USB]          = new UsbTest(this);
     _funcBase[CPU]          = new CpuTest(this);
@@ -57,6 +58,7 @@ Control::Control():QObject()
     _autoUploadLog = true;
     _mes_log_file = "";
     _interface_test_times = 1;
+	_auto_upload_mes = true;
     
     init_base_info();
     init_hw_info();
@@ -79,7 +81,7 @@ Control* Control::get_control()
 
 void Control::init_base_info()
 {
-    string dmi = "CPU:i5-6200U;MEM:8;USB:1/2;SSD:256;EMMC:0;HDD:500;WIFI:1;FAN:3800;VGA:1;HDMI:1;LCD:1920*1080;BRT:6;CAM:1";
+    string dmi = "CPU:i5-6200U;MEM:8;USB:1/2;SSD:256;EMMC:0;HDD:500;WIFI:1;FAN:3800;VGA:1;HDMI:1;LCD:1920*1080;BRT:0;CAM:0";
     get_baseinfo(_baseInfo,dmi);
 }
 
@@ -141,12 +143,16 @@ void Control::ui_init()
     _uiHandle->add_main_test_button("上传日志");
     
     if (_baseInfo->hdd_cap != "0" && _baseInfo->hdd_cap != "") {
-        if (check_file_exit(WHOLE_TEST_FILE)) {
+        if (!check_file_exit(WHOLE_TEST_FILE)) {
              _uiHandle->add_main_test_button("下道工序");
         }
     }    
     
-    _uiHandle->add_complete_or_single_test_label("整机测试");
+    if (check_file_exit(WHOLE_TEST_FILE)) {
+        _uiHandle->add_complete_or_single_test_label("整机测试");
+    } else {
+        _uiHandle->add_complete_or_single_test_label("单板测试");
+    }
     
     _uiHandle->sync_main_test_ui();
     
@@ -193,7 +199,7 @@ void Control::ui_init()
     connect(_uiHandle->get_qobject("上传日志"), SIGNAL(clicked()), this, SLOT(start_upload_log()));
 
 	if (_baseInfo->hdd_cap != "0" && _baseInfo->hdd_cap != "") {
-        if (check_file_exit(WHOLE_TEST_FILE)) {
+        if (!check_file_exit(WHOLE_TEST_FILE)) {
     		connect(_uiHandle->get_qobject("下道工序"), SIGNAL(clicked()), this, SLOT(start_next_process()));
         }
 	}
@@ -231,40 +237,7 @@ void Control::start_interface_test()
 {
     LOG_INFO("start interface test");
     _testStep = STEP_INTERFACE;
-    if (_interfaceSelectStatus->mem_select) {
-        _funcBase[MEM]->start_test(_baseInfo);
-    }
-    if (_interfaceSelectStatus->usb_select) {
-        _funcBase[USB]->start_test(_baseInfo);
-    }
-    if (_interfaceSelectStatus->mem_select) {
-        _funcBase[MEM]->start_test(_baseInfo);
-    }
-    if (_interfaceSelectStatus->net_select) {
-        _funcBase[NET]->start_test(_baseInfo);
-    }
-    if (_interfaceSelectStatus->edid_select) {
-        _funcBase[EDID]->start_test(_baseInfo);
-    }
-    if (_interfaceSelectStatus->cpu_select) {
-        _funcBase[CPU]->start_test(_baseInfo);
-    }
-
-    if (_baseInfo->hdd_cap != "0" || _baseInfo->hdd_cap != "") {
-        if (_interfaceSelectStatus->hdd_select) {
-            _funcBase[HDD]->start_test(_baseInfo);
-        }
-    }
-    if (_baseInfo->fan_speed != "0" || _baseInfo->fan_speed!= "") {
-        if (_interfaceSelectStatus->fan_select) {
-            _funcBase[FAN]->start_test(_baseInfo);
-        }
-    }
-    if (_baseInfo->wifi_exist!= "0" || _baseInfo->wifi_exist!= "") {
-        if (_interfaceSelectStatus->wifi_select) {
-            _funcBase[WIFI]->start_test(_baseInfo);
-        }
-    }
+	_funcBase[INTERFACE]->start_test(_baseInfo);
 }
 
 
@@ -329,7 +302,6 @@ void Control::start_wifi_test()
 
 void Control::start_sound_test()
 {
-    _testStep = STEP_SOUND;
     _uiHandle->start_audio_progress_dialog();    
     _funcBase[SOUND]->start_test(_baseInfo);
     LOG_INFO("start sound test");
@@ -337,21 +309,18 @@ void Control::start_sound_test()
 
 void Control::start_display_test()
 {
-    _testStep = STEP_DISPLAY;
     _uiHandle->show_display_ui();
     cout << "2" << endl;
 }
 
 void Control::start_bright_test()
 {
-    _testStep = STEP_BRIGHTNESS;
     _funcBase[BRIGHT]->start_test(_baseInfo);
     LOG_INFO("start sound test");
 }
 
 void Control::start_camera_test()
 {
-    _testStep = STEP_CAMERA;
     _funcBase[CAMERA]->start_test(_baseInfo);
     LOG_INFO("start sound test");
 }
@@ -659,6 +628,7 @@ void Control::set_test_result_pass_or_fail(string func, string result)
     }
     _uiHandle->set_test_result(func, result);
 }
+
 
 bool Control::is_stress_test_window_quit_safely()
 {

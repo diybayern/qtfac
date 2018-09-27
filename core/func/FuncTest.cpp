@@ -63,6 +63,7 @@ void FanTest::set_fan_test_result(string func,string result,string ui_log)
 	if (result == "PASS") {
 		control->set_fan_test_finish();
 	}
+	
 }
 
 string FanTest::fan_speed_test(string speed)
@@ -243,5 +244,63 @@ void NextProcess::start_test(BaseInfo* baseInfo)
     pthread_t tid;
     pthread_create(&tid,NULL,test_all,baseInfo);
 }
+
+InterfaceTest::InterfaceTest(Control* control)
+       :_control(control)
+{
+    
+}
+
+
+void* InterfaceTest::test_all(void *arg)
+{
+    BaseInfo* baseInfo = (BaseInfo *)arg;
+    Control *control = Control::get_control();
+    FuncBase** FuncBase = control->get_funcbase();
+	InterfaceSelectStatus* interfaceSelectStatus = control->get_interface_select_status();
+    
+	if (interfaceSelectStatus->mem_select) {
+        FuncBase[MEM]->start_test(baseInfo);
+    }
+    if (interfaceSelectStatus->usb_select) {
+        FuncBase[USB]->start_test(baseInfo);
+    }
+    if (interfaceSelectStatus->mem_select) {
+        FuncBase[MEM]->start_test(baseInfo);
+    }
+    if (interfaceSelectStatus->net_select) {
+        FuncBase[NET]->start_test(baseInfo);
+    }
+    if (interfaceSelectStatus->edid_select) {
+        FuncBase[EDID]->start_test(baseInfo);
+    }
+    if (interfaceSelectStatus->cpu_select) {
+        FuncBase[CPU]->start_test(baseInfo);
+    }
+
+    if (baseInfo->hdd_cap != "0" || baseInfo->hdd_cap != "") {
+        if (interfaceSelectStatus->hdd_select) {
+            FuncBase[HDD]->start_test(baseInfo);
+        }
+    }
+    if (baseInfo->fan_speed != "0" || baseInfo->fan_speed!= "") {
+        if (interfaceSelectStatus->fan_select) {
+            FuncBase[FAN]->start_test(baseInfo);
+        }
+    }
+    if (baseInfo->wifi_exist!= "0" || baseInfo->wifi_exist!= "") {
+        if (interfaceSelectStatus->wifi_select) {
+            FuncBase[WIFI]->start_test(baseInfo);
+        }
+    }
+	return NULL;
+}
+
+void InterfaceTest::start_test(BaseInfo* baseInfo)
+{
+    pthread_t tid;
+    pthread_create(&tid,NULL,test_all,baseInfo);
+}
+
 
 

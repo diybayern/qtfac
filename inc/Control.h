@@ -20,7 +20,8 @@
 
 enum FuncType
 {
-    MEM = 0,
+    INTERFACE = 0,
+    MEM,
     USB,
     NET,
     EDID,
@@ -178,6 +179,18 @@ public:
 
     void set_auto_upload_mes_status(bool status) {
         _auto_upload_mes = status;
+    }
+
+    void set_test_step(int step) {
+        _testStep = step;
+    }
+
+    FuncBase** get_funcbase() {
+        return _funcBase;
+    }
+
+    InterfaceSelectStatus* get_interface_select_status() {
+        return _interfaceSelectStatus;
     }
     
 private:

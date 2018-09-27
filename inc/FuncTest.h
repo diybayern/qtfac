@@ -92,6 +92,19 @@ private:
     
 };
 
+class InterfaceTest : public FuncBase
+{
+public:
+    InterfaceTest(Control* control);
+    static void* test_all(void *arg);
+    void start_test(BaseInfo* baseInfo);
+
+private:
+    Control* _control;
+    
+};
+
+
 
 #endif
 

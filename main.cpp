@@ -23,32 +23,40 @@ void* semi_auto_test_control(void* arg)
 	        }
 		
         if(testStep != STEP_IDLE){
-            if (funcFinishStatus->mem_finish && funcFinishStatus->fan_finish) {
-				//control->upload_mes_log();
+            if (funcFinishStatus->interface_finish 
+				&& funcFinishStatus->sound_finish 
+				&& funcFinishStatus->display_finish
+				&& funcFinishStatus->bright_finish
+				&& funcFinishStatus->camera_finish) {
+				LOG_INFO("auto send log.\n");
+				//if (control->get_auto_upload_mes_status()) {
+					control->start_upload_log();
+			    //}
 			}
             
             switch(testStep){
                 case STEP_INTERFACE:
                 {
-                    if(funcFinishStatus->interface_finish){				
+                    if(funcFinishStatus->interface_finish && !funcFinishStatus->sound_finish){				
                         LOG_INFO("interface_finish OK.\n");
+						control->set_test_step(STEP_SOUND);
                         control->start_sound_test();
                     }
                 }break;
 				case STEP_SOUND:
                 {
-                    if(funcFinishStatus->sound_finish){
-                        testStep = STEP_DISPLAY;
+                    if(funcFinishStatus->sound_finish && !funcFinishStatus->display_finish){
                         LOG_INFO("sound_finish OK.\n");
+						control->set_test_step(STEP_DISPLAY);
                         control->start_display_test();
                     }
                 }break;
 				case STEP_DISPLAY:
                 {
-                    if(funcFinishStatus->display_finish) {
+                    if(funcFinishStatus->display_finish && !funcFinishStatus->bright_finish) {
 						if (control->get_base_info()->bright_level != "0" || control->get_base_info()->bright_level != "") {
-                           testStep = STEP_BRIGHTNESS;
                            LOG_INFO("display_finish OK.\n");
+						   control->set_test_step(STEP_BRIGHTNESS);
                            control->start_bright_test();
 						}
                         
@@ -56,10 +64,10 @@ void* semi_auto_test_control(void* arg)
                 }break;
 				case STEP_BRIGHTNESS:
                 {
-                    if(funcFinishStatus->bright_finish) {
+                    if(funcFinishStatus->bright_finish && !funcFinishStatus->camera_finish) {
 						if (control->get_base_info()->camera_exist != "0" || control->get_base_info()->camera_exist != "") {
-                           testStep = STEP_CAMERA;
                            LOG_INFO("bright_finish OK.\n");
+						   control->set_test_step(STEP_CAMERA);
                            control->start_camera_test();
 						}
                         
