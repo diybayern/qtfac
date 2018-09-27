@@ -60,6 +60,10 @@ public:
     static void *test_all(void *arg);
     void start_test(BaseInfo* baseInfo);
 
+    bool usb_test_read_status();
+    static bool usb_test_read_cfg(USB_INFO_T* info);
+    static bool usb_test_read_cfg(char* dir);
+
 private:
     Control* _control;
 

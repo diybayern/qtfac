@@ -301,12 +301,29 @@ bool read_conf_line(const string conf_path, const char* tag,char* value)
                 } 
             }
         }
+		LOG_INFO("not find %s", tag);
     }
     return false;
 }
 
 int get_fac_config_from_conf(const string conf_path, FacArg *fac)
 {
+	int ret = 0;
+
+	char* dest_path = (char*)malloc(128);
+	memset(dest_path, 0, 128);
+	if(read_conf_line(conf_path, "ftp_dest_path",dest_path) == false){
+		LOG_ERROR("read dest_path failed\n");
+		ret += NO_FTP_PATH;
+	}
+	
+	char* job_number = (char*)malloc(128);
+	memset(job_number, 0, 128);
+	if(read_conf_line(conf_path, "job_number", job_number) == false){
+		LOG_ERROR("read job_number faild\n");
+		ret += NO_JOB_NUMBER;
+	}
+
     char* IP = (char*)malloc(128);
 	memset(IP, 0, 128);
     if(read_conf_line(conf_path, "ftp_ip",IP) == false){
@@ -326,20 +343,6 @@ int get_fac_config_from_conf(const string conf_path, FacArg *fac)
 	if(read_conf_line(conf_path, "ftp_passwd",ftp_passwd) == false){
         memcpy(ftp_passwd, DEFAULT_FTP_PASSWD, strlen(DEFAULT_FTP_PASSWD));
 		LOG_INFO("use default ftp_passwd\n");
-    }
-
-    char* dest_path = (char*)malloc(128);
-	memset(dest_path, 0, 128);
-	if(read_conf_line(conf_path, "ftp_dest_path",dest_path) == false){
-        LOG_ERROR("read dest_path failed\n");
-		return NO_FTP_PATH;
-    }
-
-    char* job_number = (char*)malloc(128);
-    memset(job_number, 0, 128);
-	if(read_conf_line(conf_path, "job_number", job_number) == false){
-        LOG_ERROR("read job_number faild\n");
-		return NO_JOB_NUMBER;
     }
 
     fac->ftp_ip = IP;
@@ -374,7 +377,7 @@ int get_fac_config_from_conf(const string conf_path, FacArg *fac)
 	fac->wifi_passwd = wifi_passwd;;
 	fac->wifi_enp = wifi_enp;
 
-	return 0;
+	return ret;
 }
 
 char* response_to_chinese(const char* response)

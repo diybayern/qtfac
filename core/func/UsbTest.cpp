@@ -316,3 +316,76 @@ void UsbTest::start_test(BaseInfo* baseInfo)
     pthread_t tid;
     pthread_create(&tid,NULL,test_all,baseInfo);
 }
+
+
+bool UsbTest::usb_test_read_cfg(char* dir)
+{
+    char name[128] = {0};
+    char cmd[256] = {0};
+
+    sprintf(name, "%s/fac_config.conf", dir);
+
+    if (check_file_exit(name)) {
+        LOG_INFO("find fac config conf!\n");
+    } else {
+    	LOG_ERROR("not find fac config conf!\n");
+        return false;
+    }
+
+    sprintf(cmd, "sudo cp -r %s %s", name, FAC_CONFIG_FILE.c_str());
+    if (execute_command(cmd) == "error") {
+        LOG_ERROR("system cmd %s failed!", cmd);
+        return false;
+    }
+
+    return true;
+}
+
+bool UsbTest::usb_test_read_cfg(USB_INFO_T* info) {
+
+	int i = 0;
+	bool ret = false;
+	char* path = "/mnt/usb_factory_test";
+
+    (void) mkdir(path, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+
+	for (i = 0; i < info->dev_num; i++) {
+
+		usb_test_mount(info->dev[i].block, path);
+        ret = usb_test_read_cfg(path);
+		usb_test_umount(path);
+
+        if (ret) {
+            break;
+        }
+		usleep(10000);
+	}
+
+	return ret;
+}
+
+bool UsbTest::usb_test_read_status(){
+
+    bool ret = false;
+	USB_INFO_T info;
+	memset(&info, 0, sizeof(USB_INFO_T));
+
+	info.udev = udev_new();
+	if (NULL == info.udev) {
+		LOG_ERROR("new udev failed\n");
+		return false;
+	}
+    
+    get_usb_mass_storage(&info);
+
+    if (0 != info.dev_num) {
+		ret = usb_test_read_cfg(&info);
+	} else {
+		ret = false;
+	}
+
+	udev_unref(info.udev);
+
+    return ret;
+}
+

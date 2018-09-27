@@ -26,6 +26,7 @@ Control::Control():QObject()
     _baseInfo               = new BaseInfo;
     _hwInfo                 = new HwInfo;
     _facArg                 = new FacArg;
+	_usb                    = new UsbTest(this);
 
     _funcFinishStatus                   = new FuncFinishStatus;
     _funcFinishStatus->interface_finish = false;
@@ -223,13 +224,17 @@ void Control::init_func_test()
 
 void Control::init_fac_config()
 {
+	if (!_usb->usb_test_read_status()) {
+		LOG_ERROR("init copy fac config error");
+	}
     int ret = get_fac_config_from_conf(FAC_CONFIG_FILE, _facArg);
     if (ret == NO_FTP_PATH) {
         LOG_INFO("NO_FTP_PATH");
-    }
-    if (ret == NO_JOB_NUMBER) {
+    } else if (ret == NO_JOB_NUMBER) {
         LOG_INFO("NO_JOB_NUMBER");
-    }
+    } else if (ret == (NO_FTP_PATH + NO_JOB_NUMBER)) {
+        LOG_INFO("NO_FTP_PATH and NO_JOB_NUMBER");
+    } 
     //_uiHandle->add_main_label("NO FTP INFO","NO INFO");
 }
 

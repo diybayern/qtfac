@@ -16,7 +16,7 @@
 #include "FuncBase.h"
 #include "UiHandle.h"
 
-#define   FUNC_TYPE_NUM     (14)
+#define   FUNC_TYPE_NUM     (15)
 
 enum FuncType
 {
@@ -77,6 +77,7 @@ struct InterfaceSelectStatus {
     bool wifi_select;
 };
 
+class UsbTest;
 class Control : public QObject
 {
     Q_OBJECT
@@ -217,6 +218,7 @@ private:
     string _mes_log_file;
     int _interface_test_times;
     bool _auto_upload_mes;
+    UsbTest* _usb;
 
 signals:
 
