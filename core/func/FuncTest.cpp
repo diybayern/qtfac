@@ -158,7 +158,7 @@ void* StressTest::test_all(void *arg)
         snprintf(datebuf, CMD_BUF_SIZE, "%d天%d时%d分%d秒", tmp_dst.day, tmp_dst.hour, tmp_dst.minute, tmp_dst.second);
         UiHandle::get_uihandle()->update_stress_label_value("运行时间", datebuf);
 
-		UiHandle::get_uihandle()->update_stress_label_value("CPU温度","  ");
+		UiHandle::get_uihandle()->update_stress_label_value("CPU温度",execute_command("bash " + GET_CPU_TEMP_SCRIPT));
         
         UiHandle::get_uihandle()->update_stress_label_value("CPU频率",get_current_cpu_freq());		
         UiHandle::get_uihandle()->update_stress_label_value("Mem",get_mem_info());		

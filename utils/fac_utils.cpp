@@ -617,22 +617,4 @@ string get_cpu_info(CpuStatus* st_cpu) {
 	return cpu_str;
 }
 
-#if 0
-float get_cpu_temp(string cmd, int num)
-{
-	int ret = 0;
-	int cpu_temp = 0;
-	for(int i = 0; i < num; i++) {
-		string str = execute_command(cmd);
-		if(str == "error"){
-			return 0.0
-		}
-		ret = get_int_value(str);
-		if(cpu_temp < ret){
-			cpu_temp = ret;
-		}		
-	}
-	return 1.0 * cpu_temp / 1000;
-}
-#endif
 

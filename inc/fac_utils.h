@@ -26,6 +26,9 @@ const string WIFI_TEST_SCRIPT     = FACTORY_PATH + "wifi_test.sh";
 const string HDD_TEST_SCRIPT      = FACTORY_PATH + "hdd_test.sh";
 const string CAMERA_CHECK_SCRIPT  = FACTORY_PATH + "check_camera.sh";
 const string CAMERA_START_SCRIPT  = FACTORY_PATH + "start_xawtv.sh";
+const string GET_CPU_TEMP_SCRIPT  = FACTORY_PATH + "get_cpu_temp.sh";
+
+const string GET_BASEINFO_INI     = FACTORY_PATH + "hwcfg.ini";
 
 const string MEM_UI_LOG           = FACTORY_PATH + "mem_ui_log";
 const string FAC_CONFIG_FILE      = "/tmp/fac_config.conf";
@@ -194,9 +197,6 @@ string get_current_cpu_freq();
 string get_mem_info();
 string get_cpu_info(CpuStatus* st_cpu);
 string change_float_to_string(float fla);
-
-
-//string get_cpu_temp(string cmd, int num);
 
 
 #endif

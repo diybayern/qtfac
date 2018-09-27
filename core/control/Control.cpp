@@ -82,8 +82,12 @@ Control* Control::get_control()
 
 void Control::init_base_info()
 {
-    string dmi = "CPU:i5-6200U;MEM:8;USB:1/2;SSD:256;EMMC:0;HDD:500;WIFI:1;FAN:3800;VGA:1;HDMI:1;LCD:1920*1080;BRT:0;CAM:0";
-    get_baseinfo(_baseInfo,dmi);
+    string dmi = execute_command("cat " + GET_BASEINFO_INI);
+	if (dmi != "error") {
+		get_baseinfo(_baseInfo,dmi);
+	} else {
+		LOG_ERROR("get hwcfg.ini information error");
+	}
 }
 
 void Control::init_hw_info()
