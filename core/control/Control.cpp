@@ -440,21 +440,21 @@ void Control::init_mes_log()
     LOG_MES("USB:       NULL\n");
     LOG_MES("NET:       NULL\n");
     LOG_MES("EDID:      NULL\n");
-    if (_baseInfo->hdd_cap != "0" || _baseInfo->hdd_cap != "") {
+    if (_baseInfo->hdd_cap != "0" && _baseInfo->hdd_cap != "") {
         LOG_MES("HDD:       NULL\n");
     }
-    if (_baseInfo->fan_speed != "0" || _baseInfo->fan_speed != "") {
+    if (_baseInfo->fan_speed != "0" && _baseInfo->fan_speed != "") {
         LOG_MES("FAN:       NULL\n");
     }
-    if (_baseInfo->wifi_exist != "0" || _baseInfo->wifi_exist != "") {
+    if (_baseInfo->wifi_exist != "0" && _baseInfo->wifi_exist != "") {
         LOG_MES("WIFI:      NULL\n");
     }
     LOG_MES("AUDIO:     NULL\n");
     LOG_MES("DISPLAY:   NULL\n");
-    if (_baseInfo->bright_level != "0" || _baseInfo->bright_level != "") {
+    if (_baseInfo->bright_level != "0" && _baseInfo->bright_level != "") {
         LOG_MES("BRIGHTNESS:NULL\n");
     }
-    if (_baseInfo->camera_exist != "0" || _baseInfo->camera_exist != "") {
+    if (_baseInfo->camera_exist != "0" && _baseInfo->camera_exist != "") {
         LOG_MES("CAMERA:    NULL\n");
     }
     LOG_MES("STRESS:    NULL\n");

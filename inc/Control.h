@@ -96,14 +96,14 @@ struct InterfaceTestResult {
 };
 
 struct InterfaceTestFailNum {
-    bool mem_test_fail_num;
-    bool usb_test_fail_num;
-    bool cpu_test_fail_num;
-    bool net_test_fail_num;
-    bool edid_test_fail_num;
-    bool hdd_test_fail_num;
-    bool fan_test_fail_num;
-    bool wifi_test_fail_num;
+    int mem_test_fail_num;
+    int usb_test_fail_num;
+    int cpu_test_fail_num;
+    int net_test_fail_num;
+    int edid_test_fail_num;
+    int hdd_test_fail_num;
+    int fan_test_fail_num;
+    int wifi_test_fail_num;
 };
 
 
