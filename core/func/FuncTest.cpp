@@ -38,15 +38,19 @@ bool CpuTest::is_cpu_test_pass(BaseInfo* baseInfo)
 
 void CpuTest::start_test(BaseInfo* baseInfo)
 {
-	cpu_screen_log += "==================== cpu test ====================\n";
+    Control *control = Control::get_control();
+	control->set_cpu_test_status(false);
+    cpu_screen_log += "==================== cpu test ====================\n";
     if (is_cpu_test_pass(baseInfo)) {
-		cpu_screen_log += "cpu test result:\t\t\tSUCCESS\n\n";
-		set_cpu_test_result("CPU测试","PASS",cpu_screen_log);
-	} else {	
-		cpu_screen_log += "cpu test result:\t\t\tFAIL\n\n";
-		set_cpu_test_result("CPU测试","FAIL",cpu_screen_log);
-	}	
-	cpu_screen_log = "";
+        cpu_screen_log += "cpu test result:\t\t\tSUCCESS\n\n";
+		control->set_cpu_test_result(true); 
+    } else {    
+        cpu_screen_log += "cpu test result:\t\t\tFAIL\n\n";
+		control->set_fan_test_result(false); 
+    }
+	control->update_screen_log(cpu_screen_log);
+	control->set_cpu_test_status(true);
+    cpu_screen_log = "";
 }
 
 
@@ -74,19 +78,23 @@ string FanTest::fan_speed_test(string speed)
 
 void* FanTest::test_all(void *arg)
 {
-	fan_screen_log += "==================== fan test ====================\n";
-	BaseInfo* baseInfo = (BaseInfo *)arg;
-	string result = fan_speed_test(baseInfo->fan_speed);
-	if (result == "SUCCESS") {		
-		fan_screen_log += "fan test result:\t\t\t" + result + "\n\n";
-        set_fan_test_result("FAN测试","PASS",fan_screen_log);
-	} else {
-		fan_screen_log += "fan speed should be\t" + baseInfo->fan_speed + "but current is\t" + result + "\n\n";		
-		fan_screen_log += "fan test result:\t\t\tFAIL\n\n";
-        set_fan_test_result("FAN测试","FAIL",fan_screen_log);
-	}
-	fan_screen_log = "";
-	return NULL;
+    Control *control = Control::get_control();
+	control->set_fan_test_status(false);
+    fan_screen_log += "==================== fan test ====================\n";
+    BaseInfo* baseInfo = (BaseInfo *)arg;
+    string result = fan_speed_test(baseInfo->fan_speed);
+    if (result == "SUCCESS") {        
+        fan_screen_log += "fan test result:\t\t\t" + result + "\n\n";
+        control->set_fan_test_result(true);    
+    } else {
+        fan_screen_log += "fan speed should be\t" + baseInfo->fan_speed + "but current is\t" + result + "\n\n";        
+        fan_screen_log += "fan test result:\t\t\tFAIL\n\n";
+        control->set_fan_test_result(false);
+    }
+    control->update_screen_log(fan_screen_log);
+	control->set_fan_test_status(true);
+    fan_screen_log = "";
+    return NULL;
 }
 
 void FanTest::start_test(BaseInfo* baseInfo)
@@ -257,43 +265,194 @@ void* InterfaceTest::test_all(void *arg)
     BaseInfo* baseInfo = (BaseInfo *)arg;
     Control *control = Control::get_control();
     FuncBase** FuncBase = control->get_funcbase();
-	InterfaceSelectStatus* interfaceSelectStatus = control->get_interface_select_status();
+    InterfaceSelectStatus* interfaceSelectStatus = control->get_interface_select_status();
+    InterfaceTestStatus* interfaceTestStatus = control->get_interface_test_status();
+    InterfaceTestResult* interfaceTestResult = control->get_interface_test_result();
+
+    InterfaceTestFailNum* interfaceTestFailNum = new InterfaceTestFailNum;
+    interfaceTestFailNum->cpu_test_fail_num = 0;
+    interfaceTestFailNum->mem_test_fail_num = 0;
+    interfaceTestFailNum->usb_test_fail_num = 0;
+    interfaceTestFailNum->net_test_fail_num = 0;
+    interfaceTestFailNum->edid_test_fail_num = 0;
+    interfaceTestFailNum->hdd_test_fail_num = 0;
+    interfaceTestFailNum->fan_test_fail_num = 0;
+    interfaceTestFailNum->wifi_test_fail_num = 0;
     
-	if (interfaceSelectStatus->mem_select) {
-        FuncBase[MEM]->start_test(baseInfo);
-    }
-    if (interfaceSelectStatus->usb_select) {
-        FuncBase[USB]->start_test(baseInfo);
-    }
-    if (interfaceSelectStatus->mem_select) {
-        FuncBase[MEM]->start_test(baseInfo);
-    }
-    if (interfaceSelectStatus->net_select) {
-        FuncBase[NET]->start_test(baseInfo);
-    }
-    if (interfaceSelectStatus->edid_select) {
-        FuncBase[EDID]->start_test(baseInfo);
-    }
-    if (interfaceSelectStatus->cpu_select) {
-        FuncBase[CPU]->start_test(baseInfo);
+    int test_num = 2;
+    int interface_run_status = INF_RUNEND;
+    for (int i = 0; i < test_num || test_num == 0; i++) {
+		interface_run_status = control->get_interface_run_status();
+        if (interface_run_status == INF_BREAK) {
+            break;
+        }
+        
+        control->update_screen_log("************LOOP************");
+        if (interfaceSelectStatus->mem_select) {
+            FuncBase[MEM]->start_test(baseInfo);
+        }
+        
+        if (interfaceSelectStatus->usb_select) {
+            FuncBase[USB]->start_test(baseInfo);
+        }
+
+        if (interfaceSelectStatus->net_select) {
+            FuncBase[NET]->start_test(baseInfo);
+        }
+        
+        if (interfaceSelectStatus->edid_select) {
+            FuncBase[EDID]->start_test(baseInfo);
+        }
+        
+        if (interfaceSelectStatus->cpu_select) {
+            FuncBase[CPU]->start_test(baseInfo);
+        }
+
+        if (baseInfo->hdd_cap != "0" || baseInfo->hdd_cap != "") {
+            if (interfaceSelectStatus->hdd_select) {
+                FuncBase[HDD]->start_test(baseInfo);
+            }
+        }
+        if (baseInfo->fan_speed != "0" || baseInfo->fan_speed!= "") {
+            if (interfaceSelectStatus->fan_select) {
+                FuncBase[FAN]->start_test(baseInfo);
+            }
+        }
+        
+        if (baseInfo->wifi_exist!= "0" || baseInfo->wifi_exist!= "") {
+            if (interfaceSelectStatus->wifi_select) {
+                FuncBase[WIFI]->start_test(baseInfo);
+            }
+        }
+
+        while(1) {
+            sleep(1);
+			cout << "dssd" << interfaceTestStatus->mem_test_over 
+				<< interfaceTestStatus->usb_test_over
+				<< interfaceTestStatus->edid_test_over
+				<< interfaceTestStatus->cpu_test_over
+				<< interfaceTestStatus->net_test_over
+				<< interfaceTestStatus->hdd_test_over
+				<< interfaceTestStatus->fan_test_over
+				<< interfaceTestStatus->wifi_test_over <<endl;
+            if (interfaceTestStatus->mem_test_over
+                && interfaceTestStatus->usb_test_over
+                && interfaceTestStatus->edid_test_over
+                && interfaceTestStatus->cpu_test_over
+                && interfaceTestStatus->net_test_over
+                && interfaceTestStatus->hdd_test_over
+                && interfaceTestStatus->fan_test_over
+                && interfaceTestStatus->wifi_test_over){
+
+                if (!interfaceTestResult->mem_test_result) {
+                   interfaceTestFailNum->mem_test_fail_num++;
+                }
+
+                if (!interfaceTestResult->usb_test_result) {
+                   interfaceTestFailNum->usb_test_fail_num++;
+                }
+
+                if (!interfaceTestResult->net_test_result) {
+                   interfaceTestFailNum->net_test_fail_num++;
+                }
+
+                if (!interfaceTestResult->edid_test_result) {
+                   interfaceTestFailNum->edid_test_fail_num++;
+                }
+
+                if (!interfaceTestResult->cpu_test_result) {
+                   interfaceTestFailNum->cpu_test_fail_num++;
+                }
+
+                if (!interfaceTestResult->hdd_test_result) {
+                   interfaceTestFailNum->hdd_test_fail_num++;
+                }
+
+                if (!interfaceTestResult->fan_test_result) {
+                   interfaceTestFailNum->fan_test_fail_num++;
+                }
+
+                if (!interfaceTestResult->wifi_test_result) {
+                   interfaceTestFailNum->wifi_test_fail_num++;
+                }
+                cout << "dsdsdsdssd" << endl;
+                break;
+            }
+        }
     }
 
+    if (interfaceSelectStatus->mem_select) {
+        if(interfaceTestFailNum->mem_test_fail_num == 0) {
+            control->set_func_test_result("内存测试","PASS");
+        } else {
+            control->set_func_test_result("内存测试","FAIL");
+        }
+    }
+        
+    if (interfaceSelectStatus->usb_select) {
+        if(interfaceTestFailNum->usb_test_fail_num == 0) {
+            control->set_func_test_result("USB测试","PASS");
+        } else {
+            control->set_func_test_result("USB测试","FAIL");
+        }
+    }
+    
+    if (interfaceSelectStatus->net_select) {
+        if(interfaceTestFailNum->net_test_fail_num == 0) {
+            control->set_func_test_result("网口测试","PASS");
+        } else {
+            control->set_func_test_result("网口测试","FAIL");
+        }
+    }
+    
+    if (interfaceSelectStatus->edid_select) {
+        if(interfaceTestFailNum->edid_test_fail_num == 0) {
+            control->set_func_test_result("EDID测试","PASS");
+        } else {
+            control->set_func_test_result("EDID测试","FAIL");
+        }
+    }
+    
+    if (interfaceSelectStatus->cpu_select) {
+        if(interfaceTestFailNum->cpu_test_fail_num == 0) {
+            control->set_func_test_result("CPU测试","PASS");
+        } else {
+            control->set_func_test_result("CPU测试","FAIL");
+        }
+    }
+    
     if (baseInfo->hdd_cap != "0" || baseInfo->hdd_cap != "") {
         if (interfaceSelectStatus->hdd_select) {
-            FuncBase[HDD]->start_test(baseInfo);
+            if(interfaceTestFailNum->hdd_test_fail_num == 0) {
+                control->set_func_test_result("HDD测试","PASS");
+            } else {
+                control->set_func_test_result("HDD测试","FAIL");
+            }
         }
     }
+     
     if (baseInfo->fan_speed != "0" || baseInfo->fan_speed!= "") {
         if (interfaceSelectStatus->fan_select) {
-            FuncBase[FAN]->start_test(baseInfo);
+            if(interfaceTestFailNum->fan_test_fail_num == 0) {
+                control->set_func_test_result("FAN测试","PASS");
+            } else {
+                control->set_func_test_result("FAN测试","FAIL");
+            }
         }
     }
+    
     if (baseInfo->wifi_exist!= "0" || baseInfo->wifi_exist!= "") {
         if (interfaceSelectStatus->wifi_select) {
-            FuncBase[WIFI]->start_test(baseInfo);
+            if(interfaceTestFailNum->wifi_test_fail_num == 0) {
+                control->set_func_test_result("WIFI测试","PASS");
+            } else {
+                control->set_func_test_result("WIFI测试","FAIL");
+            }
         }
     }
-	return NULL;
+    
+    control->set_interface_run_status(INF_RUNEND);
+    return NULL;
 }
 
 void InterfaceTest::start_test(BaseInfo* baseInfo)

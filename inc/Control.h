@@ -37,6 +37,13 @@ enum FuncType
     NEXT_PROCESS
 };
 
+enum InterfaceRunStatus
+{
+    INF_RUNEND = 0,
+    INF_BREAK,
+    INF_RUNNING
+};
+
 enum TestStep {
     STEP_IDLE = 0,
     STEP_INTERFACE,
@@ -66,6 +73,42 @@ struct FuncFinishStatus {
     bool stress_finish;
 };
 
+struct InterfaceTestStatus {
+    bool mem_test_over;
+    bool usb_test_over;
+    bool cpu_test_over;
+    bool net_test_over;
+    bool edid_test_over;
+    bool hdd_test_over;
+    bool fan_test_over;
+    bool wifi_test_over;
+};
+
+struct InterfaceTestResult {
+    bool mem_test_result;
+    bool usb_test_result;
+    bool cpu_test_result;
+    bool net_test_result;
+    bool edid_test_result;
+    bool hdd_test_result;
+    bool fan_test_result;
+    bool wifi_test_result;
+};
+
+struct InterfaceTestFailNum {
+    bool mem_test_fail_num;
+    bool usb_test_fail_num;
+    bool cpu_test_fail_num;
+    bool net_test_fail_num;
+    bool edid_test_fail_num;
+    bool hdd_test_fail_num;
+    bool fan_test_fail_num;
+    bool wifi_test_fail_num;
+};
+
+
+
+
 struct InterfaceSelectStatus {
     bool mem_select;
     bool usb_select;
@@ -89,6 +132,7 @@ public:
     static Control* get_control();
     void show_main_test_ui();
     void update_screen_log(string uiLog);
+    void set_func_test_result(string func,string result);
     void upload_mes_log();
     void init_mes_log();
     void update_mes_log(char* tag,char* value);
@@ -158,6 +202,85 @@ public:
         _funcFinishStatus->wifi_finish = true;
     }
 
+    void set_mem_test_status(bool status)
+    {
+        _interfaceTestStatus->mem_test_over= status;
+    }
+    
+    void set_usb_test_status(bool status)
+    {
+        _interfaceTestStatus->usb_test_over= status;
+    }
+    
+    void set_net_test_status(bool status)
+    {
+        _interfaceTestStatus->net_test_over= status;
+    }
+    
+    void set_edid_test_status(bool status)
+    {
+        _interfaceTestStatus->edid_test_over= status;
+    }
+    
+    void set_cpu_test_status(bool status)
+    {
+        _interfaceTestStatus->cpu_test_over= status;
+    }
+    
+    void set_hdd_test_status(bool status)
+    {
+        _interfaceTestStatus->hdd_test_over= status;
+    }
+    void set_fan_test_status(bool status)
+    {
+        _interfaceTestStatus->fan_test_over= status;
+    }
+    
+    void set_wifi_test_status(bool status)
+    {
+        _interfaceTestStatus->wifi_test_over= status;
+    }
+
+    void set_mem_test_result(bool status)
+    {
+        _interfaceTestResult->mem_test_result= status;
+    }
+    
+    void set_usb_test_result(bool status)
+    {
+        _interfaceTestResult->usb_test_result = status;
+    }
+    
+    void set_net_test_result(bool status)
+    {
+        _interfaceTestResult->net_test_result= status;
+    }
+    
+    void set_edid_test_result(bool status)
+    {
+        _interfaceTestResult->edid_test_result= status;
+    }
+    
+    void set_cpu_test_result(bool status)
+    {
+        _interfaceTestResult->cpu_test_result= status;
+    }
+    
+    void set_hdd_test_result(bool status)
+    {
+        _interfaceTestResult->hdd_test_result= status;
+    }
+    void set_fan_test_result(bool status)
+    {
+        _interfaceTestResult->fan_test_result= status;
+    }
+    
+    void set_wifi_test_result(bool status)
+    {
+        _interfaceTestResult->wifi_test_result= status;
+    }
+    
+
     string get_stress_test_stage() {
         return _stress_test_stage;
     }
@@ -193,6 +316,22 @@ public:
     InterfaceSelectStatus* get_interface_select_status() {
         return _interfaceSelectStatus;
     }
+
+    InterfaceTestStatus* get_interface_test_status() {
+        return _interfaceTestStatus;
+    }
+
+    InterfaceTestResult* get_interface_test_result() {
+        return _interfaceTestResult;
+    }
+
+    int get_interface_run_status() {
+        return _interfaceRunStatus;
+    }
+
+    void set_interface_run_status(int status) {
+        _interfaceRunStatus = status;
+    }
     
 private:
     void init_base_info();
@@ -209,7 +348,12 @@ private:
     BaseInfo* _baseInfo;
     HwInfo* _hwInfo;
     FuncFinishStatus* _funcFinishStatus;
+    InterfaceTestStatus* _interfaceTestStatus;
     InterfaceSelectStatus* _interfaceSelectStatus;
+    InterfaceTestResult* _interfaceTestResult;
+    InterfaceTestFailNum* _interfaceTestFailNum;
+	UsbTest* _usb;
+    
     int _testStep;
     FuncBase* _funcBase[FUNC_TYPE_NUM];
     FacArg* _facArg;
@@ -218,7 +362,7 @@ private:
     string _mes_log_file;
     int _interface_test_times;
     bool _auto_upload_mes;
-    UsbTest* _usb;
+    int _interfaceRunStatus;
 
 signals:
 

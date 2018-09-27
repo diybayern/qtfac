@@ -44,6 +44,16 @@ Control::Control():QObject()
     _funcFinishStatus->camera_finish    = false;
     _funcFinishStatus->stress_finish    = false;
 
+    _interfaceTestStatus                 = new InterfaceTestStatus;    
+	_interfaceTestStatus->cpu_test_over  = false;
+	_interfaceTestStatus->mem_test_over  = false;
+	_interfaceTestStatus->usb_test_over  = false;
+	_interfaceTestStatus->edid_test_over = false;
+	_interfaceTestStatus->net_test_over  = false;
+	_interfaceTestStatus->hdd_test_over  = false;
+	_interfaceTestStatus->fan_test_over  = false;
+	_interfaceTestStatus->wifi_test_over = false;
+
     _interfaceSelectStatus              = new InterfaceSelectStatus;
     _interfaceSelectStatus->mem_select  = true;
     _interfaceSelectStatus->usb_select  = true;
@@ -54,7 +64,10 @@ Control::Control():QObject()
     _interfaceSelectStatus->fan_select  = true;
     _interfaceSelectStatus->wifi_select = true;
 
+	_interfaceTestResult                = new InterfaceTestResult;
+
     _testStep = STEP_IDLE;
+	_interfaceRunStatus = INF_RUNEND;
     _stress_test_stage = "";
     _autoUploadLog = true;
     _mes_log_file = "";
@@ -115,18 +128,21 @@ void Control::ui_init()
         _uiHandle->add_interface_test_button("HDD测试");
     } else {
         _funcFinishStatus->hdd_finish = true;
+		_interfaceTestStatus->hdd_test_over = true;
     }
     
     if (_baseInfo->fan_speed != "0" && _baseInfo->fan_speed != "") {
         _uiHandle->add_interface_test_button("FAN测试");
     } else {
         _funcFinishStatus->fan_finish = true;
+		_interfaceTestStatus->fan_test_over = true;
     }
 
     if (_baseInfo->wifi_exist != "0" && _baseInfo->wifi_exist != "") {
         _uiHandle->add_interface_test_button("WIFI测试");
     } else {
         _funcFinishStatus->wifi_finish = true;
+		_interfaceTestStatus->wifi_test_over = true;
     }
 
     _uiHandle->add_main_test_button("音频测试");
@@ -513,6 +529,13 @@ void Control::update_screen_log(string uiLog)
     _uiHandle->update_screen_log(uiLog);
 }
 
+void Control::set_func_test_result(string func,string result)
+
+{
+    _uiHandle->set_test_result(func, result);
+}
+
+
 int Control::get_screen_height()
 {
     return _uiHandle->get_screen_height();
@@ -540,6 +563,7 @@ void Control::set_interface_select_status(string func, bool state) {
             _funcFinishStatus->mem_finish = false;
         } else {
             _funcFinishStatus->mem_finish = true;
+			_interfaceTestStatus->mem_test_over = true;
         }
     }
     if (func ==  "USB测试") {
@@ -548,6 +572,7 @@ void Control::set_interface_select_status(string func, bool state) {
             _funcFinishStatus->usb_finish = false;
         } else {
             _funcFinishStatus->usb_finish = true;
+			_interfaceTestStatus->usb_test_over = true;
         }
     }
     if (func == "网口测试") {
@@ -556,6 +581,7 @@ void Control::set_interface_select_status(string func, bool state) {
             _funcFinishStatus->net_finish = false;
         } else {
             _funcFinishStatus->net_finish = true;
+			_interfaceTestStatus->net_test_over = true;
         }
     }
     if (func == "EDID测试") {
@@ -564,6 +590,7 @@ void Control::set_interface_select_status(string func, bool state) {
             _funcFinishStatus->edid_finish = false;
         } else {
             _funcFinishStatus->edid_finish = true;
+			_interfaceTestStatus->edid_test_over = true;
         }
     }
     if (func == "CPU测试") {
@@ -572,14 +599,16 @@ void Control::set_interface_select_status(string func, bool state) {
             _funcFinishStatus->cpu_finish = false;
         } else {
             _funcFinishStatus->cpu_finish = true;
+			_interfaceTestStatus->cpu_test_over = true;
         }
     }
     if (func == "HDD测试") {
         _interfaceSelectStatus->hdd_select  = state;
-        if (_interfaceSelectStatus->mem_select) {
+        if (_interfaceSelectStatus->hdd_select) {
             _funcFinishStatus->hdd_finish = false;
         } else {
             _funcFinishStatus->hdd_finish = true;
+			_interfaceTestStatus->hdd_test_over = true;
         }
     }
     if (func == "FAN测试") {
@@ -588,6 +617,7 @@ void Control::set_interface_select_status(string func, bool state) {
             _funcFinishStatus->fan_finish = false;
         } else {
             _funcFinishStatus->fan_finish = true;
+			_interfaceTestStatus->fan_test_over = true;
         }
     }
     if (func == "WIFI测试") {
@@ -596,6 +626,7 @@ void Control::set_interface_select_status(string func, bool state) {
             _funcFinishStatus->wifi_finish = false;
         } else {
             _funcFinishStatus->wifi_finish = true;
+			_interfaceTestStatus->wifi_test_over = true;
         }
     }
 }

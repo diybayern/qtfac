@@ -554,17 +554,21 @@ void NetTest::set_net_test_result(string func,string result,string ui_log)
 
 void* NetTest::test_all(void* arg)
 {
+    Control *control = Control::get_control();
+	control->set_net_test_status(false);
 	net_screen_log += "==================== net test ====================\n";
 	bool is_pass = net_test_all();
 	if (is_pass) {
 		LOG_INFO("net test result: \tSUCCESS\n");
     	net_screen_log += "net test result: \t\t\tSUCCESS\n\n";
-        set_net_test_result("网口测试","PASS",net_screen_log);
+        control->set_net_test_result(true);
 	} else {
 		LOG_INFO("net test result: \tFAIL\n");
     	net_screen_log += "net test result: \t\t\tFAIL\n\n";
-        set_net_test_result("网口测试","FAIL",net_screen_log);
+        control->set_net_test_result(false);
 	}
+	control->update_screen_log(net_screen_log);
+	control->set_net_test_status(true);
 	net_screen_log = "";
 	return NULL;
 }
