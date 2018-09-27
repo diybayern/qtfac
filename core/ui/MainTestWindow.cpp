@@ -355,6 +355,11 @@ void MainTestWindow::_create_main_test_layout()
                     iteminfo.button = button;
                     iteminfo.label = label;
                     _insert_item_record(iteminfo);
+
+                    InterfaceTestItemPri if_item;
+                    if_item.checkbox = checkbox;
+                    if_item.button = button;
+                    if_test_pri_list.append(if_item);
                 }
 
              } else {
@@ -579,6 +584,58 @@ void MainTestWindow::slot_finish_show_display_window()
         }
     }
     emit to_quit_test_window("显示测试");
+}
+
+QPushButton* MainTestWindow::_get_interface_test_button()
+{
+    if (itemlist.isEmpty()) {
+        return NULL;
+    }
+
+    foreach (ItemCheck item, itemlist) {
+        if (0 == item.name.compare("接口测试")) {
+            return (QPushButton*)item.button;
+        }
+    }
+    return NULL;
+}
+
+void MainTestWindow::_set_interface_test_item_enable(bool state)
+{
+    if (if_test_pri_list.isEmpty()) {
+        return ;
+    }
+
+    foreach (InterfaceTestItemPri item, if_test_pri_list) {
+        if (state == true) {
+            item.checkbox->setEnabled(true);
+            item.button->setEnabled(true);
+        } else {
+            item.checkbox->setEnabled(false);
+            item.button->setEnabled(false);
+        }
+    }
+}
+
+void MainTestWindow::slot_set_interface_test_state(int state)
+{
+    if (NULL == _get_interface_test_button()) {
+        return ;
+    }
+
+    if (UI_INF_RUNNING == state) {
+        _get_interface_test_button()->setText("结束");
+        _set_interface_test_item_enable(false);
+
+    } else if (UI_INF_RUNEND == state) {
+        _get_interface_test_button()->setEnabled(true);
+        _get_interface_test_button()->setText("接口测试");
+        _set_interface_test_item_enable(true);
+
+    } else { //UI_INF_BREAK
+        _get_interface_test_button()->setEnabled(false);
+        _set_interface_test_item_enable(false);
+    }
 }
 
 void MainTestWindow::update_stress_label_value(QString item, QString result)

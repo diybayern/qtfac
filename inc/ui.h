@@ -38,10 +38,24 @@ typedef struct _CustomData {
 } CustomData;
 #endif
 
+enum
+{
+    UI_INF_RUNEND = 0,
+    UI_INF_BREAK,
+    UI_INF_RUNNING
+};
+
 class InterfaceTestItem
 {
     public:
         QString itemname;
+};
+
+class InterfaceTestItemPri
+{
+    public:
+        QCheckBox *checkbox;
+        QPushButton *button;
 };
 
 class MainLabelItem
@@ -212,6 +226,10 @@ class MainTestWindow : public QDialog
 
         bool _is_auto_upload_checked = true;
 
+        QPushButton* _get_interface_test_button();
+        QList<InterfaceTestItemPri> if_test_pri_list;
+        void _set_interface_test_item_enable(bool state);
+
     signals:
         void to_quit_test_window(QString item);
         void sig_check_state_changed(QString item, bool state);
@@ -232,6 +250,7 @@ class MainTestWindow : public QDialog
         void confirm_test_result_warning(QString title);
         void confirm_test_result_success(QString title);
         void start_audio_progress_dialog();
+        void slot_set_interface_test_state(int state);
 
     private slots:
         void on_state_changed(int state);
