@@ -26,7 +26,6 @@ Control::Control():QObject()
     _baseInfo               = new BaseInfo;
     _hwInfo                 = new HwInfo;
     _facArg                 = new FacArg;
-	_usb                    = new UsbTest(this);
 
     _funcFinishStatus                   = new FuncFinishStatus;
     _funcFinishStatus->interface_finish = false;
@@ -245,6 +244,7 @@ void Control::init_func_test()
 
 void Control::init_fac_config()
 {
+	UsbTest* _usb = (UsbTest*)_funcBase[USB];
 	if (!_usb->usb_test_read_status()) {
 		LOG_ERROR("init copy fac config error");
 	}
@@ -513,9 +513,11 @@ void Control::upload_mes_log() {
         response = response_to_chinese(response);
         LOG_INFO("upload %s",response);
 		if (!strcmp(response,"上传成功")) {
-			_uiHandle->confirm_test_result_warning("upload success");
+			_uiHandle->confirm_test_result_success("upload success");
+			set_test_result("上传日志","PASS",response);
 		} else {
 			_uiHandle->confirm_test_result_warning("upload fail");
+			set_test_result("上传日志","FAIL",response);
 		}
     } else {
         LOG_INFO("combine mes fail");

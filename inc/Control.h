@@ -352,7 +352,6 @@ private:
     InterfaceSelectStatus* _interfaceSelectStatus;
     InterfaceTestResult* _interfaceTestResult;
     InterfaceTestFailNum* _interfaceTestFailNum;
-	UsbTest* _usb;
     
     int _testStep;
     FuncBase* _funcBase[FUNC_TYPE_NUM];

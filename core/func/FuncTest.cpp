@@ -308,18 +308,18 @@ void* InterfaceTest::test_all(void *arg)
             FuncBase[CPU]->start_test(baseInfo);
         }
 
-        if (baseInfo->hdd_cap != "0" || baseInfo->hdd_cap != "") {
+        if (baseInfo->hdd_cap != "0" && baseInfo->hdd_cap != "") {
             if (interfaceSelectStatus->hdd_select) {
                 FuncBase[HDD]->start_test(baseInfo);
             }
         }
-        if (baseInfo->fan_speed != "0" || baseInfo->fan_speed!= "") {
+        if (baseInfo->fan_speed != "0" && baseInfo->fan_speed!= "") {
             if (interfaceSelectStatus->fan_select) {
                 FuncBase[FAN]->start_test(baseInfo);
             }
         }
         
-        if (baseInfo->wifi_exist!= "0" || baseInfo->wifi_exist!= "") {
+        if (baseInfo->wifi_exist!= "0" && baseInfo->wifi_exist!= "") {
             if (interfaceSelectStatus->wifi_select) {
                 FuncBase[WIFI]->start_test(baseInfo);
             }
