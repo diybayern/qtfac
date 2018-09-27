@@ -189,23 +189,6 @@ void Control::ui_init()
     _uiHandle->add_stress_test_label("硬件版本");
     
     connect(_uiHandle->get_qobject("接口测试"), SIGNAL(clicked()), this, SLOT(start_interface_test()));
-    connect(_uiHandle->get_qobject("内存测试"), SIGNAL(clicked()), this, SLOT(start_mem_test()));
-    connect(_uiHandle->get_qobject("USB测试"), SIGNAL(clicked()), this, SLOT(start_usb_test()));
-    connect(_uiHandle->get_qobject("网口测试"), SIGNAL(clicked()), this, SLOT(start_net_test()));
-    connect(_uiHandle->get_qobject("EDID测试"), SIGNAL(clicked()), this, SLOT(start_edid_test()));
-    connect(_uiHandle->get_qobject("CPU测试"), SIGNAL(clicked()), this, SLOT(start_cpu_test()));
-    if (_baseInfo->hdd_cap != "0" && _baseInfo->hdd_cap != "") {
-        connect(_uiHandle->get_qobject("HDD测试"), SIGNAL(clicked()), this, SLOT(start_hdd_test()));
-    }
-    
-    if (_baseInfo->fan_speed != "0" && _baseInfo->fan_speed != "") {
-        connect(_uiHandle->get_qobject("FAN测试"), SIGNAL(clicked()), this, SLOT(start_fan_test()));
-    }
-
-    if (_baseInfo->wifi_exist != "0" && _baseInfo->wifi_exist != "") {
-        connect(_uiHandle->get_qobject("WIFI测试"), SIGNAL(clicked()), this, SLOT(start_wifi_test()));
-    }
-
     connect(_uiHandle->get_qobject("音频测试"), SIGNAL(clicked()), this, SLOT(start_sound_test()));
     connect(_uiHandle->get_qobject("显示测试"), SIGNAL(clicked()), this, SLOT(start_display_test()));
 

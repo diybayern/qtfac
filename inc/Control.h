@@ -142,6 +142,11 @@ public:
     bool stress_test_window_quit_status;
 
     int get_test_step();
+
+    UiHandle* get_ui_handle() {
+        return _uiHandle;
+    }
+    
     FuncFinishStatus* get_func_finish_status()
     {
         return _funcFinishStatus;
