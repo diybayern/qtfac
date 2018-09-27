@@ -40,22 +40,13 @@ bool MemTest::mem_stability_test()
 	}
 }
 
-void MemTest::set_mem_test_result(string func,string result,string ui_log)
-{
-    Control *control = Control::get_control();
-    control->set_test_result(func,result,ui_log);
-	if (result == "PASS") {
-		control->set_mem_test_finish();
-	}
-}
-
 void* MemTest::test_all(void *arg)
 {
     Control *control = Control::get_control();
 	control->set_mem_test_status(false);
 	BaseInfo* baseInfo = (BaseInfo *)arg;
 	bool is_pass;
-	mem_screen_log += "==================== mem test =====================\n";
+	mem_screen_log += "==================== mem test ====================\n";
 	is_pass    = compare_men_cap(get_int_value(baseInfo->mem_cap));
 	is_pass   &= mem_stability_test();
 	mem_screen_log += execute_command("cat " + MEM_UI_LOG) + "\n\nmem test result:\t\t\t";

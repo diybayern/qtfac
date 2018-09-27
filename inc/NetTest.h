@@ -30,7 +30,6 @@ public:
     static bool init();
     static bool net_test_all();
     static void* test_all(void* arg);
-    static void set_net_test_result(string func,string result,string ui_log);
     void start_test(BaseInfo* baseInfo);
 
 private:

@@ -12,15 +12,6 @@ CpuTest::CpuTest(Control* control)
     
 }
 
-void CpuTest::set_cpu_test_result(string func,string result,string ui_log)
-{
-    Control *control = Control::get_control();
-    control->set_test_result(func,result,ui_log);
-	if (result == "PASS") {
-		control->set_cpu_test_finish();
-	}
-}
-
 bool CpuTest::is_cpu_test_pass(BaseInfo* baseInfo)
 {
 	string hw_cpu_type = _control->get_hw_info()->cpu_type;
@@ -58,16 +49,6 @@ FanTest::FanTest(Control* control)
        :_control(control)
 {
     
-}
-
-void FanTest::set_fan_test_result(string func,string result,string ui_log)
-{
-    Control *control = Control::get_control();
-    control->set_test_result(func,result,ui_log);
-	if (result == "PASS") {
-		control->set_fan_test_finish();
-	}
-	
 }
 
 string FanTest::fan_speed_test(string speed)
@@ -403,6 +384,7 @@ void* InterfaceTest::test_all(void *arg)
         if(interfaceTestFailNum->mem_test_fail_num == 0) {
 			mem_total_result = mem_total_result + "PASS(Time:" + to_string(real_test_num) + ",ERROR:0)";
             control->set_func_test_result("内存测试","PASS");
+			control->set_mem_test_finish();
         } else {
             control->set_func_test_result("内存测试","FAIL");
 			mem_total_result = mem_total_result + "FAIL(Time:" + to_string(real_test_num) + ",ERROR:" 
@@ -416,6 +398,7 @@ void* InterfaceTest::test_all(void *arg)
         if(interfaceTestFailNum->usb_test_fail_num == 0) {
 			usb_total_result = usb_total_result + "PASS(Time:" + to_string(real_test_num) + ",ERROR:0)";
             control->set_func_test_result("USB测试","PASS");
+			control->set_usb_test_finish();
         } else {
             control->set_func_test_result("USB测试","FAIL");
 			usb_total_result = usb_total_result + "FAIL(Time:" + to_string(real_test_num) + ",ERROR:" 
@@ -428,6 +411,7 @@ void* InterfaceTest::test_all(void *arg)
 		string net_total_result = "NET        ";
         if(interfaceTestFailNum->net_test_fail_num == 0) {
             control->set_func_test_result("网口测试","PASS");
+			control->set_net_test_finish();
 			net_total_result = net_total_result + "PASS(Time:" + to_string(real_test_num) + ",ERROR:0)";
         } else {
             control->set_func_test_result("网口测试","FAIL");
@@ -441,6 +425,7 @@ void* InterfaceTest::test_all(void *arg)
 		string edid_total_result = "EDID      ";
         if(interfaceTestFailNum->edid_test_fail_num == 0) {
             control->set_func_test_result("EDID测试","PASS");
+			control->set_edid_test_finish();
 			edid_total_result = edid_total_result + "PASS(Time:" + to_string(real_test_num) + ",ERROR:0)";
         } else {
             control->set_func_test_result("EDID测试","FAIL");
@@ -454,6 +439,7 @@ void* InterfaceTest::test_all(void *arg)
 		string cpu_total_result = "CPU       ";
         if(interfaceTestFailNum->cpu_test_fail_num == 0) {
             control->set_func_test_result("CPU测试","PASS");
+			control->set_cpu_test_finish();
 			cpu_total_result = cpu_total_result + "PASS(Time:" + to_string(real_test_num) + ",ERROR:0)";
         } else {
             control->set_func_test_result("CPU测试","FAIL");
@@ -468,6 +454,7 @@ void* InterfaceTest::test_all(void *arg)
         if (interfaceSelectStatus->hdd_select) {
             if(interfaceTestFailNum->hdd_test_fail_num == 0) {
                 control->set_func_test_result("HDD测试","PASS");
+				control->set_hdd_test_finish();
 				hdd_total_result = hdd_total_result + "PASS(Time:" + to_string(real_test_num) + ",ERROR:0)";
             } else {
                 control->set_func_test_result("HDD测试","FAIL");
@@ -483,6 +470,7 @@ void* InterfaceTest::test_all(void *arg)
         if (interfaceSelectStatus->fan_select) {
             if(interfaceTestFailNum->fan_test_fail_num == 0) {
                 control->set_func_test_result("FAN测试","PASS");
+				control->set_fan_test_finish();
 				fan_total_result = fan_total_result + "PASS(Time:" + to_string(real_test_num) + ",ERROR:0)";
             } else {
                 control->set_func_test_result("FAN测试","FAIL");
@@ -498,6 +486,7 @@ void* InterfaceTest::test_all(void *arg)
         if (interfaceSelectStatus->wifi_select) {
             if(interfaceTestFailNum->wifi_test_fail_num == 0) {
                 control->set_func_test_result("WIFI测试","PASS");
+				control->set_wifi_test_finish();
 				wifi_total_result = wifi_total_result + "PASS(Time:" + to_string(real_test_num) + ",ERROR:0)";
             } else {
                 control->set_func_test_result("WIFI测试","FAIL");

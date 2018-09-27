@@ -19,6 +19,7 @@
 #define access_ptr_register(reg_frame, reg) (reg_frame->reg)
 
 pthread_mutex_t g_reg_mutex = PTHREAD_MUTEX_INITIALIZER;
+string edid_screen_log = "";
 
 extern int edid_read_i2c_test(int edid_num);
 
@@ -213,27 +214,26 @@ print:
 	return ret;
 }
 
-void EdidTest::set_edid_test_result(string func,string result,string ui_log)
-{
-    Control *control = Control::get_control();
-    control->set_test_result(func,result,ui_log);
-	if (result == "PASS") {
-		control->set_edid_test_finish();
-	}
-}
-
 void* EdidTest::test_all(void *arg)
 {
-	BaseInfo* baseInfo = (BaseInfo *)arg;
-	int edid_num = get_int_value(baseInfo->vga_exist)+get_int_value(baseInfo->hdmi_exist);
-	cout << "edid_num:" << edid_num << endl;
+	
+	Control *control = Control::get_control();
+	control->set_edid_test_status(false);
+	BaseInfo* baseInfo = (BaseInfo *)arg;	
+	edid_screen_log += "==================== edid test ====================\n";
+	int edid_num = get_int_value(baseInfo->vga_exist) + get_int_value(baseInfo->hdmi_exist);
 	int is_pass = edid_test_all(edid_num);
-
+	edid_screen_log += "edid test result:\t\t\t";
 	if (is_pass == SUCCESS) {
-        set_edid_test_result("EDID测试","PASS","SUCCESS");
+		edid_screen_log += "SUCCESS\n\n";
+        control->set_edid_test_result(true);
 	} else {
-        set_edid_test_result("EDID测试","FAIL","FAIL");
+		edid_screen_log += "FAIL\n\n";
+        control->set_edid_test_result(false);
 	}
+	control->update_screen_log(edid_screen_log);
+	control->set_edid_test_status(true);
+	edid_screen_log = "";
 	return NULL;
 }
 

@@ -9,15 +9,6 @@ HddTest::HddTest(Control* control)
     
 }
 
-void HddTest::set_hdd_test_result(string func,string result,string ui_log)
-{
-    Control *control = Control::get_control();
-    control->set_test_result(func,result,ui_log);	
-	if (result == "PASS") {
-		control->set_hdd_test_finish();
-	}
-}
-
 string HddTest::hdd_test_all(string hdd_cap)
 {
     execute_command("bash " + HDD_TEST_SCRIPT + " " + hdd_cap);
@@ -53,15 +44,19 @@ bool HddTest::check_if_hdd_pass()
 
 void* HddTest::test_all(void *arg)
 {
-	hdd_screen_log += "===================== hdd test =====================\n";
+	Control *control = Control::get_control();
+	control->set_hdd_test_status(false);
+	hdd_screen_log += "==================== hdd test ====================\n";
 	BaseInfo* baseInfo = (BaseInfo *)arg;
 	string result = hdd_test_all(baseInfo->hdd_cap);
 	hdd_screen_log += "hdd test result:\t\t\t" + result + "\n\n";
 	if (result == "SUCCESS") {
-        set_hdd_test_result("HDD测试","PASS",hdd_screen_log);
+		control->set_hdd_test_result(true); 
 	} else {
-        set_hdd_test_result("HDD测试","FAIL",hdd_screen_log);
+		control->set_hdd_test_result(false); 
 	}
+	control->update_screen_log(hdd_screen_log);
+	control->set_hdd_test_status(true);
 	hdd_screen_log = "";
 	return NULL;
 }

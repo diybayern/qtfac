@@ -1,6 +1,8 @@
 #include "../../inc/FuncTest.h"
 #include "../../inc/fac_log.h"
 
+string usb_screen_log = "";
+
 UsbTest::UsbTest(Control* control)
        :_control(control)
 {
@@ -8,33 +10,22 @@ UsbTest::UsbTest(Control* control)
 }
 
 bool UsbTest::usb_num_test(string total_num, string num_3)
-{
-	Control *control = Control::get_control();
-	
+{	
     string real_total_num = execute_command("lsusb -t | grep \"Mass Storage\" | wc -l");
     string real_num_3 = execute_command("lsusb -t | grep \"Mass Storage\" | grep \"5000M\" | wc -l");
     if (real_total_num == total_num) {
         if (real_num_3 == num_3) {
             return true;
         } else {
-            control->update_screen_log("usb3.0 num is " + real_num_3 + ",which need " + num_3);
+            usb_screen_log += "usb3.0 num is " + real_num_3 + ",which need " + num_3 + "\n";
             LOG_INFO("usb3.0 num is %s,which need %s!",real_num_3.c_str(),num_3.c_str());
             return false;
         }
     } else {
-    	control->update_screen_log("usb num is " + real_total_num + ",which need " + total_num);
+    	usb_screen_log += "usb num is " + real_total_num + ",which need " + total_num + "\n";
         LOG_INFO("usb num is %s,which need %s!",real_total_num.c_str(),total_num.c_str());
         return false;
     }
-}
-
-void UsbTest::set_usb_test_result(string func,string result,string ui_log)
-{
-    Control *control = Control::get_control();
-    control->set_test_result(func,result,ui_log);
-	if (result == "PASS") {
-		control->set_usb_test_finish();
-	}
 }
 
 bool UsbTest::get_dev_mount_point(struct udev_device* dev, char* dst) {
@@ -288,7 +279,9 @@ bool UsbTest::usb_test_all(int num) {
 void* UsbTest::test_all(void *arg)
 {
     Control *control = Control::get_control();
+	control->set_usb_test_status(false);
 	BaseInfo* baseInfo = (BaseInfo *)arg;
+	usb_screen_log += "==================== usb test ====================\n";
     int num = get_int_value(baseInfo->usb_total_num);
 	bool result_num_test = false;
     result_num_test = usb_num_test(baseInfo->usb_total_num,baseInfo->usb_3_num);
@@ -296,18 +289,19 @@ void* UsbTest::test_all(void *arg)
     if (result_num_test) {
         bool result_write_read = usb_test_all(num);
         if (result_write_read) {
-			control->update_mes_log("USB","PASS");
-            set_usb_test_result("USB测试","PASS","USB测试成功");
+			usb_screen_log += "usb test result:\t\t\tSUCCESS\n\n";
+	   		control->set_usb_test_result(true); 
         } else {
-        	control->update_mes_log("USB","FAIL");
-            set_usb_test_result("USB测试","FAIL","USB读写异常");
+        	usb_screen_log += "usb test result:\t\t\tFAIL\n\n";
+			control->set_usb_test_result(false);
         }
     } else {
-    	control->update_mes_log("USB","FAIL");
-        set_usb_test_result("USB测试","FAIL","USB数量不对");
-        
-    }
-	
+		usb_screen_log += "usb test result:\t\t\tFAIL\n\n";
+		control->set_usb_test_result(false); 
+    }	
+	control->update_screen_log(usb_screen_log);
+	control->set_usb_test_status(true);
+	usb_screen_log = "";
 	return NULL;
 }
 

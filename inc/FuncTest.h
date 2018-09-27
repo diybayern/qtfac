@@ -17,7 +17,6 @@ class CpuTest : public FuncBase
 public:
     CpuTest(Control* control);
     bool is_cpu_test_pass(BaseInfo* baseInfo);
-    void set_cpu_test_result(string func,string result,string ui_log);
     void start_test(BaseInfo* baseInfo);
 
 private:
@@ -30,7 +29,6 @@ class FanTest : public FuncBase
 public:
     FanTest(Control* control);
     static string fan_speed_test(string speed);
-    static void set_fan_test_result(string func,string result,string ui_log);
     static void *test_all(void *arg);
     void start_test(BaseInfo* baseInfo);
 
@@ -44,7 +42,6 @@ public:
     UsbTest(Control* control);
 
     void read_fac_config();
-    static void set_usb_test_result(string func,string result,string ui_log);
     static bool usb_num_test(string total_num, string num_3);
     
     static bool get_dev_mount_point(struct udev_device* dev, char* dst);

@@ -13,7 +13,6 @@ public:
     HddTest(Control* control);
     static string hdd_test_all(string hdd_cap);
     static bool check_if_hdd_pass();
-    static void set_hdd_test_result(string func,string result,string ui_log);
     static void *test_all(void *arg);
     void start_test(BaseInfo* baseInfo);
 

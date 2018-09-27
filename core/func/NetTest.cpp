@@ -543,15 +543,6 @@ error:
     return ret;
 }
 
-void NetTest::set_net_test_result(string func,string result,string ui_log)
-{
-    Control *control = Control::get_control();
-    control->set_test_result(func,result,ui_log);
-	if (result == "PASS") {
-		control->set_net_test_finish();
-	}
-}
-
 void* NetTest::test_all(void* arg)
 {
     Control *control = Control::get_control();

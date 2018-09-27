@@ -13,7 +13,6 @@ public:
     static bool compare_men_cap(int mem_cap);
     static bool mem_stability_test();
     static void *test_all(void *arg);
-    static void set_mem_test_result(string func,string result,string ui_log);
     void start_test(BaseInfo* baseInfo);
 
 private:

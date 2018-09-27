@@ -17,7 +17,6 @@ class EdidTest : public FuncBase
 public:
     EdidTest(Control* control);
     static void *test_all(void *arg);
-    static void set_edid_test_result(string func,string result,string ui_log);
     void start_test(BaseInfo* baseInfo);
 
 private:
