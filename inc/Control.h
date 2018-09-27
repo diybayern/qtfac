@@ -242,6 +242,7 @@ public slots:
     void show_test_confirm_dialog(string item);
     void set_interface_select_status(string func, bool state);
     void set_test_result_pass_or_fail(string func, string result);
+    void set_sn_mac_test_result(string sn_mac, string result);
 };
 
 #endif // CONTROL_H

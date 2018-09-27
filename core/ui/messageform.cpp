@@ -9,7 +9,6 @@ MessageForm::MessageForm(QWidget *parent, const int mode, const int timeout) : Q
     setWindowModality(Qt::ApplicationModal);
     setFocusPolicy(Qt::StrongFocus);
     setAttribute(Qt::WA_DeleteOnClose, false);
-    //setAttribute(Qt::WA_TranslucentBackground,true);
     effect = new QGraphicsDropShadowEffect;
     effect->setBlurRadius(8);
     effect->setColor(Qt::gray);
@@ -30,10 +29,13 @@ MessageForm::MessageForm(QWidget *parent, const int mode, const int timeout) : Q
         _dialog_h = 220;
         _lb_text_w = 500;
 
-    } else if (mode == Warnning || mode == Success) {
+    } else if (mode == Warnning || mode == Success || mode == SNMAC_Success || mode == SNMAC_Error) {
         _dialog_w = 400;
         _dialog_h = 220;
         _lb_text_w = 200;
+    } else if (mode == SNMAC) {
+        _dialog_w = 500;
+        _dialog_h = 170;
     }
 
     resize(_dialog_w, _dialog_h);
@@ -68,17 +70,17 @@ MessageForm::MessageForm(QWidget *parent, const int mode, const int timeout) : Q
         lb_icon->setObjectName(QString::fromUtf8("lb_icon"));
         lb_icon->setGeometry(QRect(20, 0, 80, 80));
 
-        if (mode == Message)
-        {
+        if (mode == Message) {
             lb_icon->setPixmap(QPixmap("./img/message.png"));
-        }
-        else if (mode == Warnning || mode == Success)
-        {
+
+        } else if (mode == Warnning) {
             lb_icon->setPixmap(QPixmap("./img/warning.png"));
-        }
-        else if (mode == Error)
-        {
-            lb_icon->setPixmap(QPixmap("./img/error.png"));
+
+        } else if (mode == SNMAC_Error) {
+            lb_icon->setPixmap(QPixmap("./img/failure.png"));
+
+        } else if (mode == SNMAC_Success || mode == Success) {
+            lb_icon->setPixmap(QPixmap("./img/correct.png"));
         }
     }
 
@@ -90,27 +92,33 @@ MessageForm::MessageForm(QWidget *parent, const int mode, const int timeout) : Q
         lb_text->setAlignment(Qt::AlignLeading|Qt::AlignCenter);
         lb_text->setWordWrap(true);
     } else {
-        ly_snmac = new QHBoxLayout(groupBox);
-        ly_snmac->setObjectName(QString::fromUtf8("ly_snmac"));
+
+        fl_snmac = new QFormLayout;
+        fl_snmac->setObjectName(QString::fromUtf8("fl_snmac"));
         lb_snmac = new QLabel;
         lb_snmac->setObjectName(QString::fromUtf8("lb_snmac"));
         lb_snmac->setFont(font);
         le_snmac = new QLineEdit;
+        le_snmac->setFont(font);
         le_snmac->setObjectName(QString::fromUtf8("le_snmac"));
-        ly_snmac->addWidget(lb_snmac);
-        ly_snmac->addWidget(le_snmac);
         le_snmac->setFocusPolicy(Qt::StrongFocus);
         le_snmac->installEventFilter(this);
+        fl_snmac->addRow(lb_snmac, le_snmac);
+        fl_snmac->setSpacing(10);
+        fl_snmac->setMargin(10);
+        groupBox->setLayout(fl_snmac);
     }
 
-    if (mode == Message || mode == Error || mode == Warnning || mode == NOICON || mode == SNMAC || mode == Success)
+    if (mode == Message || mode == SNMAC_Error || mode == SNMAC_Success || mode == Warnning || mode == NOICON || mode == SNMAC || mode == Success)
     {
-        if (mode == Warnning || mode == Success) {
+        if (mode == Warnning) {
             lb_title->setStyleSheet("background-color: rgb(255, 255, 0);");
-        } else if (mode == Error) {
+        } else if (mode == SNMAC_Error) {
             lb_title->setStyleSheet("background-color: rgb(255, 0, 0);");        
         } else if (mode == Message || mode == SNMAC) {
             lb_title->setStyleSheet("background-color: rgb(174, 238, 238);");
+        } else if (mode == SNMAC_Success || mode == Success) {
+            lb_title->setStyleSheet("background-color: rgb(188, 238, 104);");
         }
 
         if (mode == Message) {
@@ -139,11 +147,13 @@ MessageForm::MessageForm(QWidget *parent, const int mode, const int timeout) : Q
             connect(bt_fail, SIGNAL(clicked()), this, SLOT(proButtonFail()));
             connect(this, SIGNAL(sig_handled_test_result(QString, QString)), UiHandle::get_uihandle(), SLOT(slot_handled_test_result(QString, QString)));
         } else if (mode == SNMAC) {
+            QFont font_snmac;
+            font_snmac.setPointSize(16);
             bt_snmac = new QPushButton(frame);
             bt_snmac->setObjectName(QString::fromUtf8("bt_snmac"));
-            bt_snmac->setGeometry(QRect(470, 230, 100, 40));
-            bt_snmac->setFont(font);
-            bt_snmac->setText(tr("CANCEL"));
+            bt_snmac->setGeometry(QRect(400, 120, 80, 30));
+            bt_snmac->setFont(font_snmac);
+            bt_snmac->setText(tr("取消"));
             connect(bt_snmac, SIGNAL(clicked()), this, SLOT(proButtonCancel()));
         } else if (mode == Warnning) {
             bt_cancle = new QPushButton(frame);
@@ -168,6 +178,16 @@ MessageForm::MessageForm(QWidget *parent, const int mode, const int timeout) : Q
                 bt_confirm->setText(tr("下道工序"));
             }
             connect(bt_confirm, SIGNAL(clicked()), this, SLOT(proButtonConfirm()));
+        } else if (mode == SNMAC_Success || mode == SNMAC_Error) {
+            QFont font_snmac_state;
+            font_snmac_state.setPointSize(16);
+            bt_check_snmac = new QPushButton(frame);
+            bt_check_snmac->setObjectName(QString::fromUtf8("bt_check_snmac"));
+            bt_check_snmac->setGeometry(QRect(250, 150, 80, 30));
+            bt_check_snmac->setFont(font_snmac_state);
+            bt_check_snmac->setText(tr("确定"));
+            connect(bt_check_snmac, SIGNAL(clicked()), this, SLOT(proButtonSNMAC()));
+            connect(this, SIGNAL(sig_send_sn_mac_test_result(QString, QString)), UiHandle::get_uihandle(), SLOT(slot_recv_sn_mac_test_result(QString, QString)));
         }
     }
     this->timeout = timeout;
@@ -200,6 +220,7 @@ void MessageForm::timerEvent(QTimerEvent *evt)
 {
     if (evt->timerId() == timerId)
     {
+        emit sig_send_sn_mac_test_result(_m_test_item, _m_snmac_state);
         killTimer(timerId);
         accept();
     }
@@ -232,6 +253,12 @@ void MessageForm::proButtonConfirm()
     accept();
 }
 
+void MessageForm::proButtonSNMAC()
+{
+    emit sig_send_sn_mac_test_result(_m_test_item, _m_snmac_state);
+    accept();
+}
+
 int MessageForm::startExec()
 {
     if (timeout)
@@ -261,7 +288,15 @@ bool MessageBox(QWidget *parent,const int mode,const QString &test_item, const Q
     } else {
         form->setLabel(text);
     }
+
+    if (mode == MessageForm::SNMAC_Success) {
+        form->setSNMACState("PASS");
+    } else if (mode == MessageForm::SNMAC_Error) {
+        form->setSNMACState("FAIL");
+    }
+
     form->setTestItem(test_item);
+
     int ret = form->startExec();
 
     delete form;

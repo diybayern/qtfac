@@ -210,6 +210,7 @@ void Control::ui_init()
 	}
 	connect(_uiHandle, SIGNAL(to_show_test_confirm_dialog(string)), this, SLOT(show_test_confirm_dialog(string)));
     connect(_uiHandle, SIGNAL(sig_ui_handled_test_result(string, string)), this, SLOT(set_test_result_pass_or_fail(string, string)));
+    connect(_uiHandle, SIGNAL(sig_ui_handled_sn_mac_test_result(string, string)), this, SLOT(set_sn_mac_test_result(string, string)));
     connect(_uiHandle, SIGNAL(sig_ui_check_state_changed(string, bool)), this, SLOT(set_interface_select_status(string, bool)));
 }
 
@@ -638,6 +639,10 @@ void Control::set_test_result_pass_or_fail(string func, string result)
     _uiHandle->set_test_result(func, result);
 }
 
+void Control::set_sn_mac_test_result(string sn_mac, string result)
+{
+    cout<<"sn_mac =" <<sn_mac<<", result = "<<result<<endl;
+}
 
 bool Control::is_stress_test_window_quit_safely()
 {

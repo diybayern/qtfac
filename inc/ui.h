@@ -129,7 +129,6 @@ class MainTestWindow : public QDialog
         void add_main_test_button(QString item);
         void add_stress_test_label(QString item);
         void add_complete_or_single_test_label(QString config);
-        void show_sn_mac_message_box();
         QString ui_get_test_count();
         QList<ItemCheck> itemlist;
         void _get_sn_num();
@@ -140,7 +139,7 @@ class MainTestWindow : public QDialog
         int get_current_res_w;
         QList<StressTestItem> stress_test_item_list;
         QTimer  updatetimer;
-        bool is_complete_test;
+        bool is_complete_test = true;
 
 
     private:
@@ -224,6 +223,7 @@ class MainTestWindow : public QDialog
         void get_result_string(QString func, QString result);
         void show_stress_test_window();
         void show_display_test_window();
+        void show_sn_mac_message_box();
         void slot_finish_show_stress_window();
         void slot_finish_show_display_window();
         void update_screen_log(QString info);

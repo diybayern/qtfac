@@ -22,7 +22,8 @@ public:
     enum{
         Message = 0,
         Warnning,
-        Error,
+        SNMAC_Success,
+        SNMAC_Error,
         SNMAC,
         Success,
         NOICON
@@ -36,6 +37,7 @@ public slots:
     void setText(const QString &str)      {lb_text->setText(str);lb_text->update();}
     void setLabel(const QString &str)     {lb_snmac->setText(str);lb_snmac->update();}
     void setTestItem(const QString &item) {_m_test_item = item;}
+    void setSNMACState(const QString &state) {_m_snmac_state = state;}
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event);
@@ -43,6 +45,7 @@ protected:
 
 signals:
     void sig_handled_test_result(QString test_item, QString result);
+    void sig_send_sn_mac_test_result(QString snmac, QString result);
 
 private slots:
     void proButtonOK();
@@ -50,6 +53,7 @@ private slots:
     void proButtonCancel();
     void proButtonQuit();
     void proButtonConfirm();
+    void proButtonSNMAC();
 
 public:
     QFrame          *frame;
@@ -59,9 +63,10 @@ public:
     QPushButton     *bt_fail;
     QPushButton     *bt_cancle;
     QPushButton     *bt_confirm;
+    QPushButton     *bt_check_snmac;
     QLabel          *lb_icon;
     QLineEdit       *le_snmac;
-    QHBoxLayout     *ly_snmac;
+    QFormLayout     *fl_snmac;
     QLabel          *lb_snmac;
     QPushButton     *bt_snmac;
     QGraphicsDropShadowEffect *effect;
@@ -71,6 +76,7 @@ private:
 
    QString         m_sMsg;
    QString         _m_test_item;
+   QString         _m_snmac_state;
 
    int             timerId;
    int             errTimerId;

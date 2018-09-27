@@ -7,6 +7,7 @@ UiHandle::UiHandle()
     connect(this, SIGNAL(print_result(QString,QString)), MainTestWindow::get_main_test_window(), SLOT(get_result_string(QString,QString)));
     connect(this, SIGNAL(to_show_stress_test_window()), MainTestWindow::get_main_test_window(), SLOT(show_stress_test_window()));
     connect(this, SIGNAL(to_show_display_test_window()), MainTestWindow::get_main_test_window(), SLOT(show_display_test_window()));
+    connect(this, SIGNAL(to_show_sn_mac_message_box()), MainTestWindow::get_main_test_window(), SLOT(show_sn_mac_message_box()));
     connect(this, SIGNAL(need_to_update_screen_log(QString)), MainTestWindow::get_main_test_window(), SLOT(update_screen_log(QString)));
     connect(this, SIGNAL(to_update_stress_label_value(QString,QString)), MainTestWindow::get_main_test_window(), SLOT(update_stress_label_value(QString,QString)));
 	connect(this, SIGNAL(to_confirm_test_result_dialog(QString)), MainTestWindow::get_main_test_window(), SLOT(confirm_test_result_dialog(QString)));  
@@ -127,7 +128,7 @@ void UiHandle::update_stress_label_value(string item, string result)
 
 void UiHandle::show_sn_mac_message_box()
 {
-    MainTestWindow::get_main_test_window()->show_sn_mac_message_box();
+    emit to_show_sn_mac_message_box();
 }
 
 void UiHandle::quit_test_window(QString item)
@@ -138,6 +139,11 @@ void UiHandle::quit_test_window(QString item)
 void UiHandle::slot_handled_test_result(QString test_item, QString result)
 {
     emit sig_ui_handled_test_result(test_item.toStdString(), result.toStdString());
+}
+
+void UiHandle::slot_recv_sn_mac_test_result(QString sn_mac, QString result)
+{
+    emit sig_ui_handled_sn_mac_test_result(sn_mac.toStdString(), result.toStdString());
 }
 
 void UiHandle::slot_check_state_changed(QString item, bool state)

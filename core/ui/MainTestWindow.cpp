@@ -525,16 +525,16 @@ void MainTestWindow::resume_message_box()
     if (is_complete_test) {
 
         if (g_sn_mac_message.compare(_local_sn_num) == 0) {
-            MessageBox(NULL, MessageForm::Message, "SN", "扫描成功", "SN比对成功", 1000);
+            MessageBox(NULL, MessageForm::SNMAC_Success, "SN", "扫描成功", "SN比对成功", 1000);
         } else {
-            MessageBox(NULL, MessageForm::Error, "SN", "警告", "SN比对失败,请重试！", 0);
+            MessageBox(NULL, MessageForm::SNMAC_Error, "SN", "警告", "SN比对失败,请重试！", 0);
         }
 
     } else {
         if (g_sn_mac_message.compare(_local_mac_addr) == 0) {
-            MessageBox(NULL, MessageForm::Message, "MAC", "扫描成功", "MAC比对成功", 1000);
+            MessageBox(NULL, MessageForm::SNMAC_Success, "MAC", "扫描成功", "MAC比对成功", 1000);
         } else {
-            MessageBox(NULL, MessageForm::Error, "MAC", "警告", "MAC比对失败,请重试！", 0);
+            MessageBox(NULL, MessageForm::SNMAC_Error, "MAC", "警告", "MAC比对失败,请重试！", 0);
         }
     }
 }
