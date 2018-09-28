@@ -34,6 +34,8 @@ class UiHandle: public QObject
         void start_audio_progress_dialog();
         void ui_set_interface_test_state(int state);
         void show_sn_mac_comparison_result(string sn_mac, string result);
+        bool get_is_complete_test() {return _is_complete_test;}
+        void set_is_complete_test(bool category) {_is_complete_test = category;}
         int get_screen_width();
         int get_screen_height();
         bool get_auto_upload_check_state();
@@ -42,6 +44,7 @@ class UiHandle: public QObject
 
     private:
         static UiHandle* _ui_handle;
+        bool _is_complete_test;
 
     signals:
         void to_draw_main_test_window();
