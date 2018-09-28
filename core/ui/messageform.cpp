@@ -2,6 +2,7 @@
 
 QPointer<MessageForm> g_form = NULL;
 QString g_sn_mac_message;
+static int g_mode = 0;
 
 MessageForm::MessageForm(QWidget *parent, const int mode, const int timeout) : QDialog(parent)
 {
@@ -172,7 +173,7 @@ MessageForm::MessageForm(QWidget *parent, const int mode, const int timeout) : Q
             bt_confirm->setObjectName(QString::fromUtf8("bt_confirm"));
             bt_confirm->setGeometry(QRect(250, 150, 100, 40));
             bt_confirm->setFont(font);
-            if (MainTestWindow::get_main_test_window()->is_complete_test) {
+            if (UiHandle::get_uihandle()->get_is_complete_test()) {
                 bt_confirm->setText(tr("关机"));
             } else {
                 bt_confirm->setText(tr("下道工序"));
@@ -220,8 +221,11 @@ void MessageForm::timerEvent(QTimerEvent *evt)
     if (evt->timerId() == timerId)
     {
         emit sig_send_sn_mac_test_result(_m_test_item, _m_snmac_state);
-        killTimer(timerId);
-        accept();
+        if (g_mode != SNMAC) {
+
+            killTimer(timerId);
+            accept();
+        }
     }
 }
 
@@ -272,6 +276,7 @@ int MessageForm::startExec()
 bool MessageBox(QWidget *parent,const int mode,const QString &test_item, const QString &title,const QString &text,const int timeout)
 {
     int timeoutTemp = timeout;
+    g_mode = mode;
     if (g_form != NULL)
     {
         delete g_form;

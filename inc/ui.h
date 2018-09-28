@@ -151,7 +151,6 @@ class MainTestWindow : public QDialog
         int get_current_res_w;
         QList<StressTestItem> stress_test_item_list;
         QTimer  updatetimer;
-        bool is_complete_test = true;
 
     private:
         static MainTestWindow* _main_test_window;
