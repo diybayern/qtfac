@@ -373,9 +373,17 @@ protected:
 
 private:
     static DisplayTestWindow* _display_test_window;
+    QFrame* _frame;
+    QLabel* _lb_red;
+    QLabel* _lb_green;
+    QLabel* _lb_blue;
+    QPixmap _pm_red;
+    QPixmap _pm_green;
+    QPixmap _pm_blue;
     int _state;
     int _st_w;
     int _st_h;
+    QPixmap _text2Pixmap(QString text);
 
 signals:
     void sig_finish_show_display_window();
