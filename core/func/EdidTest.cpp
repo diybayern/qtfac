@@ -214,6 +214,21 @@ print:
 	return ret;
 }
 
+int EdidTest::get_edid_num(BaseInfo* baseInfo){
+	int vga = 0, hdmi = 0;
+	if (baseInfo->vga_exist == "" || baseInfo->vga_exist == "0") {
+		vga = 0;
+	} else {
+		vga = get_int_value(baseInfo->vga_exist);
+	}
+
+	if (baseInfo->hdmi_exist == "" || baseInfo->hdmi_exist == "0") {
+		hdmi = 0;
+	} else {
+		hdmi = get_int_value(baseInfo->hdmi_exist);
+	}
+	return vga + hdmi;
+}
 void* EdidTest::test_all(void *arg)
 {
 	
@@ -221,7 +236,8 @@ void* EdidTest::test_all(void *arg)
 	control->set_edid_test_status(false);
 	BaseInfo* baseInfo = (BaseInfo *)arg;	
 	edid_screen_log += "==================== edid test ====================\n";
-	int edid_num = get_int_value(baseInfo->vga_exist) + get_int_value(baseInfo->hdmi_exist);
+	int edid_num = get_edid_num(baseInfo);
+	LOG_INFO("edid num: %d", edid_num);
 	int is_pass = edid_test_all(edid_num);
 	edid_screen_log += "edid test result:\t\t\t";
 	if (is_pass == SUCCESS) {

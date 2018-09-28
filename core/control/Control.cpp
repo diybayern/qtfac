@@ -274,6 +274,66 @@ void Control::start_interface_test()
 	_funcBase[INTERFACE]->start_test(_baseInfo);
 }
 
+/*
+void Control::start_mem_test()
+{
+    _testStep = STEP_INTERFACE;
+    _funcBase[MEM]->start_test(_baseInfo);
+    LOG_INFO("start mem test");
+}
+
+void Control::start_cpu_test()
+{
+    _testStep = STEP_INTERFACE;
+    _funcBase[CPU]->start_test(_baseInfo);
+    LOG_INFO("start cpu test");
+}
+
+
+void Control::start_usb_test()
+{
+    _testStep = STEP_INTERFACE;
+    _funcBase[USB]->start_test(_baseInfo);
+    LOG_INFO("start usb test");
+}
+
+void Control::start_net_test()
+{
+    _testStep = STEP_INTERFACE;
+    _funcBase[NET]->start_test(_baseInfo);
+    LOG_INFO("start net test");
+}
+
+void Control::start_edid_test()
+{
+    _testStep = STEP_INTERFACE;
+    _funcBase[EDID]->start_test(_baseInfo);
+    LOG_INFO("start edid test");
+}
+
+void Control::start_hdd_test()
+{    
+    _testStep = STEP_INTERFACE;
+    _funcBase[HDD]->start_test(_baseInfo);   
+    LOG_INFO("start hdd test");
+}
+
+
+void Control::start_fan_test()
+{
+    _testStep = STEP_INTERFACE;
+    _funcBase[FAN]->start_test(_baseInfo);
+    LOG_INFO("start fan test");
+}
+
+void Control::start_wifi_test()
+{   
+    _testStep = STEP_INTERFACE;
+    _funcBase[WIFI]->start_test(_baseInfo);    
+    LOG_INFO("start wifi test");
+}*/
+
+
 void Control::start_sound_test()
 {
     _uiHandle->start_audio_progress_dialog();    
@@ -466,8 +526,8 @@ void Control::update_mes_log(char* tag,char* value)
 void Control::upload_mes_log() {
 	if (fac_config_status != 0) {
 		LOG_INFO("fac config is wrong, do not upload");
-		_uiHandle->confirm_test_result_warning("upload fail");
-		set_test_result("上传日志","FAIL","fac config is wrong");
+		_uiHandle->confirm_test_result_warning("配置文件有误");
+		set_test_result("上传日志","FAIL","配置文件有误");
 		return;
 	} else if (combine_fac_log_to_mes(MES_FILE)) {
         char* response = ftp_send_file(MES_FILE,_facArg);

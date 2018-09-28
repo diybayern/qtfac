@@ -30,7 +30,7 @@ static int native;
 static int currentmode;
 
 static const char *invalid_model_name[] = {
-	"DP2VGA  V205"
+	"DP2VGA"
 };
 
 #if 0

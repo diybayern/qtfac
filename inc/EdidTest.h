@@ -26,6 +26,7 @@ private:
     static int do_vbe_ddc_service(unsigned BX, reg_frame* regs);
     static int do_vbe_service(unsigned int AX, unsigned int BX, reg_frame* regs);
     static int parse_edid(char* buf);
+    static int get_edid_num(BaseInfo* baseInfo);
 };
 
 #endif
