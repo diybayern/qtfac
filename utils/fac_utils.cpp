@@ -8,9 +8,9 @@ using namespace std;
 
 netbuf* ftp_handle;
 
-#define DEFAULT_FTP_IP       "172.21.5.79"
-#define DEFAULT_FTP_USER     "djy"
-#define DEFAULT_FTP_PASSWD   "djy"
+#define DEFAULT_FTP_IP       "172.21.5.48"
+#define DEFAULT_FTP_USER     "test"
+#define DEFAULT_FTP_PASSWD   "test"
 #define DEFAULT_WIFI_SSID    "sfc-test"
 #define DEFAULT_WIFI_PASSWD  "12345678"
 #define DEFAULT_WIFI_ENP     "WPA"
@@ -299,6 +299,7 @@ bool read_conf_line(const string conf_path, const char* tag,char* value)
         sprintf(match, "%s=%%s", tag);
         
         while(fgets(line, sizeof(line), conf_fp) != NULL){
+			delNL(line);
             if(line[0] != '#') {//ignore the comment
                 if(strstr(line, tag)!=NULL){
                     sscanf(line, match, value);
@@ -320,12 +321,18 @@ int get_fac_config_from_conf(const string conf_path, FacArg *fac)
 	if(read_conf_line(conf_path, "ftp_dest_path",dest_path) == false){
 		LOG_ERROR("read dest_path failed\n");
 		ret += NO_FTP_PATH;
+	} else if (*dest_path != '\\'){
+		LOG_ERROR("ftp dest_path is empty\n");
+		ret += NO_FTP_PATH;
 	}
 	
 	char* job_number = (char*)malloc(128);
 	memset(job_number, 0, 128);
 	if(read_conf_line(conf_path, "job_number", job_number) == false){
 		LOG_ERROR("read job_number faild\n");
+		ret += NO_JOB_NUMBER;
+	} else if (*job_number == 0){
+		LOG_ERROR("job_number is empty\n");
 		ret += NO_JOB_NUMBER;
 	}
 

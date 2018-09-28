@@ -141,6 +141,7 @@ public:
     int get_screen_width();
     bool is_stress_test_window_quit_safely();
     bool stress_test_window_quit_status;
+    int fac_config_status;
 
     int get_test_step();
 
@@ -366,14 +367,6 @@ signals:
 
 public slots:
     void start_interface_test();
-    void start_mem_test();
-    void start_usb_test();
-    void start_net_test();
-    void start_edid_test();
-    void start_cpu_test();
-    void start_hdd_test();
-    void start_fan_test();
-    void start_wifi_test();
     void start_sound_test();
     void start_display_test();
     void start_bright_test();

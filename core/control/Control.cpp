@@ -256,12 +256,12 @@ void Control::init_fac_config()
 	if (!_usb->usb_test_read_status()) {
 		LOG_ERROR("init copy fac config error");
 	}
-    int ret = get_fac_config_from_conf(FAC_CONFIG_FILE, _facArg);
-    if (ret == NO_FTP_PATH) {
+    fac_config_status = get_fac_config_from_conf(FAC_CONFIG_FILE, _facArg);
+    if (fac_config_status == NO_FTP_PATH) {
         LOG_INFO("NO_FTP_PATH");
-    } else if (ret == NO_JOB_NUMBER) {
+    } else if (fac_config_status == NO_JOB_NUMBER) {
         LOG_INFO("NO_JOB_NUMBER");
-    } else if (ret == (NO_FTP_PATH + NO_JOB_NUMBER)) {
+    } else if (fac_config_status == (NO_FTP_PATH + NO_JOB_NUMBER)) {
         LOG_INFO("NO_FTP_PATH and NO_JOB_NUMBER");
     } 
     //_uiHandle->add_main_label("NO FTP INFO","NO INFO");
@@ -273,66 +273,6 @@ void Control::start_interface_test()
     _testStep = STEP_INTERFACE;
 	_funcBase[INTERFACE]->start_test(_baseInfo);
 }
-
-
-void Control::start_mem_test()
-{
-    _testStep = STEP_INTERFACE;
-    _funcBase[MEM]->start_test(_baseInfo);
-    LOG_INFO("start mem test");
-}
-
-void Control::start_cpu_test()
-{
-    _testStep = STEP_INTERFACE;
-    _funcBase[CPU]->start_test(_baseInfo);
-    LOG_INFO("start cpu test");
-}
-
-
-void Control::start_usb_test()
-{
-    _testStep = STEP_INTERFACE;
-    _funcBase[USB]->start_test(_baseInfo);
-    LOG_INFO("start usb test");
-}
-
-void Control::start_net_test()
-{
-    _testStep = STEP_INTERFACE;
-    _funcBase[NET]->start_test(_baseInfo);
-    LOG_INFO("start net test");
-}
-
-void Control::start_edid_test()
-{
-    _testStep = STEP_INTERFACE;
-    _funcBase[EDID]->start_test(_baseInfo);
-    LOG_INFO("start edid test");
-}
-
-void Control::start_hdd_test()
-{    
-    _testStep = STEP_INTERFACE;
-    _funcBase[HDD]->start_test(_baseInfo);   
-    LOG_INFO("start hdd test");
-}
-
-
-void Control::start_fan_test()
-{
-    _testStep = STEP_INTERFACE;
-    _funcBase[FAN]->start_test(_baseInfo);
-    LOG_INFO("start fan test");
-}
-
-void Control::start_wifi_test()
-{   
-    _testStep = STEP_INTERFACE;
-    _funcBase[WIFI]->start_test(_baseInfo);    
-    LOG_INFO("start wifi test");
-}
-
 
 void Control::start_sound_test()
 {
@@ -524,7 +464,12 @@ void Control::update_mes_log(char* tag,char* value)
 
 
 void Control::upload_mes_log() {
-    if (combine_fac_log_to_mes(MES_FILE)) {
+	if (fac_config_status != 0) {
+		LOG_INFO("fac config is wrong, do not upload");
+		_uiHandle->confirm_test_result_warning("upload fail");
+		set_test_result("上传日志","FAIL","fac config is wrong");
+		return;
+	} else if (combine_fac_log_to_mes(MES_FILE)) {
         char* response = ftp_send_file(MES_FILE,_facArg);
         response = response_to_chinese(response);
         LOG_INFO("upload %s",response);

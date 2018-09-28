@@ -259,6 +259,11 @@ void* InterfaceTest::test_all(void *arg)
 		return NULL;
 	}
 
+	if (control->get_auto_upload_mes_status() && control->fac_config_status != 0) {
+		control->get_ui_handle()->confirm_test_result_warning("配置文件有误");
+		return NULL;
+	}
+
 	if (control->get_interface_run_status() == INF_RUNEND)
 	{
 		control->set_interface_run_status(INF_RUNNING);
