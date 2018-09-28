@@ -114,7 +114,7 @@ void* StressTest::test_all(void *arg)
 		remove_local_file(STRESS_LOCK_FILE.c_str());
 	}
 	
-	if (check_file_exit(WHOLE_TEST_FILE)) {
+	if (control->whole_test_state) {
 		write_local_data(STRESS_LOCK_FILE.c_str(),"w+",WHOLE_LOCK,sizeof(WHOLE_LOCK));
 	} else {
 		write_local_data(STRESS_LOCK_FILE.c_str(),"w+",PCBA_LOCK,sizeof(PCBA_LOCK));

@@ -108,6 +108,12 @@ void Control::init_hw_info()
 
 void Control::ui_init()
 {
+	if (check_file_exit(WHOLE_TEST_FILE)) {
+		whole_test_state = true;
+	} else {
+		whole_test_state = false;
+	}
+	
     _uiHandle->add_main_label("产品型号:", _hwInfo->product_name);
     _uiHandle->add_main_label("硬件版本:", _hwInfo->product_hw_version);
     _uiHandle->add_main_label("SN序列号:", _hwInfo->sn);
@@ -160,19 +166,20 @@ void Control::ui_init()
     
     _uiHandle->add_main_test_button(STRESS_TEST_NAME);
     _uiHandle->add_main_test_button(UPLOAD_LOG_NAME);
-    
+
     if (_baseInfo->hdd_cap != "0" && _baseInfo->hdd_cap != "") {
-        if (!check_file_exit(WHOLE_TEST_FILE)) {
+        if (!whole_test_state) {
              _uiHandle->add_main_test_button(NEXT_PROCESS_NAME);
         }
     }    
     
-    if (check_file_exit(WHOLE_TEST_FILE)) {
+    if (whole_test_state) {
         _uiHandle->add_complete_or_single_test_label("整机测试");
     } else {
         _uiHandle->add_complete_or_single_test_label("单板测试");
     }
-    
+	_uiHandle->set_is_complete_test(whole_test_state);
+	
     _uiHandle->sync_main_test_ui();
     
     _uiHandle->add_stress_test_label("运行时间");
@@ -201,7 +208,7 @@ void Control::ui_init()
     connect(_uiHandle->get_qobject(UPLOAD_LOG_NAME), SIGNAL(clicked()), this, SLOT(start_upload_log()));
 
 	if (_baseInfo->hdd_cap != "0" && _baseInfo->hdd_cap != "") {
-        if (!check_file_exit(WHOLE_TEST_FILE)) {
+        if (!whole_test_state) {
     		connect(_uiHandle->get_qobject(NEXT_PROCESS_NAME), SIGNAL(clicked()), this, SLOT(start_next_process()));
         }
 	}
@@ -733,7 +740,7 @@ void Control::set_test_result_pass_or_fail(string func, string result)
 void Control::set_sn_mac_test_result(string sn_mac, string result)
 {
     cout<<"sn_mac =" <<sn_mac<<", result = "<<result<<endl;
-/*	if (sn_mac == "MAC" && result == "PASS" && check_file_exit(WHOLE_TEST_FILE)) {
+/*	if (sn_mac == "MAC" && result == "PASS" && whole_test_state) {
 		sleep(2);
 		_sn_mac = "SN";
 		_uiHandle->show_sn_mac_message_box("SN");

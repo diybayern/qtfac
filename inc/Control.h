@@ -142,7 +142,8 @@ public:
     bool is_stress_test_window_quit_safely();
     bool stress_test_window_quit_status;
     int fac_config_status;
-
+    bool whole_test_state;
+    
     int get_test_step();
 
     UiHandle* get_ui_handle() {
