@@ -108,11 +108,11 @@ void Control::init_hw_info()
 
 void Control::ui_init()
 {
-    _uiHandle->add_main_label("产品型号:", "Rain410");
-    _uiHandle->add_main_label("硬件版本:", "V1.00");
-    _uiHandle->add_main_label("SN序列号:", "12345678");
-    _uiHandle->add_main_label("MAC地址:", "00:11:22:33:44:55:66");
-    _uiHandle->add_main_label("CPU型号:", "i3-6100U");
+    _uiHandle->add_main_label("产品型号:", _hwInfo->product_name);
+    _uiHandle->add_main_label("硬件版本:", _hwInfo->product_hw_version);
+    _uiHandle->add_main_label("SN序列号:", _hwInfo->sn);
+    _uiHandle->add_main_label("MAC地址:", _hwInfo->mac);
+    _uiHandle->add_main_label("CPU型号:", _hwInfo->cpu_type);
     
     _uiHandle->add_main_test_button("接口测试");
     
@@ -214,7 +214,27 @@ void Control::ui_init()
 
 void Control::check_sn_mac_compare_result(string message)
 {
-    cout<<"message = "<<message<<endl;
+	int i = 0, j = 0;
+    if (_sn_mac == "MAC") {
+		if (message.size() != 12) {
+			_uiHandle->show_sn_mac_comparison_result("MAC", "FAIL");
+		} else {
+			string mac = _hwInfo->mac;
+			for(i = 0, j = 0; i < 12; i++, j++) {
+				if (message[i++] != mac[j++]) {
+					_uiHandle->show_sn_mac_comparison_result("MAC", "FAIL");
+					break;
+				}
+				if (message[i] != mac[j++]) {
+					_uiHandle->show_sn_mac_comparison_result("MAC", "FAIL");
+					break;
+				}
+			}
+			if (i == 12) {
+				_uiHandle->show_sn_mac_comparison_result("MAC", "PASS");
+			}
+		}
+    }
 }
 
 void Control::show_test_confirm_dialog(string item)
@@ -373,6 +393,14 @@ void Control::confirm_test_result(string func)
 void Control::show_main_test_ui()
 {
     _uiHandle->to_show_main_test_ui();
+	auto_test_mac_sn();
+}
+
+void Control::auto_test_mac_sn() {
+	if (!check_file_exit(STRESS_LOCK_FILE.c_str())) {
+		_sn_mac = "MAC";
+		_uiHandle->show_sn_mac_message_box("MAC");
+	}
 }
 
 int Control::get_test_step()

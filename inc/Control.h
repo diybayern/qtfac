@@ -131,6 +131,7 @@ public:
     void confirm_test_result(string func);
     static Control* get_control();
     void show_main_test_ui();
+    void auto_test_mac_sn();
     void update_screen_log(string uiLog);
     void set_func_test_result(string func,string result);
     void upload_mes_log();
@@ -359,6 +360,7 @@ private:
     string _mes_log_file;
     bool _auto_upload_mes;
     int _interfaceRunStatus;
+    string _sn_mac;
 
 signals:
 

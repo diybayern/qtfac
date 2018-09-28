@@ -197,7 +197,12 @@ bool remove_local_file(const char* filename) {
 void get_hwinfo(HwInfo* hwInfo) {
 
 	hwInfo->sn = execute_command("dmidecode -s system-serial-number");
-	hwInfo->mac = execute_command("ifconfig | grep HWaddr | awk '/eth0/ {print $5}'");
+	
+	string mac = execute_command("ifconfig | grep HWaddr | awk '/eth0/ {print $5}'");
+	char* new_mac = (char*)malloc(128);
+	new_mac = lower_to_capital(mac.c_str(),new_mac);
+	hwInfo->mac = new_mac;
+	
 	hwInfo->product_name = execute_command("dmidecode -s system-product-name");
     hwInfo->product_id = execute_command("dmidecode -s baseboard-product-name");
 	hwInfo->product_hw_version = execute_command("dmidecode -s system-version");
