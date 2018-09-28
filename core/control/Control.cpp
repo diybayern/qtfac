@@ -547,6 +547,7 @@ void Control::auto_start_stress_test()
 }
 
 void Control::set_interface_select_status(string func, bool state) {
+	_funcFinishStatus->interface_finish = false;
     if (func == "内存测试") {
         _interfaceSelectStatus->mem_select  = state;
         if (_interfaceSelectStatus->mem_select) {

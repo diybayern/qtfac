@@ -406,6 +406,13 @@ bool WifiTest::check_if_wifi_connect_pass(void)
 void* WifiTest::test_all(void* arg)
 {
 	Control *control = Control::get_control();
+    while (1) {
+		//starting wifi test after net test over
+		sleep(1);
+        if (control->get_interface_test_status()->net_test_over) {
+            break;
+		}
+	}
 	control->set_wifi_test_status(false);
 	wifi_screen_log += "==================== wifi test ====================\n";
 	bool is_pass = false;

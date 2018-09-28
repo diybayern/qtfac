@@ -10,17 +10,6 @@ void* semi_auto_test_control(void* arg)
 		int testStep = control->get_test_step();
 		FuncFinishStatus* funcFinishStatus = control->get_func_finish_status();
         usleep(500000);
-
-		if (funcFinishStatus->mem_finish
-			 && funcFinishStatus->usb_finish
-			 && funcFinishStatus->net_finish
-			 && funcFinishStatus->cpu_finish
-			 && funcFinishStatus->edid_finish
-			 && funcFinishStatus->hdd_finish
-			 && funcFinishStatus->fan_finish
-			 && funcFinishStatus->wifi_finish) {
-			     funcFinishStatus->interface_finish = true;
-	        }
 		
         if(testStep != STEP_IDLE){
             if (funcFinishStatus->interface_finish 
@@ -28,10 +17,9 @@ void* semi_auto_test_control(void* arg)
 				&& funcFinishStatus->display_finish
 				&& funcFinishStatus->bright_finish
 				&& funcFinishStatus->camera_finish) {
-				LOG_INFO("auto send log.\n");
-				//if (control->get_auto_upload_mes_status()) {
+				if (control->get_auto_upload_mes_status()) {
 					control->start_upload_log();
-			    //}
+			    }
 			}
             
             switch(testStep){

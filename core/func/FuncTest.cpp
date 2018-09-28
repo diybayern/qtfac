@@ -249,15 +249,23 @@ void* InterfaceTest::test_all(void *arg)
 	if (control->get_interface_run_status() == INF_RUNNING)
 	{
 		control->set_interface_run_status(INF_BREAK);
+		control->get_ui_handle()->ui_set_interface_test_state(INF_BREAK);
+		return NULL;
+	}
+
+	FuncFinishStatus* funcFinishStatus = control->get_func_finish_status();
+    if (funcFinishStatus->interface_finish) {
+        LOG_INFO("interface test has finished,do not need test again");
 		return NULL;
 	}
 
 	if (control->get_interface_run_status() == INF_RUNEND)
 	{
-	}
+		control->set_interface_run_status(INF_RUNNING);
+		control->get_ui_handle()->ui_set_interface_test_state(INF_RUNNING);
+	}	
 	
-	
-    FuncBase** FuncBase = control->get_funcbase();
+	FuncBase** FuncBase = control->get_funcbase();
     InterfaceSelectStatus* interfaceSelectStatus = control->get_interface_select_status();
     InterfaceTestStatus* interfaceTestStatus = control->get_interface_test_status();
     InterfaceTestResult* interfaceTestResult = control->get_interface_test_result();
@@ -276,12 +284,12 @@ void* InterfaceTest::test_all(void *arg)
 	int real_test_num = 0;
     int interface_run_status = INF_RUNNING;
     for (int i = 0; i < test_num || test_num == 0; i++) {
-		real_test_num = i + 1;
 		interface_run_status = control->get_interface_run_status();
         if (interface_run_status == INF_BREAK) {
             break;
         }
 
+		real_test_num = i + 1;
 		string loop = "************LOOP:" + to_string(i+1) + "************";
         control->update_screen_log(loop);
         if (interfaceSelectStatus->mem_select) {
@@ -497,8 +505,19 @@ void* InterfaceTest::test_all(void *arg)
         }
     }
 	control->update_screen_log("===============================================");
+	if (funcFinishStatus->mem_finish
+	  && funcFinishStatus->usb_finish
+	  && funcFinishStatus->net_finish
+	  && funcFinishStatus->cpu_finish
+	  && funcFinishStatus->edid_finish
+	  && funcFinishStatus->hdd_finish
+	  && funcFinishStatus->fan_finish
+	  && funcFinishStatus->wifi_finish) {
+	     funcFinishStatus->interface_finish = true;
+    }
     
     control->set_interface_run_status(INF_RUNEND);
+	control->get_ui_handle()->ui_set_interface_test_state(INF_RUNEND);
     return NULL;
 }
 

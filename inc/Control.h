@@ -300,11 +300,7 @@ public:
     }
 
     bool get_auto_upload_mes_status() {
-        return _auto_upload_mes;
-    }
-
-    void set_auto_upload_mes_status(bool status) {
-        _auto_upload_mes = status;
+        return _uiHandle->get_auto_upload_check_state();
     }
 
     void set_test_step(int step) {
