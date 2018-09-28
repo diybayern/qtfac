@@ -112,7 +112,7 @@ void Control::ui_init()
     _uiHandle->add_main_label("硬件版本:", _hwInfo->product_hw_version);
     _uiHandle->add_main_label("SN序列号:", _hwInfo->sn);
     _uiHandle->add_main_label("MAC地址:", _hwInfo->mac);
-    _uiHandle->add_main_label("CPU型号:", _hwInfo->cpu_type);
+   // _uiHandle->add_main_label("CPU型号:", _hwInfo->cpu_type);
     
     _uiHandle->add_main_test_button("接口测试");
     
@@ -264,7 +264,6 @@ void Control::init_fac_config()
     } else if (fac_config_status == (NO_FTP_PATH + NO_JOB_NUMBER)) {
         LOG_INFO("NO_FTP_PATH and NO_JOB_NUMBER");
     } 
-    //_uiHandle->add_main_label("NO FTP INFO","NO INFO");
 }
 
 void Control::start_interface_test()
@@ -273,66 +272,6 @@ void Control::start_interface_test()
     _testStep = STEP_INTERFACE;
 	_funcBase[INTERFACE]->start_test(_baseInfo);
 }
-
-/*
-void Control::start_mem_test()
-{
-    _testStep = STEP_INTERFACE;
-    _funcBase[MEM]->start_test(_baseInfo);
-    LOG_INFO("start mem test");
-}
-
-void Control::start_cpu_test()
-{
-    _testStep = STEP_INTERFACE;
-    _funcBase[CPU]->start_test(_baseInfo);
-    LOG_INFO("start cpu test");
-}
-
-
-void Control::start_usb_test()
-{
-    _testStep = STEP_INTERFACE;
-    _funcBase[USB]->start_test(_baseInfo);
-    LOG_INFO("start usb test");
-}
-
-void Control::start_net_test()
-{
-    _testStep = STEP_INTERFACE;
-    _funcBase[NET]->start_test(_baseInfo);
-    LOG_INFO("start net test");
-}
-
-void Control::start_edid_test()
-{
-    _testStep = STEP_INTERFACE;
-    _funcBase[EDID]->start_test(_baseInfo);
-    LOG_INFO("start edid test");
-}
-
-void Control::start_hdd_test()
-{    
-    _testStep = STEP_INTERFACE;
-    _funcBase[HDD]->start_test(_baseInfo);   
-    LOG_INFO("start hdd test");
-}
-
-
-void Control::start_fan_test()
-{
-    _testStep = STEP_INTERFACE;
-    _funcBase[FAN]->start_test(_baseInfo);
-    LOG_INFO("start fan test");
-}
-
-void Control::start_wifi_test()
-{   
-    _testStep = STEP_INTERFACE;
-    _funcBase[WIFI]->start_test(_baseInfo);    
-    LOG_INFO("start wifi test");
-}*/
-
 
 void Control::start_sound_test()
 {
