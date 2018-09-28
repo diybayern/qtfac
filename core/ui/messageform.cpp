@@ -160,9 +160,9 @@ MessageForm::MessageForm(QWidget *parent, const int mode, const int timeout) : Q
             bt_cancle = new QPushButton(frame);
             bt_cancle->setObjectName(QString::fromUtf8("bt_cancel"));
             if (mode == NOICON) {
-                bt_cancle->setGeometry(QRect(250, 150, 100, 40));
+                bt_cancle->setGeometry(QRect(150, 150, 100, 40));
             } else {
-                bt_cancle->setGeometry(QRect(250, 150, 100, 40));
+                bt_cancle->setGeometry(QRect(150, 150, 100, 40));
             }
 
             bt_cancle->setFont(font);
@@ -171,7 +171,7 @@ MessageForm::MessageForm(QWidget *parent, const int mode, const int timeout) : Q
         } else if (mode == Success) {
             bt_confirm = new QPushButton(frame);
             bt_confirm->setObjectName(QString::fromUtf8("bt_confirm"));
-            bt_confirm->setGeometry(QRect(250, 150, 100, 40));
+            bt_confirm->setGeometry(QRect(150, 150, 100, 40));
             bt_confirm->setFont(font);
             if (UiHandle::get_uihandle()->get_is_complete_test()) {
                 bt_confirm->setText(tr("关机"));
@@ -179,6 +179,7 @@ MessageForm::MessageForm(QWidget *parent, const int mode, const int timeout) : Q
                 bt_confirm->setText(tr("下道工序"));
             }
             connect(bt_confirm, SIGNAL(clicked()), this, SLOT(proButtonConfirm()));
+            connect(this, SIGNAL(sig_confirm_shut_down_or_next_process(QString)), UiHandle::get_uihandle(), SLOT(slot_confirm_shut_down_or_next_process(QString)));
         } else if (mode == SNMAC_Success || mode == SNMAC_Error) {
             QFont font_snmac_state;
             font_snmac_state.setPointSize(16);
@@ -253,6 +254,7 @@ void MessageForm::proButtonCancel()
 
 void MessageForm::proButtonConfirm()
 {
+    emit sig_confirm_shut_down_or_next_process(bt_confirm->text());
     accept();
 }
 

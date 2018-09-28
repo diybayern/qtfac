@@ -66,6 +66,7 @@ class UiHandle: public QObject
         void sig_set_interface_test_state(int state);
         void sig_show_sn_mac_comparison_result(QString sn_mac, QString result);
         void sig_ui_get_message_from_scangun(string message);
+        void sig_ui_confirm_shut_down_or_next_process(string process);
         void to_update_stress_test_pass_or_fail(QString result);
 
     public slots:
@@ -74,6 +75,7 @@ class UiHandle: public QObject
         void slot_check_state_changed(QString item, bool state);
         void slot_recv_sn_mac_test_result(QString sn_mac, QString result);
         void slot_get_message_from_scangun(QString message);
+        void slot_confirm_shut_down_or_next_process(QString process);
 };
 
 

@@ -267,6 +267,7 @@ public slots:
     void set_test_result_pass_or_fail(string func, string result);
     void set_sn_mac_test_result(string sn_mac, string result);
     void check_sn_mac_compare_result(string message);
+    void confirm_shut_down_or_next_process(string process);
 };
 
 #endif // CONTROL_H

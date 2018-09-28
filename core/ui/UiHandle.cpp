@@ -166,6 +166,11 @@ void UiHandle::slot_get_message_from_scangun(QString message)
     emit sig_ui_get_message_from_scangun(message.toStdString());
 }
 
+void UiHandle::slot_confirm_shut_down_or_next_process(QString message)
+{
+    emit sig_ui_confirm_shut_down_or_next_process(message.toStdString());
+}
+
 string UiHandle::get_test_count()
 {
     QString count = MainTestWindow::get_main_test_window()->ui_get_test_count();

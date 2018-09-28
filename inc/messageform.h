@@ -46,6 +46,7 @@ protected:
 signals:
     void sig_handled_test_result(QString test_item, QString result);
     void sig_send_sn_mac_test_result(QString snmac, QString result);
+    void sig_confirm_shut_down_or_next_process(QString process);
 
 private slots:
     void proButtonOK();

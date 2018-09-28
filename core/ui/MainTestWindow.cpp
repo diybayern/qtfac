@@ -175,7 +175,7 @@ void MainTestWindow::_create_main_label_layout()
 
     if (_lab_complete_or_single_test != NULL)
     {
-        _grid_main_label_layout->addWidget(_lab_complete_or_single_test, i , 7);
+        _grid_main_label_layout->addWidget(_lab_complete_or_single_test, i , 1);
     }
     _hbox_main_label_layout->addLayout(_grid_main_label_layout);
     _hbox_main_label_layout->addStretch();
