@@ -279,7 +279,7 @@ bool UsbTest::usb_test_all(int num) {
 void* UsbTest::test_all(void *arg)
 {
     Control *control = Control::get_control();
-	control->set_usb_test_status(false);
+	control->set_interface_test_status(USB_TEST_NAME, false);
 	BaseInfo* baseInfo = (BaseInfo *)arg;
 	usb_screen_log += "==================== usb test ====================\n";
     int num = get_int_value(baseInfo->usb_total_num);
@@ -290,17 +290,17 @@ void* UsbTest::test_all(void *arg)
         bool result_write_read = usb_test_all(num);
         if (result_write_read) {
 			usb_screen_log += "usb test result:\t\t\tSUCCESS\n\n";
-	   		control->set_usb_test_result(true); 
+	   		control->set_interface_test_result(USB_TEST_NAME, true); 
         } else {
         	usb_screen_log += "usb test result:\t\t\tFAIL\n\n";
-			control->set_usb_test_result(false);
+			control->set_interface_test_result(USB_TEST_NAME, false);
         }
     } else {
 		usb_screen_log += "usb test result:\t\t\tFAIL\n\n";
-		control->set_usb_test_result(false); 
+		control->set_interface_test_result(USB_TEST_NAME, false); 
     }	
 	control->update_screen_log(usb_screen_log);
-	control->set_usb_test_status(true);
+	control->set_interface_test_status(USB_TEST_NAME, true);
 	usb_screen_log = "";
 	return NULL;
 }

@@ -353,7 +353,6 @@ bool WifiTest::check_if_wifi_connect_pass(void)
     char wifi_info[CMD_BUF_SIZE];
     char wifi_status[CMD_BUF_SIZE];
     char wifi_ssid_mac[CMD_BUF_SIZE];
-	bool ret = true;
 	int size = 0;
 	
 	if(!get_file_size("/tmp/wifi_test_info.tmp", &size)) {
@@ -413,7 +412,7 @@ void* WifiTest::test_all(void* arg)
             break;
 		}
 	}
-	control->set_wifi_test_status(false);
+	control->set_interface_test_status(WIFI_TEST_NAME, false);
 	wifi_screen_log += "==================== wifi test ====================\n";
 	bool is_pass = false;
 	string str = execute_command("bash " + WIFI_TEST_SCRIPT);
@@ -427,13 +426,13 @@ void* WifiTest::test_all(void* arg)
 
 	if (is_pass) {
 		wifi_screen_log += "wifi test result:\t\t\tSUCCESS\n\n";
-		control->set_wifi_test_result(true); 
+		control->set_interface_test_result(WIFI_TEST_NAME, true); 
 	} else {
 		wifi_screen_log += "wifi test result:\t\t\tFAIL\n\n";
-		control->set_wifi_test_result(false); 
+		control->set_interface_test_result(WIFI_TEST_NAME, false); 
 	}
 	control->update_screen_log(wifi_screen_log);
-	control->set_wifi_test_status(true);
+	control->set_interface_test_status(WIFI_TEST_NAME, true);
 	wifi_screen_log = "";
 	return NULL;
 }

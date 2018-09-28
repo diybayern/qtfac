@@ -546,20 +546,20 @@ error:
 void* NetTest::test_all(void* arg)
 {
     Control *control = Control::get_control();
-	control->set_net_test_status(false);
+	control->set_interface_test_status(NET_TEST_NAME, false);
 	net_screen_log += "==================== net test ====================\n";
 	bool is_pass = net_test_all();
 	if (is_pass) {
 		LOG_INFO("net test result: \tSUCCESS\n");
     	net_screen_log += "net test result: \t\t\tSUCCESS\n\n";
-        control->set_net_test_result(true);
+        control->set_interface_test_result(NET_TEST_NAME, true);
 	} else {
 		LOG_INFO("net test result: \tFAIL\n");
     	net_screen_log += "net test result: \t\t\tFAIL\n\n";
-        control->set_net_test_result(false);
+        control->set_interface_test_result(NET_TEST_NAME, false);
 	}
 	control->update_screen_log(net_screen_log);
-	control->set_net_test_status(true);
+	control->set_interface_test_status(NET_TEST_NAME, true);
 	net_screen_log = "";
 	return NULL;
 }

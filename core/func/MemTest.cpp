@@ -43,7 +43,7 @@ bool MemTest::mem_stability_test()
 void* MemTest::test_all(void *arg)
 {
     Control *control = Control::get_control();
-	control->set_mem_test_status(false);
+	control->set_interface_test_status(MEM_TEST_NAME, false);
 	BaseInfo* baseInfo = (BaseInfo *)arg;
 	bool is_pass;
 	mem_screen_log += "==================== mem test ====================\n";
@@ -52,13 +52,13 @@ void* MemTest::test_all(void *arg)
 	mem_screen_log += execute_command("cat " + MEM_UI_LOG) + "\n\nmem test result:\t\t\t";
 	if (is_pass) {
 		mem_screen_log += "SUCCESS\n\n";
-        control->set_mem_test_result(true); 
+        control->set_interface_test_result(MEM_TEST_NAME, true); 
 	} else {
 		mem_screen_log += "FAIL\n\n";
-        control->set_mem_test_result(false); 
+        control->set_interface_test_result(MEM_TEST_NAME, false); 
 	}
 	control->update_screen_log(mem_screen_log);
-	control->set_mem_test_status(true);
+	control->set_interface_test_status(MEM_TEST_NAME, true);
 	mem_screen_log = "";
 	return NULL;
 }

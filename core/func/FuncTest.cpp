@@ -30,17 +30,17 @@ bool CpuTest::is_cpu_test_pass(BaseInfo* baseInfo)
 void CpuTest::start_test(BaseInfo* baseInfo)
 {
     Control *control = Control::get_control();
-	control->set_cpu_test_status(false);
+	control->set_interface_test_status(CPU_TEST_NAME, false);
     cpu_screen_log += "==================== cpu test ====================\n";
     if (is_cpu_test_pass(baseInfo)) {
         cpu_screen_log += "cpu test result:\t\t\tSUCCESS\n\n";
-		control->set_cpu_test_result(true); 
+		control->set_interface_test_result(CPU_TEST_NAME, true); 
     } else {    
         cpu_screen_log += "cpu test result:\t\t\tFAIL\n\n";
-		control->set_cpu_test_result(false); 
+		control->set_interface_test_result(CPU_TEST_NAME, false); 
     }
 	control->update_screen_log(cpu_screen_log);
-	control->set_cpu_test_status(true);
+	control->set_interface_test_status(CPU_TEST_NAME, true);
     cpu_screen_log = "";
 }
 
@@ -60,20 +60,20 @@ string FanTest::fan_speed_test(string speed)
 void* FanTest::test_all(void *arg)
 {
     Control *control = Control::get_control();
-	control->set_fan_test_status(false);
+	control->set_interface_test_status(FAN_TEST_NAME, false);
     fan_screen_log += "==================== fan test ====================\n";
     BaseInfo* baseInfo = (BaseInfo *)arg;
     string result = fan_speed_test(baseInfo->fan_speed);
     if (result == "SUCCESS") {        
         fan_screen_log += "fan test result:\t\t\t" + result + "\n\n";
-        control->set_fan_test_result(true);    
+        control->set_interface_test_result(FAN_TEST_NAME, true);    
     } else {
         fan_screen_log += "fan speed should be\t" + baseInfo->fan_speed + "but current is\t" + result + "\n\n";        
         fan_screen_log += "fan test result:\t\t\tFAIL\n\n";
-        control->set_fan_test_result(false);
+        control->set_interface_test_result(FAN_TEST_NAME, false);
     }
     control->update_screen_log(fan_screen_log);
-	control->set_fan_test_status(true);
+	control->set_interface_test_status(FAN_TEST_NAME, true);
     fan_screen_log = "";
     return NULL;
 }
@@ -95,17 +95,18 @@ void* StressTest::test_all(void *arg)
 {
 	BaseInfo* baseInfo = (BaseInfo *)arg;
 	Control *control = Control::get_control();
+	UiHandle* uihandle = UiHandle::get_uihandle();
     TimeInfo init_time = {0,0,0,0};
     TimeInfo tmp_dst = {0,0,0,0};
     char datebuf[CMD_BUF_SIZE] = {0};
-	CpuStatus st_cpu = {0,};
+	CpuStatus st_cpu = {0,0,0,0,0,0,0,0,0,0,0};
 
 	if (check_file_exit(STRESS_LOCK_FILE.c_str())) {
 		string stress_stage = control->get_stress_test_stage();		
 		remove_local_file(STRESS_LOCK_FILE.c_str());
-		if (stress_stage == "whole" || stress_stage == "PCBA") {
+		if (stress_stage == WHOLE_LOCK|| stress_stage == PCBA_LOCK) {
 			LOG_INFO("last stress test exit error\n");			
-	    } else if (stress_stage == "next") {
+	    } else if (stress_stage == NEXT_LOCK) {
 			LOG_INFO("next process -> stress test\n");
 	    } else {
 			LOG_ERROR("stress test lock file wrong\n");
@@ -123,35 +124,36 @@ void* StressTest::test_all(void *arg)
 		return NULL;
 	}
 	control->stress_test_window_quit_status = true;
-	UiHandle::get_uihandle()->show_stress_test_ui();
+	uihandle->show_stress_test_ui();
 
-    UiHandle::get_uihandle()->update_stress_label_value("编码状态","PASS");
-    UiHandle::get_uihandle()->update_stress_label_value("解码状态","PASS");
-    UiHandle::get_uihandle()->update_stress_label_value("产品型号",(control->get_hw_info())->product_name);
-    UiHandle::get_uihandle()->update_stress_label_value("硬件版本",(control->get_hw_info())->product_hw_version);
-    UiHandle::get_uihandle()->update_stress_label_value("SN序列号",(control->get_hw_info())->sn);
-    UiHandle::get_uihandle()->update_stress_label_value("MAC地址",(control->get_hw_info())->mac);
+    uihandle->update_stress_label_value("编码状态","PASS");
+    uihandle->update_stress_label_value("解码状态","PASS");
+    uihandle->update_stress_label_value("产品型号",(control->get_hw_info())->product_name);
+    uihandle->update_stress_label_value("硬件版本",(control->get_hw_info())->product_hw_version);
+    uihandle->update_stress_label_value("SN序列号",(control->get_hw_info())->sn);
+    uihandle->update_stress_label_value("MAC地址",(control->get_hw_info())->mac);
     
     get_current_open_time(&init_time);
     while(true)
     {
-        if (!Control::get_control()->is_stress_test_window_quit_safely()) {
+        if (!control->is_stress_test_window_quit_safely()) {
             break;
         }
 		
         get_current_open_time(&tmp_dst);
         diff_running_time(&tmp_dst, &init_time);
-		if (tmp_dst.hour == 4) {
+		if (tmp_dst.minute == 2) {
 			remove_local_file(STRESS_LOCK_FILE.c_str());
+			uihandle->set_stress_test_pass_or_fail("PASS");
 		}
         snprintf(datebuf, CMD_BUF_SIZE, "%d天%d时%d分%d秒", tmp_dst.day, tmp_dst.hour, tmp_dst.minute, tmp_dst.second);
-        UiHandle::get_uihandle()->update_stress_label_value("运行时间", datebuf);
+        uihandle->update_stress_label_value("运行时间", datebuf);
 
-		UiHandle::get_uihandle()->update_stress_label_value("CPU温度",execute_command("bash " + GET_CPU_TEMP_SCRIPT));
+		uihandle->update_stress_label_value("CPU温度",execute_command("bash " + GET_CPU_TEMP_SCRIPT));
         
-        UiHandle::get_uihandle()->update_stress_label_value("CPU频率",get_current_cpu_freq());		
-        UiHandle::get_uihandle()->update_stress_label_value("Mem",get_mem_info());		
-        UiHandle::get_uihandle()->update_stress_label_value("Cpu",get_cpu_info(&st_cpu));
+        uihandle->update_stress_label_value("CPU频率",get_current_cpu_freq());		
+        uihandle->update_stress_label_value("Mem",get_mem_info());		
+        uihandle->update_stress_label_value("Cpu",get_cpu_info(&st_cpu));
 
         sleep(1);
     }
@@ -192,14 +194,15 @@ bool NextProcess::create_stress_test_lock()
 void NextProcess::next_process_handle() 
 {
     int next_process_f = -1;
-
+	UiHandle* uihandle = UiHandle::get_uihandle();
+	
     pthread_detach(pthread_self());    
     if (pthread_mutex_trylock(&g_next_process_lock)) {
         LOG_ERROR("g_next_process_lock has been locked\n");
         return;
     }
 
-    //g_idle_add(gtk_win_next_process, "正在处理，请等待...");
+    uihandle->confirm_test_result_warning("正在处理，请等待...");
     next_process_f = system("bash /etc/diskstatus_mgr.bash --product-detach");
     usleep(1000000);
 
@@ -209,14 +212,14 @@ void NextProcess::next_process_handle()
     if (WEXITSTATUS(next_process_f) == 0) {
         if (!create_stress_test_lock()) {
             LOG_ERROR("create stress test lock fail!\n");			
-           // g_idle_add(gtk_win_next_process,"EMMC异常，无法关机！\n");
+            uihandle->confirm_test_result_warning("EMMC异常，无法关机！");
         } else if (system("shutdown -h now") < 0) {
             LOG_ERROR("shutdown cmd run error\n");			
-           // g_idle_add(gtk_win_next_process,"终端异常，无法关机！\n");
+            uihandle->confirm_test_result_warning("终端异常，无法关机！");
         }
     } else if (WEXITSTATUS(next_process_f) > 0) {
         LOG_ERROR("The disk is abnormal and cannot enter the next process.\n");		
-		//g_idle_add(gtk_win_next_process,"终端异常，无法关机！\n");
+		uihandle->confirm_test_result_warning("终端异常，无法关机！");
     }
  
     return;
@@ -396,10 +399,10 @@ void* InterfaceTest::test_all(void *arg)
 		string mem_total_result = "MEM        ";
         if(interfaceTestFailNum->mem_test_fail_num == 0) {
 			mem_total_result = mem_total_result + "PASS(Time:" + to_string(real_test_num) + ",ERROR:0)";
-            control->set_func_test_result("内存测试","PASS");
-			control->set_mem_test_finish();
+            control->set_func_test_result(MEM_TEST_NAME,"PASS");
+			control->set_interface_test_finish(MEM_TEST_NAME);
         } else {
-            control->set_func_test_result("内存测试","FAIL");
+            control->set_func_test_result(MEM_TEST_NAME,"FAIL");
 			mem_total_result = mem_total_result + "FAIL(Time:" + to_string(real_test_num) + ",ERROR:" 
 				               + to_string(interfaceTestFailNum->mem_test_fail_num) + ")";
         }
@@ -410,10 +413,10 @@ void* InterfaceTest::test_all(void *arg)
 		string usb_total_result = "USB        ";
         if(interfaceTestFailNum->usb_test_fail_num == 0) {
 			usb_total_result = usb_total_result + "PASS(Time:" + to_string(real_test_num) + ",ERROR:0)";
-            control->set_func_test_result("USB测试","PASS");
-			control->set_usb_test_finish();
+            control->set_func_test_result(USB_TEST_NAME,"PASS");
+			control->set_interface_test_finish(USB_TEST_NAME);
         } else {
-            control->set_func_test_result("USB测试","FAIL");
+            control->set_func_test_result(USB_TEST_NAME,"FAIL");
 			usb_total_result = usb_total_result + "FAIL(Time:" + to_string(real_test_num) + ",ERROR:" 
 				               + to_string(interfaceTestFailNum->usb_test_fail_num) + ")";
         }
@@ -423,11 +426,11 @@ void* InterfaceTest::test_all(void *arg)
     if (interfaceSelectStatus->net_select) {
 		string net_total_result = "NET        ";
         if(interfaceTestFailNum->net_test_fail_num == 0) {
-            control->set_func_test_result("网口测试","PASS");
-			control->set_net_test_finish();
+            control->set_func_test_result(NET_TEST_NAME,"PASS");
+			control->set_interface_test_finish(NET_TEST_NAME);
 			net_total_result = net_total_result + "PASS(Time:" + to_string(real_test_num) + ",ERROR:0)";
         } else {
-            control->set_func_test_result("网口测试","FAIL");
+            control->set_func_test_result(NET_TEST_NAME,"FAIL");
 			net_total_result = net_total_result + "FAIL(Time:" + to_string(real_test_num) + ",ERROR:" 
 				               + to_string(interfaceTestFailNum->net_test_fail_num) + ")";
         }
@@ -437,11 +440,11 @@ void* InterfaceTest::test_all(void *arg)
     if (interfaceSelectStatus->edid_select) {
 		string edid_total_result = "EDID      ";
         if(interfaceTestFailNum->edid_test_fail_num == 0) {
-            control->set_func_test_result("EDID测试","PASS");
-			control->set_edid_test_finish();
+            control->set_func_test_result(EDID_TEST_NAME,"PASS");
+			control->set_interface_test_finish(EDID_TEST_NAME);
 			edid_total_result = edid_total_result + "PASS(Time:" + to_string(real_test_num) + ",ERROR:0)";
         } else {
-            control->set_func_test_result("EDID测试","FAIL");
+            control->set_func_test_result(EDID_TEST_NAME,"FAIL");
 			edid_total_result = edid_total_result + "FAIL(Time:" + to_string(real_test_num) + ",ERROR:" 
 				               + to_string(interfaceTestFailNum->edid_test_fail_num) + ")";
         }
@@ -451,11 +454,11 @@ void* InterfaceTest::test_all(void *arg)
     if (interfaceSelectStatus->cpu_select) {
 		string cpu_total_result = "CPU       ";
         if(interfaceTestFailNum->cpu_test_fail_num == 0) {
-            control->set_func_test_result("CPU测试","PASS");
-			control->set_cpu_test_finish();
+            control->set_func_test_result(CPU_TEST_NAME,"PASS");
+			control->set_interface_test_finish(CPU_TEST_NAME);
 			cpu_total_result = cpu_total_result + "PASS(Time:" + to_string(real_test_num) + ",ERROR:0)";
         } else {
-            control->set_func_test_result("CPU测试","FAIL");
+            control->set_func_test_result(CPU_TEST_NAME,"FAIL");
 			cpu_total_result = cpu_total_result + "FAIL(Time:" + to_string(real_test_num) + ",ERROR:" 
 				               + to_string(interfaceTestFailNum->cpu_test_fail_num) + ")";
         }
@@ -466,11 +469,11 @@ void* InterfaceTest::test_all(void *arg)
         if (interfaceSelectStatus->hdd_select) {
 			string hdd_total_result = "HDD       ";
             if(interfaceTestFailNum->hdd_test_fail_num == 0) {
-                control->set_func_test_result("HDD测试","PASS");
-				control->set_hdd_test_finish();
+                control->set_func_test_result(HDD_TEST_NAME,"PASS");
+				control->set_interface_test_finish(HDD_TEST_NAME);
 				hdd_total_result = hdd_total_result + "PASS(Time:" + to_string(real_test_num) + ",ERROR:0)";
             } else {
-                control->set_func_test_result("HDD测试","FAIL");
+                control->set_func_test_result(HDD_TEST_NAME,"FAIL");
 				hdd_total_result = hdd_total_result + "FAIL(Time:" + to_string(real_test_num) + ",ERROR:" 
 				               + to_string(interfaceTestFailNum->hdd_test_fail_num) + ")";
             }
@@ -482,11 +485,11 @@ void* InterfaceTest::test_all(void *arg)
         if (interfaceSelectStatus->fan_select) {
 			string fan_total_result = "FAN       ";
             if(interfaceTestFailNum->fan_test_fail_num == 0) {
-                control->set_func_test_result("FAN测试","PASS");
-				control->set_fan_test_finish();
+                control->set_func_test_result(FAN_TEST_NAME,"PASS");
+				control->set_interface_test_finish(FAN_TEST_NAME);
 				fan_total_result = fan_total_result + "PASS(Time:" + to_string(real_test_num) + ",ERROR:0)";
             } else {
-                control->set_func_test_result("FAN测试","FAIL");
+                control->set_func_test_result(FAN_TEST_NAME,"FAIL");
 				fan_total_result = fan_total_result + "FAIL(Time:" + to_string(real_test_num) + ",ERROR:" 
 				               + to_string(interfaceTestFailNum->fan_test_fail_num) + ")";
             }
@@ -498,11 +501,11 @@ void* InterfaceTest::test_all(void *arg)
         if (interfaceSelectStatus->wifi_select) {
 			string wifi_total_result = "WIFI       ";
             if(interfaceTestFailNum->wifi_test_fail_num == 0) {
-                control->set_func_test_result("WIFI测试","PASS");
-				control->set_wifi_test_finish();
+                control->set_func_test_result(WIFI_TEST_NAME,"PASS");
+				control->set_interface_test_finish(WIFI_TEST_NAME);
 				wifi_total_result = wifi_total_result + "PASS(Time:" + to_string(real_test_num) + ",ERROR:0)";
             } else {
-                control->set_func_test_result("WIFI测试","FAIL");
+                control->set_func_test_result(WIFI_TEST_NAME,"FAIL");
 				wifi_total_result = wifi_total_result + "FAIL(Time:" + to_string(real_test_num) + ",ERROR:" 
 				               + to_string(interfaceTestFailNum->wifi_test_fail_num) + ")";
             }

@@ -45,18 +45,18 @@ bool HddTest::check_if_hdd_pass()
 void* HddTest::test_all(void *arg)
 {
 	Control *control = Control::get_control();
-	control->set_hdd_test_status(false);
+	control->set_interface_test_status(HDD_TEST_NAME, false);
 	hdd_screen_log += "==================== hdd test ====================\n";
 	BaseInfo* baseInfo = (BaseInfo *)arg;
 	string result = hdd_test_all(baseInfo->hdd_cap);
 	hdd_screen_log += "hdd test result:\t\t\t" + result + "\n\n";
 	if (result == "SUCCESS") {
-		control->set_hdd_test_result(true); 
+		control->set_interface_test_result(HDD_TEST_NAME, true); 
 	} else {
-		control->set_hdd_test_result(false); 
+		control->set_interface_test_result(HDD_TEST_NAME, false); 
 	}
 	control->update_screen_log(hdd_screen_log);
-	control->set_hdd_test_status(true);
+	control->set_interface_test_status(HDD_TEST_NAME, true);
 	hdd_screen_log = "";
 	return NULL;
 }

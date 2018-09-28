@@ -233,7 +233,7 @@ void* EdidTest::test_all(void *arg)
 {
 	
 	Control *control = Control::get_control();
-	control->set_edid_test_status(false);
+	control->set_interface_test_status(EDID_TEST_NAME, false);
 	BaseInfo* baseInfo = (BaseInfo *)arg;	
 	edid_screen_log += "==================== edid test ====================\n";
 	int edid_num = get_edid_num(baseInfo);
@@ -242,13 +242,13 @@ void* EdidTest::test_all(void *arg)
 	edid_screen_log += "edid test result:\t\t\t";
 	if (is_pass == SUCCESS) {
 		edid_screen_log += "SUCCESS\n\n";
-        control->set_edid_test_result(true);
+        control->set_interface_test_result(EDID_TEST_NAME, true);
 	} else {
 		edid_screen_log += "FAIL\n\n";
-        control->set_edid_test_result(false);
+        control->set_interface_test_result(EDID_TEST_NAME, false);
 	}
 	control->update_screen_log(edid_screen_log);
-	control->set_edid_test_status(true);
+	control->set_interface_test_status(EDID_TEST_NAME, true);
 	edid_screen_log = "";
 	return NULL;
 }

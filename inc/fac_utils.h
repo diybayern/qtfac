@@ -18,6 +18,26 @@
 
 using std::string;
 
+
+const string MEM_TEST_NAME  = "内存测试";
+const string USB_TEST_NAME  = "USB测试";
+const string NET_TEST_NAME  = "网口测试";
+const string EDID_TEST_NAME = "EDID测试";
+const string CPU_TEST_NAME  = "CPU测试";
+const string HDD_TEST_NAME  = "HDD测试";
+const string FAN_TEST_NAME  = "FAN测试";
+const string WIFI_TEST_NAME = "WIFI测试";
+
+const string INTERFACE_TEST_NAME  = "接口测试";
+const string SOUND_TEST_NAME      = "音频测试";
+const string DISPLAY_TEST_NAME    = "显示测试";
+const string BRIGHT_TEST_NAME     = "亮度测试";
+const string CAMERA_TEST_NAME     = "摄像头测试";
+const string STRESS_TEST_NAME     = "拷机测试";
+const string UPLOAD_LOG_NAME      = "上传日志";
+const string NEXT_PROCESS_NAME    = "下道工序";
+
+
 const string FACTORY_PATH         = "/usr/local/bin/factory/";
 const string STRESS_LOCK_FILE     = FACTORY_PATH + "lock";
 const string FAN_TEST_SCRIPT      = FACTORY_PATH + "fan_test.sh";

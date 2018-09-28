@@ -114,56 +114,56 @@ void Control::ui_init()
     _uiHandle->add_main_label("MAC地址:", _hwInfo->mac);
    // _uiHandle->add_main_label("CPU型号:", _hwInfo->cpu_type);
     
-    _uiHandle->add_main_test_button("接口测试");
+    _uiHandle->add_main_test_button(INTERFACE_TEST_NAME);
     
-    _uiHandle->add_interface_test_button("内存测试");
-    _uiHandle->add_interface_test_button("USB测试");
-    _uiHandle->add_interface_test_button("网口测试");
-    _uiHandle->add_interface_test_button("EDID测试");
-    _uiHandle->add_interface_test_button("CPU测试");
+    _uiHandle->add_interface_test_button(MEM_TEST_NAME);
+    _uiHandle->add_interface_test_button(USB_TEST_NAME);
+    _uiHandle->add_interface_test_button(NET_TEST_NAME);
+    _uiHandle->add_interface_test_button(EDID_TEST_NAME);
+    _uiHandle->add_interface_test_button(CPU_TEST_NAME);
     
     if (_baseInfo->hdd_cap != "0" && _baseInfo->hdd_cap != "") {
-        _uiHandle->add_interface_test_button("HDD测试");
+        _uiHandle->add_interface_test_button(HDD_TEST_NAME);
     } else {
         _funcFinishStatus->hdd_finish = true;
 		_interfaceTestStatus->hdd_test_over = true;
     }
     
     if (_baseInfo->fan_speed != "0" && _baseInfo->fan_speed != "") {
-        _uiHandle->add_interface_test_button("FAN测试");
+        _uiHandle->add_interface_test_button(FAN_TEST_NAME);
     } else {
         _funcFinishStatus->fan_finish = true;
 		_interfaceTestStatus->fan_test_over = true;
     }
 
     if (_baseInfo->wifi_exist != "0" && _baseInfo->wifi_exist != "") {
-        _uiHandle->add_interface_test_button("WIFI测试");
+        _uiHandle->add_interface_test_button(WIFI_TEST_NAME);
     } else {
         _funcFinishStatus->wifi_finish = true;
 		_interfaceTestStatus->wifi_test_over = true;
     }
 
-    _uiHandle->add_main_test_button("音频测试");
-    _uiHandle->add_main_test_button("显示测试");
+    _uiHandle->add_main_test_button(SOUND_TEST_NAME);
+    _uiHandle->add_main_test_button(DISPLAY_TEST_NAME);
     
     if (_baseInfo->bright_level != "0" && _baseInfo->bright_level != ""){
-        _uiHandle->add_main_test_button("亮度测试");
+        _uiHandle->add_main_test_button(BRIGHT_TEST_NAME);
     } else {
         _funcFinishStatus->bright_finish = true;
 	}
     
     if (_baseInfo->camera_exist != "0" && _baseInfo->camera_exist != "") {
-        _uiHandle->add_main_test_button("摄像头测试");
+        _uiHandle->add_main_test_button(CAMERA_TEST_NAME);
     } else {
         _funcFinishStatus->camera_finish = true;
 	}
     
-    _uiHandle->add_main_test_button("拷机测试");
-    _uiHandle->add_main_test_button("上传日志");
+    _uiHandle->add_main_test_button(STRESS_TEST_NAME);
+    _uiHandle->add_main_test_button(UPLOAD_LOG_NAME);
     
     if (_baseInfo->hdd_cap != "0" && _baseInfo->hdd_cap != "") {
         if (!check_file_exit(WHOLE_TEST_FILE)) {
-             _uiHandle->add_main_test_button("下道工序");
+             _uiHandle->add_main_test_button(NEXT_PROCESS_NAME);
         }
     }    
     
@@ -187,22 +187,22 @@ void Control::ui_init()
     _uiHandle->add_stress_test_label("产品型号");
     _uiHandle->add_stress_test_label("硬件版本");
     
-    connect(_uiHandle->get_qobject("接口测试"), SIGNAL(clicked()), this, SLOT(start_interface_test()));
-    connect(_uiHandle->get_qobject("音频测试"), SIGNAL(clicked()), this, SLOT(start_sound_test()));
-    connect(_uiHandle->get_qobject("显示测试"), SIGNAL(clicked()), this, SLOT(start_display_test()));
+    connect(_uiHandle->get_qobject(INTERFACE_TEST_NAME), SIGNAL(clicked()), this, SLOT(start_interface_test()));
+    connect(_uiHandle->get_qobject(SOUND_TEST_NAME), SIGNAL(clicked()), this, SLOT(start_sound_test()));
+    connect(_uiHandle->get_qobject(DISPLAY_TEST_NAME), SIGNAL(clicked()), this, SLOT(start_display_test()));
 
     if (_baseInfo->bright_level != "0" && _baseInfo->bright_level != ""){
-        connect(_uiHandle->get_qobject("亮度测试"), SIGNAL(clicked()), this, SLOT(start_bright_test()));
+        connect(_uiHandle->get_qobject(BRIGHT_TEST_NAME), SIGNAL(clicked()), this, SLOT(start_bright_test()));
     }
     if (_baseInfo->camera_exist != "0" && _baseInfo->camera_exist != "") {
-        connect(_uiHandle->get_qobject("摄像头测试"), SIGNAL(clicked()), this, SLOT(start_camera_test()));
+        connect(_uiHandle->get_qobject(CAMERA_TEST_NAME), SIGNAL(clicked()), this, SLOT(start_camera_test()));
     }
-    connect(_uiHandle->get_qobject("拷机测试"), SIGNAL(clicked()), this, SLOT(start_stress_test()));
-    connect(_uiHandle->get_qobject("上传日志"), SIGNAL(clicked()), this, SLOT(start_upload_log()));
+    connect(_uiHandle->get_qobject(STRESS_TEST_NAME), SIGNAL(clicked()), this, SLOT(start_stress_test()));
+    connect(_uiHandle->get_qobject(UPLOAD_LOG_NAME), SIGNAL(clicked()), this, SLOT(start_upload_log()));
 
 	if (_baseInfo->hdd_cap != "0" && _baseInfo->hdd_cap != "") {
         if (!check_file_exit(WHOLE_TEST_FILE)) {
-    		connect(_uiHandle->get_qobject("下道工序"), SIGNAL(clicked()), this, SLOT(start_next_process()));
+    		connect(_uiHandle->get_qobject(NEXT_PROCESS_NAME), SIGNAL(clicked()), this, SLOT(start_next_process()));
         }
 	}
 	connect(_uiHandle, SIGNAL(to_show_test_confirm_dialog(string)), this, SLOT(show_test_confirm_dialog(string)));
@@ -218,28 +218,43 @@ void Control::check_sn_mac_compare_result(string message)
     if (_sn_mac == "MAC") {
 		if (message.size() != 12) {
 			_uiHandle->show_sn_mac_comparison_result("MAC", "FAIL");
-		} else {
-			string mac = _hwInfo->mac;
-			for(i = 0, j = 0; i < 12; i++, j++) {
-				if (message[i++] != mac[j++]) {
-					_uiHandle->show_sn_mac_comparison_result("MAC", "FAIL");
-					break;
-				}
-				if (message[i] != mac[j++]) {
-					_uiHandle->show_sn_mac_comparison_result("MAC", "FAIL");
-					break;
-				}
+			return;
+		} 
+		
+		string mac = _hwInfo->mac;
+		for(i = 0, j = 0; i < 12; i++, j++) {
+			if (message[i++] != mac[j++]) {
+				_uiHandle->show_sn_mac_comparison_result("MAC", "FAIL");
+				return;
 			}
-			if (i == 12) {
-				_uiHandle->show_sn_mac_comparison_result("MAC", "PASS");
+			if (message[i] != mac[j++]) {
+				_uiHandle->show_sn_mac_comparison_result("MAC", "FAIL");
+				return;
 			}
 		}
+		_uiHandle->show_sn_mac_comparison_result("MAC", "PASS");
+		return;
+    }
+
+	if (_sn_mac == "SN") {
+		string sn = _hwInfo->sn;
+		if (message.size() != sn.size()) {
+			_uiHandle->show_sn_mac_comparison_result("SN", "FAIL");
+			return;
+		} 
+		for(i = 0; i < message.size(); i++) {
+			if (message[i] != sn[i]) {
+				_uiHandle->show_sn_mac_comparison_result("SN", "FAIL");
+				return;
+			}
+		}
+		_uiHandle->show_sn_mac_comparison_result("SN", "PASS");
     }
 }
 
 void Control::show_test_confirm_dialog(string item)
 {
-    if (item.compare("拷机测试") == 0) {
+    if (item.compare(STRESS_TEST_NAME) == 0) {
         stress_test_window_quit_status = false;
     }
     _uiHandle->confirm_test_result_dialog(item);
@@ -466,7 +481,7 @@ void Control::upload_mes_log() {
 	if (fac_config_status != 0) {
 		LOG_INFO("fac config is wrong, do not upload");
 		_uiHandle->confirm_test_result_warning("配置文件有误");
-		set_test_result("上传日志","FAIL","配置文件有误");
+		set_test_result(UPLOAD_LOG_NAME,"FAIL","配置文件有误");
 		return;
 	} else if (combine_fac_log_to_mes(MES_FILE)) {
         char* response = ftp_send_file(MES_FILE,_facArg);
@@ -474,10 +489,10 @@ void Control::upload_mes_log() {
         LOG_INFO("upload %s",response);
 		if (!strcmp(response,"上传成功")) {
 			_uiHandle->confirm_test_result_success("upload success");
-			set_test_result("上传日志","PASS",response);
+			set_test_result(UPLOAD_LOG_NAME,"PASS",response);
 		} else {
 			_uiHandle->confirm_test_result_warning("upload fail");
-			set_test_result("上传日志","FAIL",response);
+			set_test_result(UPLOAD_LOG_NAME,"FAIL",response);
 		}
     } else {
         LOG_INFO("combine mes fail");
@@ -520,7 +535,7 @@ void Control::auto_start_stress_test()
 
 void Control::set_interface_select_status(string func, bool state) {
 	_funcFinishStatus->interface_finish = false;
-    if (func == "内存测试") {
+    if (func == MEM_TEST_NAME) {
         _interfaceSelectStatus->mem_select  = state;
         if (_interfaceSelectStatus->mem_select) {
             _funcFinishStatus->mem_finish = false;
@@ -529,7 +544,7 @@ void Control::set_interface_select_status(string func, bool state) {
 			_interfaceTestStatus->mem_test_over = true;
         }
     }
-    if (func ==  "USB测试") {
+    if (func ==  USB_TEST_NAME) {
         _interfaceSelectStatus->usb_select  = state;
         if (_interfaceSelectStatus->usb_select) {
             _funcFinishStatus->usb_finish = false;
@@ -538,7 +553,7 @@ void Control::set_interface_select_status(string func, bool state) {
 			_interfaceTestStatus->usb_test_over = true;
         }
     }
-    if (func == "网口测试") {
+    if (func == NET_TEST_NAME) {
         _interfaceSelectStatus->net_select  = state;
         if (_interfaceSelectStatus->net_select) {
             _funcFinishStatus->net_finish = false;
@@ -547,7 +562,7 @@ void Control::set_interface_select_status(string func, bool state) {
 			_interfaceTestStatus->net_test_over = true;
         }
     }
-    if (func == "EDID测试") {
+    if (func == EDID_TEST_NAME) {
         _interfaceSelectStatus->edid_select = state;
         if (_interfaceSelectStatus->edid_select) {
             _funcFinishStatus->edid_finish = false;
@@ -556,7 +571,7 @@ void Control::set_interface_select_status(string func, bool state) {
 			_interfaceTestStatus->edid_test_over = true;
         }
     }
-    if (func == "CPU测试") {
+    if (func == CPU_TEST_NAME) {
         _interfaceSelectStatus->cpu_select  = state;
         if (_interfaceSelectStatus->cpu_select) {
             _funcFinishStatus->cpu_finish = false;
@@ -565,7 +580,7 @@ void Control::set_interface_select_status(string func, bool state) {
 			_interfaceTestStatus->cpu_test_over = true;
         }
     }
-    if (func == "HDD测试") {
+    if (func == HDD_TEST_NAME) {
         _interfaceSelectStatus->hdd_select  = state;
         if (_interfaceSelectStatus->hdd_select) {
             _funcFinishStatus->hdd_finish = false;
@@ -574,7 +589,7 @@ void Control::set_interface_select_status(string func, bool state) {
 			_interfaceTestStatus->hdd_test_over = true;
         }
     }
-    if (func == "FAN测试") {
+    if (func == FAN_TEST_NAME) {
         _interfaceSelectStatus->fan_select  = state;
         if (_interfaceSelectStatus->fan_select) {
             _funcFinishStatus->fan_finish = false;
@@ -583,7 +598,7 @@ void Control::set_interface_select_status(string func, bool state) {
 			_interfaceTestStatus->fan_test_over = true;
         }
     }
-    if (func == "WIFI测试") {
+    if (func == WIFI_TEST_NAME) {
         _interfaceSelectStatus->wifi_select = state;
         if (_interfaceSelectStatus->wifi_select) {
             _funcFinishStatus->wifi_finish = false;
@@ -594,39 +609,121 @@ void Control::set_interface_select_status(string func, bool state) {
     }
 }
 
+void Control::set_interface_test_status(string func, bool status){
+	if (func == MEM_TEST_NAME) {
+		_interfaceTestStatus->mem_test_over= status;
+	}
+	if (func == USB_TEST_NAME) {
+		_interfaceTestStatus->usb_test_over= status;
+	}
+	if (func == CPU_TEST_NAME) {
+		_interfaceTestStatus->cpu_test_over= status;
+	}
+	if (func == NET_TEST_NAME) {
+		_interfaceTestStatus->net_test_over= status;
+	}
+	if (func == EDID_TEST_NAME) {
+		_interfaceTestStatus->edid_test_over= status;
+	}
+	if (func == HDD_TEST_NAME) {
+		_interfaceTestStatus->hdd_test_over= status;
+	}
+	if (func == FAN_TEST_NAME) {
+		_interfaceTestStatus->fan_test_over= status;
+	}
+	if (func == WIFI_TEST_NAME) {
+		_interfaceTestStatus->wifi_test_over= status;
+	}
+}
+
+void Control::set_interface_test_finish(string func){
+	if (func == MEM_TEST_NAME) {
+		_funcFinishStatus->mem_finish = true;
+	}
+	if (func == USB_TEST_NAME) {
+		_funcFinishStatus->usb_finish = true;
+	}
+	if (func == CPU_TEST_NAME) {
+		_funcFinishStatus->cpu_finish = true;
+	}
+	if (func == NET_TEST_NAME) {
+		_funcFinishStatus->net_finish = true;
+	}
+	if (func == EDID_TEST_NAME) {
+		_funcFinishStatus->edid_finish = true;
+	}
+	if (func == HDD_TEST_NAME) {
+		_funcFinishStatus->hdd_finish = true;
+	}
+	if (func == FAN_TEST_NAME) {
+		_funcFinishStatus->fan_finish = true;
+	}
+	if (func == WIFI_TEST_NAME) {
+		_funcFinishStatus->wifi_finish = true;
+	}
+}
+
+void Control::set_interface_test_result(string func, bool status) {
+	if (func == MEM_TEST_NAME) {
+        _interfaceTestResult->mem_test_result= status;
+	}
+	if (func == USB_TEST_NAME) {
+        _interfaceTestResult->usb_test_result= status;
+	}
+	if (func == CPU_TEST_NAME) {
+        _interfaceTestResult->cpu_test_result= status;
+	}
+	if (func == NET_TEST_NAME) {
+        _interfaceTestResult->net_test_result= status;
+	}
+	if (func == EDID_TEST_NAME) {
+        _interfaceTestResult->edid_test_result= status;
+	}
+	if (func == HDD_TEST_NAME) {
+        _interfaceTestResult->hdd_test_result= status;
+	}
+	if (func == FAN_TEST_NAME) {
+        _interfaceTestResult->fan_test_result= status;
+	}
+	if (func == WIFI_TEST_NAME) {
+        _interfaceTestResult->wifi_test_result= status;
+	}
+}
+
+
 void Control::set_test_result_pass_or_fail(string func, string result)
 {
     if (result == "PASS") {
-        if (func == "音频测试") {
+        if (func == SOUND_TEST_NAME) {
             _funcFinishStatus->sound_finish= true;
         }
-        if (func == "显示测试") {
+        if (func == DISPLAY_TEST_NAME) {
             _funcFinishStatus->display_finish= true;
         }
-        if (func == "亮度测试") {
+        if (func == BRIGHT_TEST_NAME) {
             _funcFinishStatus->bright_finish= true;
         }
-        if (func == "摄像头测试") {
+        if (func == CAMERA_TEST_NAME) {
             _funcFinishStatus->camera_finish= true;
         }
-        if (func == "拷机测试") {
+        if (func == STRESS_TEST_NAME) {
             _funcFinishStatus->stress_finish= true;
         }
     } else {
 
-        if (func == "音频测试") {
+        if (func == SOUND_TEST_NAME) {
             _funcFinishStatus->sound_finish= false;
         }
-        if (func == "显示测试") {
+        if (func == DISPLAY_TEST_NAME) {
             _funcFinishStatus->display_finish= false;
         }
-        if (func == "亮度测试") {
+        if (func == BRIGHT_TEST_NAME) {
             _funcFinishStatus->bright_finish= false;
         }
-        if (func == "摄像头测试") {
+        if (func == CAMERA_TEST_NAME) {
             _funcFinishStatus->camera_finish= false;
         }
-        if (func == "拷机测试") {
+        if (func == STRESS_TEST_NAME) {
             _funcFinishStatus->stress_finish= false;
         }
     }
@@ -636,6 +733,11 @@ void Control::set_test_result_pass_or_fail(string func, string result)
 void Control::set_sn_mac_test_result(string sn_mac, string result)
 {
     cout<<"sn_mac =" <<sn_mac<<", result = "<<result<<endl;
+/*	if (sn_mac == "MAC" && result == "PASS" && check_file_exit(WHOLE_TEST_FILE)) {
+		sleep(2);
+		_sn_mac = "SN";
+		_uiHandle->show_sn_mac_message_box("SN");
+	}*/
 }
 
 bool Control::is_stress_test_window_quit_safely()
