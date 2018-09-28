@@ -22,6 +22,7 @@ class UiHandle: public QObject
         void confirm_test_result_warning(string title);
         void confirm_test_result_success(string title);
         void set_test_result(string item, string result);
+        void set_stress_test_pass_or_fail(string result);
         void show_display_ui();
         void show_stress_test_ui();
         void update_screen_log(string textInfo);
@@ -62,6 +63,7 @@ class UiHandle: public QObject
         void sig_set_interface_test_state(int state);
         void sig_show_sn_mac_comparison_result(QString sn_mac, QString result);
         void sig_ui_get_message_from_scangun(string message);
+        void to_update_stress_test_pass_or_fail(QString result);
 
     public slots:
         void quit_test_window(QString item);

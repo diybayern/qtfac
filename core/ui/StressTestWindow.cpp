@@ -109,17 +109,23 @@ StressTestWindow::StressTestWindow(QWidget *parent)
     _lb_info = new QFrame(_frame);
     _if_a.info_start_x = st_w/2;
     _if_a.info_start_y = st_h/3;
-    _if_a.info_w = st_w/2;
+    _if_a.info_w = st_w/2/2;
     _if_a.info_h = st_h - st_h/3;
     _lb_info->setObjectName(QString::fromUtf8("lb_info"));
     _lb_info->setGeometry(QRect(_if_a.info_start_x, _if_a.info_start_y, _if_a.info_w, _if_a.info_h));
+
+    _frame_check_pass_fail = new QFrame(_frame);
+    _frame_check_pass_fail->setObjectName(QString::fromUtf8("_frame_check_pass_fail"));
+    _frame_check_pass_fail->setGeometry(QRect(st_w/2+st_w/2/2, st_h/3, st_w/2/2, st_h - st_h/3));
+    _lb_pass_fail = new QLabel(_frame_check_pass_fail);
+    _lb_pass_fail->setObjectName(QString::fromUtf8("_lb_pass_fail"));
+    _lb_pass_fail->setGeometry(QRect(0, (st_h - st_h/3)/5, st_w/2/2/2, (st_h - st_h/3)/2));
 
     _group_box = new QGroupBox(_lb_info);
     _group_box->setObjectName(QString::fromUtf8("_group_box"));
     _group_box->setStyleSheet("QGroupBox{border:none}");
     _group_box->setGeometry(QRect(0, 0, _if_a.info_w, _if_a.info_h));
     _form_box = new QFormLayout;
-
     QFont font;
     if ((st_h <= 1080 && st_h > 1050) && (st_w <= 1920 && st_w > 1680)) {
         font.setPointSize(12);
@@ -154,12 +160,12 @@ StressTestWindow::StressTestWindow(QWidget *parent)
     connect(ImageTestThread::get_image_test_thread(), SIGNAL(sig_send_one_pixmap(QPixmap)), this, SLOT(slot_get_one_pixmap(QPixmap)));
 #if 0
     connect(VideoTestThread::get_video_test_thread(), SIGNAL(sig_send_one_frame(QImage)), this, SLOT(slot_get_one_frame(QImage)));
-#endif
+#endif    
     ImageTestThread::get_image_test_thread()->start_run();
     VideoTestThread::get_video_test_thread()->start_play();
     connect(this, SIGNAL(sig_finish_video_test_thread()), VideoTestThread::get_video_test_thread(), SLOT(slot_finish_video_test_thread()));
     connect(this, SIGNAL(sig_finish_image_test_thread()), ImageTestThread::get_image_test_thread(), SLOT(slot_finish_image_test_thread()));
-    connect(this, SIGNAL(sig_finish_show_stress_window()), MainTestWindow::get_main_test_window(), SLOT(slot_finish_show_stress_window()));
+    connect(this, SIGNAL(sig_finish_show_stress_window()), MainTestWindow::get_main_test_window(), SLOT(slot_finish_show_stress_window()));    
 }
 
 StressTestWindow::~StressTestWindow()
@@ -169,6 +175,21 @@ StressTestWindow::~StressTestWindow()
     //gst_object_unref (del_data.playbin);
 }
 
+QPixmap StressTestWindow::_text2Pixmap(QString text, QColor color)
+{
+    QFont font;
+    font.setPointSize(100);
+    QFontMetrics fmt(font);
+    QPixmap result(fmt.width(text), fmt.height());
+    QRect rect(0,0,fmt.width(text), fmt.height());
+    result.fill(Qt::transparent);
+    QPainter painter(&result);
+    painter.setFont(font);
+    painter.setPen(color);
+    painter.drawText((const QRectF)(rect),text);
+    return result;
+}
+
 void StressTestWindow::finish_stress_window()
 {
     if (NULL != _stress_test_window) {
@@ -176,6 +197,17 @@ void StressTestWindow::finish_stress_window()
         this->deleteLater();
         _stress_test_window = NULL;
     }
+}
+
+void StressTestWindow::update_stress_test_pass_or_fail(QString result)
+{
+    if (result.compare("PASS") == 0) {
+        _pm_pass_fail = _text2Pixmap(result, QColor(0, 255, 0));
+    } else {
+        _pm_pass_fail = _text2Pixmap(result, QColor(255, 0, 0));
+    }
+    _pm_pass_fail = _pm_pass_fail.scaled(st_w/2/2/2, (st_h - st_h/3)/2, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    _lb_pass_fail->setPixmap(_pm_pass_fail);
 }
 
 void StressTestWindow::update_stress_label_value(QString item, QString result)

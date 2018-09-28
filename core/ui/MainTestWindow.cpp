@@ -583,6 +583,11 @@ void MainTestWindow::slot_show_sn_mac_comparison_result(QString sn_mac, QString 
     }
 }
 
+void MainTestWindow::slot_update_stress_test_pass_or_fail(QString result)
+{
+    StressTestWindow::get_stress_test_window()->update_stress_test_pass_or_fail(result);
+}
+
 void MainTestWindow::update_stress_label_value(QString item, QString result)
 {
     StressTestWindow::get_stress_test_window()->update_stress_label_value(item, result);

@@ -19,6 +19,8 @@ UiHandle::UiHandle()
     connect(MainTestWindow::get_main_test_window(), SIGNAL(sig_check_state_changed(QString, bool)), this, SLOT(slot_check_state_changed(QString, bool)));
     connect(MainTestWindow::get_main_test_window(), SIGNAL(sig_get_message_from_scangun(QString)), this, SLOT(slot_get_message_from_scangun(QString)));
     connect(this, SIGNAL(sig_show_sn_mac_comparison_result(QString, QString)), MainTestWindow::get_main_test_window(), SLOT(slot_show_sn_mac_comparison_result(QString, QString)));
+    connect(this, SIGNAL(to_update_stress_test_pass_or_fail(QString)), MainTestWindow::get_main_test_window(), SLOT(slot_update_stress_test_pass_or_fail(QString)));
+
 }
 
 UiHandle::~UiHandle()
@@ -178,6 +180,11 @@ void UiHandle::ui_set_interface_test_state(int state)
 void UiHandle::show_sn_mac_comparison_result(string sn_mac, string result)
 {
     emit sig_show_sn_mac_comparison_result(QString::fromStdString(sn_mac), QString::fromStdString(result));
+}
+
+void UiHandle::set_stress_test_pass_or_fail(string result)
+{
+    emit to_update_stress_test_pass_or_fail(QString::fromStdString(result));
 }
 
 QObject* UiHandle::get_qobject(string name)

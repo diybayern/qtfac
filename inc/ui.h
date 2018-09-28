@@ -245,6 +245,7 @@ class MainTestWindow : public QDialog
         void start_audio_progress_dialog();
         void slot_set_interface_test_state(int state);
         void slot_show_sn_mac_comparison_result(QString sn_mac, QString result);
+        void slot_update_stress_test_pass_or_fail(QString result);
 
     private slots:
         void on_state_changed(int state);
@@ -305,6 +306,7 @@ public:
     void _set_picture(QPixmap& pix);
     QList<Stress_Test_Info> stress_test_info_list;
     void update_stress_label_value(QString item, QString result);
+    void update_stress_test_pass_or_fail(QString result);
     QLabel *_lb_video;
 #if 0
     void mediaPlay();
@@ -325,9 +327,9 @@ private slots:
 private:
     static StressTestWindow* _stress_test_window;
     QFrame *_frame;
-
     QLabel *_lb_image_frame;
     QFrame *_lb_info;
+    QFrame *_frame_check_pass_fail;
     QList<image_layout_attr> _image_label_list;
     video_attr _v_a;
     image_attr _im_a;
@@ -336,6 +338,9 @@ private:
     QPixmap _m_pixmap;
     QGroupBox *_group_box;
     QFormLayout *_form_box;
+    QLabel *_lb_pass_fail;
+    QPixmap _pm_pass_fail;
+    QPixmap _text2Pixmap(QString text, QColor color);
     int st_w;
     int st_h;
 #if 0
