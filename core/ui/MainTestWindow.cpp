@@ -87,6 +87,11 @@ void MainTestWindow::show_sn_mac_message_box(QString sn_mac)
     MessageBox(MessageForm::SNMAC, sn_mac,  sn_mac + "测试", sn_mac, 0);
 }
 
+void MainTestWindow::confirm_test_result_waiting(QString title)
+{
+    MessageBox(MessageForm::DOING, title,  "提示", title, 0);
+}
+
 void MainTestWindow::get_result_string(QString func, QString result)
 {
     if (itemlist.isEmpty())

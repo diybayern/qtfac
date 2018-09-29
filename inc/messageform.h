@@ -22,6 +22,7 @@ public:
     enum{
         Message = 0,
         Warnning,
+        DOING,
         SNMAC_Success,
         SNMAC_Error,
         SNMAC,

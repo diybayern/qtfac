@@ -30,7 +30,7 @@ MessageForm::MessageForm(QWidget *parent, const int mode, const int timeout) : Q
         _dialog_h = 220;
         _lb_text_w = 500;
 
-    } else if (mode == Warnning || mode == Success || mode == SNMAC_Success || mode == SNMAC_Error) {
+    } else if (mode == Warnning || mode == Success || mode == SNMAC_Success || mode == SNMAC_Error || mode == DOING) {
         _dialog_w = 400;
         _dialog_h = 220;
         _lb_text_w = 200;
@@ -74,7 +74,7 @@ MessageForm::MessageForm(QWidget *parent, const int mode, const int timeout) : Q
         if (mode == Message) {
             lb_icon->setPixmap(QPixmap("./img/message.png"));
 
-        } else if (mode == Warnning) {
+        } else if (mode == Warnning || mode == DOING) {
             lb_icon->setPixmap(QPixmap("./img/warning.png"));
 
         } else if (mode == SNMAC_Error) {
@@ -110,9 +110,9 @@ MessageForm::MessageForm(QWidget *parent, const int mode, const int timeout) : Q
         groupBox->setLayout(fl_snmac);
     }
 
-    if (mode == Message || mode == SNMAC_Error || mode == SNMAC_Success || mode == Warnning || mode == NOICON || mode == SNMAC || mode == Success)
+    if (mode == Message || mode == SNMAC_Error || mode == SNMAC_Success || mode == Warnning || mode == NOICON || mode == SNMAC || mode == Success || mode == DOING)
     {
-        if (mode == Warnning) {
+        if (mode == Warnning || mode == DOING) {
             lb_title->setStyleSheet("background-color: rgb(255, 255, 0);");
         } else if (mode == SNMAC_Error) {
             lb_title->setStyleSheet("background-color: rgb(255, 0, 0);");        
@@ -215,6 +215,7 @@ MessageForm::MessageForm(QWidget *parent, const int mode, const int timeout) : Q
 MessageForm::~MessageForm()
 {
     disconnect(this);
+    qDebug()<<"~MessageForm()";
 }
 
 bool MessageForm::eventFilter(QObject *obj, QEvent *event)

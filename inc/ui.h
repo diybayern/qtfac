@@ -242,6 +242,7 @@ class MainTestWindow : public QDialog
         void confirm_test_result_dialog(QString title);
         void confirm_test_result_warning(QString title);
         void confirm_test_result_success(QString title);
+        void confirm_test_result_waiting(QString title);
         void start_audio_progress_dialog();
         void slot_set_interface_test_state(int state);
         void slot_show_sn_mac_comparison_result(QString sn_mac, QString result);

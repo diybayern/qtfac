@@ -21,6 +21,7 @@ class UiHandle: public QObject
         void confirm_test_result_dialog(string title);
         void confirm_test_result_warning(string title);
         void confirm_test_result_success(string title);
+        void confirm_test_result_waiting(string title);
         void set_test_result(string item, string result);
         void set_stress_test_pass_or_fail(string result);
         void show_display_ui();
@@ -60,6 +61,7 @@ class UiHandle: public QObject
         void to_start_audio_progress_dialog();
         void to_confirm_test_result_warning(QString title);
         void to_confirm_test_result_success(QString title);
+        void to_confirm_test_result_waiting(QString title);
         void to_show_test_confirm_dialog(string item);
         void sig_ui_handled_test_result(string test_item, string result);
         void sig_ui_handled_sn_mac_test_result(string sn_mac, string result);
