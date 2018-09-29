@@ -299,7 +299,13 @@ void StressTestWindow::_set_picture(QPixmap& pix)
 
 void StressTestWindow::keyPressEvent(QKeyEvent *event)
 {
-
+    if (event->key() == Qt::Key_Escape) {
+        if (NULL != _stress_test_window) {
+            emit sig_finish_video_test_thread();
+            emit sig_finish_image_test_thread();
+            emit sig_finish_show_stress_window();
+        }
+    }
 }
 
 bool start_stress_ui()
