@@ -187,12 +187,6 @@ void MainTestWindow::on_state_changed(int state)
     foreach (ItemCheck item, itemlist) {
 
         if (item.name == sender()->objectName()) {
-            QPushButton *button = (QPushButton*)item.button;
-            if (state == Qt::Checked) {
-                button->setEnabled(true);
-            } else {
-                button->setEnabled(false);
-            }
 
             emit sig_check_state_changed(item.name, state == Qt::Checked ? true:false);
         }
