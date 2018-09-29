@@ -71,7 +71,7 @@ class StressTest : public FuncBase
 {
 public:
     StressTest(Control* control);
-    static void *test_all(void *arg);
+    static void *test_all(void*);
     void start_test(BaseInfo* baseInfo);
 
 private:
@@ -83,7 +83,7 @@ class NextProcess : public FuncBase
 {
 public:
     NextProcess(Control* control);
-    static void* test_all(void *arg);
+    static void* test_all(void*);
     void start_test(BaseInfo* baseInfo);
     static void next_process_handle();
     static bool create_stress_test_lock();

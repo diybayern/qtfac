@@ -152,7 +152,7 @@ bool CameraTest::camera_test_all()
     return false;
 }
 
-void* CameraTest::test_all(void *arg)
+void* CameraTest::test_all(void*)
 {
 	camera_test_all();
 	Control::get_control()->update_screen_log("==================== camera test ====================\n");

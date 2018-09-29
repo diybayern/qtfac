@@ -533,7 +533,7 @@ bool SoundTest::init()
     return true;
 }
 
-void* SoundTest::test_all(void* arg)
+void* SoundTest::test_all(void*)
 {
 	Control *control = Control::get_control();
 

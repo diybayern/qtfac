@@ -3,7 +3,7 @@
 #include "inc/fac_utils.h"
 #include "inc/fac_log.h"
 
-void* semi_auto_test_control(void* arg)
+void* semi_auto_test_control(void*)
 {
     Control* control = Control::get_control();
     while(1){

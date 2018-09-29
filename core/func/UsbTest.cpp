@@ -30,7 +30,6 @@ bool UsbTest::usb_num_test(string total_num, string num_3)
 
 bool UsbTest::get_dev_mount_point(struct udev_device* dev, char* dst) {
 	int len = 0;
-	int ret = false;
 	DIR* dir = NULL;
 	struct dirent *ptr = NULL;
 	const char* sys_path = NULL;
@@ -51,7 +50,6 @@ bool UsbTest::get_dev_mount_point(struct udev_device* dev, char* dst) {
 
 		if (0 == strncmp(ptr->d_name, sys_name, len)) {
 			snprintf(dst, USB_BLOCK_LEN, "/dev/%s", ptr->d_name);
-			ret = true;
 			break;
 		}
 	}

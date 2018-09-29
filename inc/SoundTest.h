@@ -45,7 +45,7 @@ public:
     static bool start_record();
     static bool stop_record();
     
-    static void* test_all(void* arg);
+    static void* test_all(void*);
     void start_test(BaseInfo* baseInfo);
 
 private:

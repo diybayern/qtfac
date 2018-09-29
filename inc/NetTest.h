@@ -29,7 +29,7 @@ public:
     NetTest(Control* control);
     static bool init();
     static bool net_test_all();
-    static void* test_all(void* arg);
+    static void* test_all(void*);
     void start_test(BaseInfo* baseInfo);
 
 private:

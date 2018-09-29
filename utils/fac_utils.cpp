@@ -564,7 +564,7 @@ string change_float_to_string(float fla)
 {
 	string str = to_string(fla);
 	int i;
-	for(i = 0; i < str.size(); i++) {
+	for(i = 0; i < (int)str.size(); i++) {
 		if(str[i] == '.') {
 			break;
 		}

@@ -224,6 +224,11 @@ void Control::ui_init()
 void Control::retry_sn_mac_test()
 {
     cout<<"retry_sn_mac_test"<<endl;
+/*	if (_sn_mac == "MAC") {
+		_uiHandle->show_sn_mac_message_box("MAC");
+	} else if (_sn_mac == "SN") {
+		_uiHandle->show_sn_mac_message_box("SN");
+	}*/
 }
 
 void Control::confirm_shut_down_or_next_process(string process)
@@ -239,10 +244,11 @@ void Control::confirm_shut_down_or_next_process(string process)
 }
 
 void Control::check_sn_mac_compare_result(string message)
-{
+{cout<<"check"<<_sn_mac<<endl;
 	int i = 0, j = 0;
+	int size = (int)message.size();
     if (_sn_mac == "MAC") {
-		if (message.size() != 12) {
+		if (size != 12) {
 			_uiHandle->show_sn_mac_comparison_result("MAC", "FAIL");
 			return;
 		} 
@@ -264,11 +270,11 @@ void Control::check_sn_mac_compare_result(string message)
 
 	if (_sn_mac == "SN") {
 		string sn = _hwInfo->sn;
-		if (message.size() != sn.size()) {
+		if (size != (int)sn.size()) {
 			_uiHandle->show_sn_mac_comparison_result("SN", "FAIL");
 			return;
 		} 
-		for(i = 0; i < message.size(); i++) {
+		for(i = 0; i < size; i++) {
 			if (message[i] != sn[i]) {
 				_uiHandle->show_sn_mac_comparison_result("SN", "FAIL");
 				return;

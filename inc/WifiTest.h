@@ -29,7 +29,7 @@ class WifiTest : public FuncBase
 public:
     WifiTest(Control* control);
     static bool init();
-    static void* test_all(void* arg);
+    static void* test_all(void*);
     void start_test(BaseInfo* baseInfo);
 
 private:

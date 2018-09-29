@@ -364,6 +364,7 @@ bool WifiTest::check_if_wifi_connect_pass(void)
 		return false;
 	}
 	LOG_INFO("WIFI INFO:%s\n",wifi_info);
+	wifi_screen_log += "WIFI INFO:" + (string)wifi_info + "\n";;
 
 
 	if(!get_file_size("/tmp/wifi.status", &size)) {
@@ -378,6 +379,7 @@ bool WifiTest::check_if_wifi_connect_pass(void)
 
     if (!strcmp(delNL(wifi_status), "SUCCESS")) {
         LOG_INFO("WIFI is ready\n");
+		wifi_screen_log += "WIFI is ready\n";
 
 		if(!get_file_size("/tmp/ssid.mac", &size)) {
 			LOG_ERROR("/tmp/ssid.mac is null\n");
@@ -388,21 +390,23 @@ bool WifiTest::check_if_wifi_connect_pass(void)
 			return false;
 		}
         LOG_INFO("WIFI SSID mac:\t%s\n",wifi_ssid_mac);
-		//wifi_screen_log += "WIFI ssid mac:\t\t" + wifi_ssid_mac + "\n";
+		wifi_screen_log += "WIFI ssid mac:\t\t" + (string)wifi_ssid_mac + "\n";
         
         return true;
     } else {
         if (!strcmp(delNL(wifi_status), "IP not available!")) {
             LOG_ERROR("IP not available\n");
+			wifi_screen_log += "IP not available\n";
             return true;
         } else {
             LOG_ERROR("WIFI fail reason: \t%s\n", wifi_status);
+			wifi_screen_log += "WIFI fail reason: \t" + (string)wifi_status + "\n";
             return false;
         }
     }
 }
 
-void* WifiTest::test_all(void* arg)
+void* WifiTest::test_all(void*)
 {
 	Control *control = Control::get_control();
     while (1) {

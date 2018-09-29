@@ -543,7 +543,7 @@ error:
     return ret;
 }
 
-void* NetTest::test_all(void* arg)
+void* NetTest::test_all(void*)
 {
     Control *control = Control::get_control();
 	control->set_interface_test_status(NET_TEST_NAME, false);

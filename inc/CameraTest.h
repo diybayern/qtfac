@@ -12,7 +12,7 @@ class CameraTest : public FuncBase
 public:
     CameraTest(Control* control);
     static bool camera_test_all();
-    static void *test_all(void *arg);
+    static void *test_all(void*);
     void start_test(BaseInfo* baseInfo);
 
 private:

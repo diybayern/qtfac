@@ -91,9 +91,8 @@ StressTest::StressTest(Control* control)
 }
 
 
-void* StressTest::test_all(void *arg)
+void* StressTest::test_all(void *)
 {
-	BaseInfo* baseInfo = (BaseInfo *)arg;
 	Control *control = Control::get_control();
 	UiHandle* uihandle = UiHandle::get_uihandle();
     TimeInfo init_time = {0,0,0,0};
@@ -116,9 +115,9 @@ void* StressTest::test_all(void *arg)
 	}
 	
 	if (control->whole_test_state) {
-		write_local_data(STRESS_LOCK_FILE.c_str(),"w+",WHOLE_LOCK,sizeof(WHOLE_LOCK));
+		write_local_data(STRESS_LOCK_FILE.c_str(),"w+",(char*)WHOLE_LOCK,sizeof(WHOLE_LOCK));
 	} else {
-		write_local_data(STRESS_LOCK_FILE.c_str(),"w+",PCBA_LOCK,sizeof(PCBA_LOCK));
+		write_local_data(STRESS_LOCK_FILE.c_str(),"w+",(char*)PCBA_LOCK,sizeof(PCBA_LOCK));
 	}
 
 	if (!check_file_exit(STRESS_LOCK_FILE.c_str())) {
@@ -230,7 +229,7 @@ void NextProcess::next_process_handle()
     return;
 }
 
-void* NextProcess::test_all(void *arg)
+void* NextProcess::test_all(void*)
 {
 	next_process_handle();
 	return NULL;
