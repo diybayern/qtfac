@@ -196,6 +196,7 @@ void NextProcess::next_process_handle()
 {
     int next_process_f = -1;
 	UiHandle* uihandle = UiHandle::get_uihandle();
+	Control* control = Control::get_control();
 	
     pthread_detach(pthread_self());    
     if (pthread_mutex_trylock(&g_next_process_lock)) {
@@ -214,13 +215,16 @@ void NextProcess::next_process_handle()
         if (!create_stress_test_lock()) {
             LOG_ERROR("create stress test lock fail!\n");			
             uihandle->confirm_test_result_warning("EMMC异常，无法关机！");
+			control->update_screen_log("EMMC异常，无法关机！");
         } else if (execute_command("shutdown -h now") == "error") {
             LOG_ERROR("shutdown cmd run error\n");			
             uihandle->confirm_test_result_warning("终端异常，无法关机！");
+			control->update_screen_log("终端异常，无法关机！");
         }
     } else if (WEXITSTATUS(next_process_f) > 0) {
         LOG_ERROR("The disk is abnormal and cannot enter the next process.\n");		
-		uihandle->confirm_test_result_warning("终端异常，无法关机！");
+		uihandle->confirm_test_result_warning("磁盘异常，无法进入下道工序");
+		control->update_screen_log("磁盘异常，无法进入下道工序");
     }
  
     return;

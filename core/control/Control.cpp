@@ -222,7 +222,6 @@ void Control::ui_init()
 
 void Control::confirm_shut_down_or_next_process(string process)
 {
-    cout<<"process = "<<process<<endl;
 	if (process == NEXT_PROCESS_NAME) {
 		_funcBase[NEXT_PROCESS]->start_test(_baseInfo);
 	} else if (process == "关机") {
@@ -319,19 +318,19 @@ void Control::start_sound_test()
 void Control::start_display_test()
 {
     _uiHandle->show_display_ui();
-    cout << "2" << endl;
+    LOG_INFO("start display test");
 }
 
 void Control::start_bright_test()
 {
     _funcBase[BRIGHT]->start_test(_baseInfo);
-    LOG_INFO("start sound test");
+    LOG_INFO("start bright test");
 }
 
 void Control::start_camera_test()
 {
     _funcBase[CAMERA]->start_test(_baseInfo);
-    LOG_INFO("start sound test");
+    LOG_INFO("start camera test");
 }
 
 void Control::start_stress_test()
@@ -348,6 +347,7 @@ void Control::start_next_process()
 
 void Control::start_upload_log()
 {
+    LOG_INFO("start upload log");
     upload_mes_log();
 }
 
@@ -753,9 +753,8 @@ void Control::set_test_result_pass_or_fail(string func, string result)
 
 void Control::set_sn_mac_test_result(string sn_mac, string result)
 {
-    cout<<"sn_mac =" <<sn_mac<<", result = "<<result<<endl;
 	if (sn_mac == "MAC" && result == "PASS" && whole_test_state) {
-		sleep(2);
+		sleep(1);
 		_sn_mac = "SN";
 		_uiHandle->show_sn_mac_message_box("SN");
 	}

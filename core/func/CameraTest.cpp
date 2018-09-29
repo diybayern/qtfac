@@ -100,14 +100,17 @@ void CameraTest::start_camera_xawtv()
 bool CameraTest::check_if_xawtv_started()
 {
     unsigned long winid;
+	Control* control = Control::get_control();
 
     winid = get_window_id("/tmp/xawtv.winid");
     if (winid == 0) {
         LOG_ERROR("Failed to start xawtv window!\n");
+		control->update_screen_log("Failed to start xawtv window!\n");
         return false;
     }
 
     LOG_INFO("xawtv window started OK.\n");
+	control->update_screen_log("xawtv window started OK.\n");
     return true;
 }
 
@@ -115,6 +118,7 @@ bool CameraTest::camera_test_all()
 {
     int failed_count = 0;
     bool xawtv_ok = false;
+	Control* control = Control::get_control();
 
     /* check if camera device exists */
 	string result = execute_command("sh " + CAMERA_CHECK_SCRIPT);
@@ -136,12 +140,14 @@ bool CameraTest::camera_test_all()
             usleep(50000);
             failed_count++;
             LOG_ERROR("xawtv started failed count: %d\n", failed_count);
+			control->update_screen_log("xawtv started failed count: " + to_string(failed_count) + "\n");
         }
     } while (failed_count < XAWTV_MAX_FAIL_COUNT);
 
     if (!xawtv_ok && failed_count >= XAWTV_MAX_FAIL_COUNT) {
         /* xawtv started failed, just report FAIL result */
         LOG_ERROR("ERROR: Failed to start xawtv, GPU fault may be detected!\n");
+		control->update_screen_log("ERROR: Failed to start xawtv, GPU fault may be detected!\n");
     }
     return false;
 }
@@ -149,7 +155,7 @@ bool CameraTest::camera_test_all()
 void* CameraTest::test_all(void *arg)
 {
 	camera_test_all();
-
+	Control::get_control()->update_screen_log("==================== camera test ====================\n");
 	//Control::get_control()->set_bright_test_finish();
 	return NULL;
 }
