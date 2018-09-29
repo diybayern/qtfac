@@ -159,6 +159,8 @@ class MainTestWindow : public QDialog
         //main label layout
         QGridLayout *_grid_main_label_layout;
         QHBoxLayout *_hbox_main_label_layout;
+        QLabel _lb_sn_pass_fail;
+        QLabel _lb_mac_pass_fail;
 
         //main test layout
         QGridLayout *_grid_main_test_layout;
@@ -244,6 +246,7 @@ class MainTestWindow : public QDialog
         void slot_set_interface_test_state(int state);
         void slot_show_sn_mac_comparison_result(QString sn_mac, QString result);
         void slot_update_stress_test_pass_or_fail(QString result);
+        void update_sn_mac_state(QString sn_mac, QString result);
 
     private slots:
         void on_state_changed(int state);

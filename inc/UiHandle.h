@@ -34,6 +34,7 @@ class UiHandle: public QObject
         void start_audio_progress_dialog();
         void ui_set_interface_test_state(int state);
         void show_sn_mac_comparison_result(string sn_mac, string result);
+        void update_sn_mac_test_result(string sn_mac, string result);
         bool get_is_complete_test() {return _is_complete_test;}
         void set_is_complete_test(bool category) {_is_complete_test = category;}
         int get_screen_width();
@@ -69,6 +70,7 @@ class UiHandle: public QObject
         void sig_ui_confirm_shut_down_or_next_process(string process);
         void to_update_stress_test_pass_or_fail(QString result);
         void sig_ui_retry_sn_mac();
+        void to_update_sn_mac_state(QString sn_mac, QString result);
 
     public slots:
         void quit_test_window(QString item);

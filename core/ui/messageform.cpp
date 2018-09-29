@@ -189,7 +189,7 @@ MessageForm::MessageForm(QWidget *parent, const int mode, const int timeout) : Q
             font_snmac_state.setPointSize(16);
 
             bt_snmac_cancel = new QPushButton(frame);
-            bt_snmac_cancel->setObjectName(QString::fromUtf8("bt_check_snmac"));
+            bt_snmac_cancel->setObjectName(QString::fromUtf8("bt_snmac_cancel"));
             bt_snmac_cancel->setGeometry(QRect(250, 150, 80, 30));
             bt_snmac_cancel->setFont(font_snmac_state);
             bt_snmac_cancel->setText(tr("取消"));
@@ -214,7 +214,7 @@ MessageForm::MessageForm(QWidget *parent, const int mode, const int timeout) : Q
 
 MessageForm::~MessageForm()
 {
-
+    disconnect(this);
 }
 
 bool MessageForm::eventFilter(QObject *obj, QEvent *event)
@@ -227,6 +227,7 @@ bool MessageForm::eventFilter(QObject *obj, QEvent *event)
             QString str = le_snmac->text();
             g_sn_mac_message = str;
             QTimer::singleShot(1000, MainTestWindow::get_main_test_window(), SLOT(compute_result()));
+            return true;
         }
     }
 
@@ -239,7 +240,6 @@ void MessageForm::timerEvent(QTimerEvent *evt)
     {
         emit sig_send_sn_mac_test_result(_m_test_item, _m_snmac_state);
         if (g_mode != SNMAC) {
-
             killTimer(timerId);
             accept();
         }
@@ -276,13 +276,12 @@ void MessageForm::proButtonConfirm()
 
 void MessageForm::proButtonSnmacCancel()
 {
-    reject();
+    accept();
 }
 
 void MessageForm::proButtonSNMACRetry()
 {
     emit sig_retry_sn_mac_test();
-    accept();
 }
 
 int MessageForm::startExec()

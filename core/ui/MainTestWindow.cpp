@@ -171,6 +171,11 @@ void MainTestWindow::_create_main_label_layout()
         QString result = _main_label_item_list.at(i).result;
         _grid_main_label_layout->addWidget(new QLabel(label), i, 0);
         _grid_main_label_layout->addWidget(new QLabel(result), i, 1);
+        if (label.contains("SN")) {
+            _grid_main_label_layout->addWidget(&_lb_sn_pass_fail, i, 2);
+        } else if (label.contains("MAC")) {
+            _grid_main_label_layout->addWidget(&_lb_mac_pass_fail, i, 2);
+        }
     }
 
     if (_lab_complete_or_single_test != NULL)
@@ -187,6 +192,17 @@ void MainTestWindow::_create_main_label_layout()
     _hbox_main_label_layout->addLayout(_grid_main_label_layout);
     _hbox_main_label_layout->addStretch();
     _hbox_main_label_layout->addLayout(_hbox_checkbox_auto_upload_log);
+}
+
+void MainTestWindow::update_sn_mac_state(QString sn_mac, QString result)
+{
+    if (sn_mac.contains("SN")) {
+        _lb_sn_pass_fail.setPalette(_get_label_color(result));
+        _lb_sn_pass_fail.setText(result);
+    } else {
+        _lb_mac_pass_fail.setPalette(_get_label_color(result));
+        _lb_mac_pass_fail.setText(result);
+    }
 }
 
 void MainTestWindow::on_state_changed(int state)
