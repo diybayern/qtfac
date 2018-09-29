@@ -10,7 +10,7 @@ class Control;
 class HddTest : public FuncBase
 {
 public:
-    HddTest(Control* control);
+    HddTest();
     static string hdd_test_all(string hdd_cap);
     static bool check_if_hdd_pass();
     static void *test_all(void *arg);

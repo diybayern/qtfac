@@ -35,10 +35,7 @@ class Control;
 class SoundTest : public FuncBase
 {
 public:
-    SoundTest(Control* control);
-  //  SoundTest();
-  // ~SoundTest();
-   // static SoundTest* get_instance();
+    SoundTest();
     static bool start_playback();
     static bool stop_playback();
 
@@ -48,10 +45,10 @@ public:
     static void* test_all(void*);
     void start_test(BaseInfo* baseInfo);
 
-private:
-    //static SoundTest* _mInstance;
-    Control* _control;
     static bool init();
+
+private:
+    Control* _control;
     static int open_sound_card(SndInfo *info);
     static void close_sound_card(SndInfo *info);
     static void* record_loop(void *arg);

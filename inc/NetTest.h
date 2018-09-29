@@ -26,7 +26,7 @@ class Control;
 class NetTest : public FuncBase
 {
 public:
-    NetTest(Control* control);
+    NetTest();
     static bool init();
     static bool net_test_all();
     static void* test_all(void*);

@@ -5,10 +5,8 @@
 
 string mem_screen_log = "";
 
-MemTest::MemTest(Control* control)
-       :_control(control)
+MemTest::MemTest()
 {
-    _test_result="";
 }
 
 bool MemTest::compare_men_cap(int mem_cap)

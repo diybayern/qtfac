@@ -10,7 +10,7 @@ class Control;
 class BrightTest : public FuncBase
 {
 public:
-    BrightTest(Control* control);
+    BrightTest();
     static int brightness_is_set(const int* const array, int array_cout, int value);
     static void bright_test_all(string bright_level);
     static void *test_all(void *arg);

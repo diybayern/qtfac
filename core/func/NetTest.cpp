@@ -25,10 +25,8 @@
 NetInfo* g_net_info = NULL;
 string net_screen_log = "";
 
-NetTest::NetTest(Control* control)
-       :_control(control)
+NetTest::NetTest()
 {
-    init();
 }
 
 bool NetTest::net_get_eth_name(char* eth_name, int size)

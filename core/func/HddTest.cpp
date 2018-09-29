@@ -3,8 +3,7 @@
 
 string hdd_screen_log = "";
 
-HddTest::HddTest(Control* control)
-       :_control(control)
+HddTest::HddTest()
 {
     
 }

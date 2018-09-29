@@ -15,7 +15,7 @@ class Control;
 class EdidTest : public FuncBase
 {
 public:
-    EdidTest(Control* control);
+    EdidTest();
     static void *test_all(void *arg);
     void start_test(BaseInfo* baseInfo);
 

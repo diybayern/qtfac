@@ -3,8 +3,7 @@
 
 string usb_screen_log = "";
 
-UsbTest::UsbTest(Control* control)
-       :_control(control)
+UsbTest::UsbTest()
 {
     
 }

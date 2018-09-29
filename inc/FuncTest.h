@@ -15,7 +15,7 @@ class Control;
 class CpuTest : public FuncBase
 {
 public:
-    CpuTest(Control* control);
+    CpuTest();
     bool is_cpu_test_pass(BaseInfo* baseInfo);
     void start_test(BaseInfo* baseInfo);
 
@@ -27,7 +27,7 @@ private:
 class FanTest : public FuncBase
 {
 public:
-    FanTest(Control* control);
+    FanTest();
     static string fan_speed_test(string speed);
     static void *test_all(void *arg);
     void start_test(BaseInfo* baseInfo);
@@ -39,7 +39,7 @@ private:
 class UsbTest : public FuncBase
 {
 public:
-    UsbTest(Control* control);
+    UsbTest();
 
     void read_fac_config();
     static bool usb_num_test(string total_num, string num_3);
@@ -70,7 +70,7 @@ private:
 class StressTest : public FuncBase
 {
 public:
-    StressTest(Control* control);
+    StressTest();
     static void *test_all(void*);
     void start_test(BaseInfo* baseInfo);
 
@@ -82,12 +82,12 @@ private:
 class NextProcess : public FuncBase
 {
 public:
-    NextProcess(Control* control);
+    NextProcess();
     static void* test_all(void*);
     void start_test(BaseInfo* baseInfo);
     static void next_process_handle();
     static bool create_stress_test_lock();
-
+    static void init();
 private:
     Control* _control;
     
@@ -96,7 +96,7 @@ private:
 class InterfaceTest : public FuncBase
 {
 public:
-    InterfaceTest(Control* control);
+    InterfaceTest();
     static void* test_all(void *arg);
     void start_test(BaseInfo* baseInfo);
 

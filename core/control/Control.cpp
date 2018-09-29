@@ -5,21 +5,20 @@
 
 Control::Control():QObject()
 {
-    _funcBase[INTERFACE]    = new InterfaceTest(this);
-    _funcBase[MEM]          = new MemTest(this);
-    _funcBase[USB]          = new UsbTest(this);
-    _funcBase[CPU]          = new CpuTest(this);
-    _funcBase[EDID]         = new EdidTest(this);
-    _funcBase[NET]          = new NetTest(this);
-    _funcBase[HDD]          = new HddTest(this);
-    _funcBase[FAN]          = new FanTest(this);
-    _funcBase[WIFI]         = new WifiTest(this);
-    _funcBase[SOUND]        = new SoundTest(this);
-    _funcBase[BRIGHT]       = new BrightTest(this);
-    _funcBase[CAMERA]       = new CameraTest(this);
-    _funcBase[STRESS]       = new StressTest(this);
-    _funcBase[UPLOAD_LOG]   = new StressTest(this);
-    _funcBase[NEXT_PROCESS] = new NextProcess(this);
+    _funcBase[INTERFACE]    = new InterfaceTest();
+    _funcBase[MEM]          = new MemTest();
+    _funcBase[USB]          = new UsbTest();
+    _funcBase[CPU]          = new CpuTest();
+    _funcBase[EDID]         = new EdidTest();
+    _funcBase[NET]          = new NetTest();
+    _funcBase[HDD]          = new HddTest();
+    _funcBase[FAN]          = new FanTest();
+    _funcBase[WIFI]         = new WifiTest();
+    _funcBase[SOUND]        = new SoundTest();
+    _funcBase[BRIGHT]       = new BrightTest();
+    _funcBase[CAMERA]       = new CameraTest();
+    _funcBase[STRESS]       = new StressTest();
+    _funcBase[NEXT_PROCESS] = new NextProcess();
     
     _uiHandle               = UiHandle::get_uihandle();
 
@@ -77,7 +76,6 @@ Control::Control():QObject()
     init_base_info();
     init_hw_info();
     ui_init();
-    init_func_test();
     init_fac_config();
     init_mes_log();
 
@@ -225,7 +223,6 @@ void Control::ui_init()
 
 void Control::retry_sn_mac_test()
 {
-    cout<<"retry_sn_mac_test"<<endl;
 	if (_sn_mac == "MAC") {
 		_uiHandle->show_sn_mac_message_box("MAC");
 	} else if (_sn_mac == "SN") {
@@ -281,13 +278,23 @@ void Control::show_test_confirm_dialog(string item)
 
 void Control::init_func_test()
 {
-    cout << "init func" << endl;
+	SoundTest* sound = (SoundTest*) _funcBase[SOUND];
+    sound->init();
+	
+	NetTest* net = (NetTest*) _funcBase[NET];
+    net->init();
+
+	WifiTest* wifi = (WifiTest*) _funcBase[WIFI];
+    wifi->init();
+	
+	NextProcess* nextpro = (NextProcess*) _funcBase[NEXT_PROCESS];
+    nextpro->init();
 }
 
 void Control::init_fac_config()
 {
-	UsbTest* _usb = (UsbTest*)_funcBase[USB];
-	if (!_usb->usb_test_read_status()) {
+	UsbTest* usb = (UsbTest*)_funcBase[USB];
+	if (!usb->usb_test_read_status()) {
 		LOG_ERROR("init copy fac config error");
 	}
     fac_config_status = get_fac_config_from_conf(FAC_CONFIG_FILE, _facArg);

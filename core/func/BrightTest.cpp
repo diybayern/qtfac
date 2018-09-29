@@ -11,10 +11,8 @@ const int BRIGHTNESS_VALUE[6] =
     7,17,27,37,47,57,
 };
 
-BrightTest::BrightTest(Control* control)
-       :_control(control)
+BrightTest::BrightTest()
 {
-
 }
 
 inline int BrightTest::brightness_is_set(const int* const array, int array_cout, int value)

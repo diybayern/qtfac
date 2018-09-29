@@ -95,7 +95,10 @@ int main(int argc, char *argv[])
     }
     a.setFont(font);
 
-    Control::get_control()->show_main_test_ui();
+	Control* control = Control::get_control();
+	control->init_func_test();
+    control->show_main_test_ui();
+    
 
 	pthread_t tid;
     pthread_create(&tid,NULL,semi_auto_test_control,NULL);

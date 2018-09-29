@@ -23,10 +23,8 @@
 WifiInfo* g_wifi_info = NULL;
 string wifi_screen_log = "";
 
-WifiTest::WifiTest(Control* control)
-       :_control(control)
+WifiTest::WifiTest()
 {
-    init();
 }
 
 bool WifiTest::wifi_get_wlan_name(char* wlan_name, int size) {

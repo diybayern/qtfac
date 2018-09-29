@@ -16,7 +16,7 @@
 #include "FuncBase.h"
 #include "UiHandle.h"
 
-#define   FUNC_TYPE_NUM     (15)
+#define   FUNC_TYPE_NUM     (14)
 
 enum FuncType
 {
@@ -33,7 +33,6 @@ enum FuncType
     BRIGHT,
     CAMERA,
     STRESS,
-    UPLOAD_LOG,
     NEXT_PROCESS
 };
 
@@ -127,6 +126,7 @@ class Control : public QObject
 public:
     //explicit Control(QObject *parent = 0);
     Control();
+        static Control* _control;
     void set_test_result(string func,string result,string ui_log);
     void confirm_test_result(string func);
     static Control* get_control();
@@ -141,10 +141,6 @@ public:
     int get_screen_width();
     bool is_stress_test_window_quit_safely();
     bool stress_test_window_quit_status;
-    int fac_config_status;
-    bool whole_test_state;
-    bool _is_idv;
-    
     int get_test_step();
 
     UiHandle* get_ui_handle() {
@@ -221,18 +217,33 @@ public:
     void set_interface_run_status(int status) {
         _interfaceRunStatus = status;
     }
+
+    void init_func_test();
+
+    bool get_is_idv(){
+        return _is_idv;
+    }
+    
+    int get_fac_config_status(){
+        return fac_config_status;
+    }
+    
+    bool get_whole_test_state(){
+        return whole_test_state;
+    }
+    
     
 private:
     void init_base_info();
     void init_hw_info();
-    void init_func_test();
+    
     void init_fac_config();
     void auto_start_stress_test();
 
     void ui_init();
 
 private:
-    static Control* _control;
+
     UiHandle* _uiHandle;
     BaseInfo* _baseInfo;
     HwInfo* _hwInfo;
@@ -251,6 +262,9 @@ private:
     bool _auto_upload_mes;
     int _interfaceRunStatus;
     string _sn_mac;
+    bool _is_idv;
+    int fac_config_status;
+    bool whole_test_state;
 
 signals:
 

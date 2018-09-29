@@ -23,8 +23,7 @@ string edid_screen_log = "";
 
 extern int edid_read_i2c_test(int edid_num);
 
-EdidTest::EdidTest(Control* control)
-       :_control(control)
+EdidTest::EdidTest()
 {
 
 }

@@ -6,8 +6,7 @@ string fan_screen_log = "";
 
 pthread_mutex_t g_next_process_lock;
 
-CpuTest::CpuTest(Control* control)
-       :_control(control)
+CpuTest::CpuTest()
 {
     
 }
@@ -45,8 +44,7 @@ void CpuTest::start_test(BaseInfo* baseInfo)
 }
 
 
-FanTest::FanTest(Control* control)
-       :_control(control)
+FanTest::FanTest()
 {
     
 }
@@ -84,10 +82,8 @@ void FanTest::start_test(BaseInfo* baseInfo)
     pthread_create(&tid,NULL,test_all,baseInfo);
 }
 
-StressTest::StressTest(Control* control)
-       :_control(control)
+StressTest::StressTest()
 {
-    
 }
 
 
@@ -114,7 +110,7 @@ void* StressTest::test_all(void *)
 		remove_local_file(STRESS_LOCK_FILE.c_str());
 	}
 	
-	if (control->whole_test_state) {
+	if (control->get_whole_test_state()) {
 		write_local_data(STRESS_LOCK_FILE.c_str(),"w+",(char*)WHOLE_LOCK,sizeof(WHOLE_LOCK));
 	} else {
 		write_local_data(STRESS_LOCK_FILE.c_str(),"w+",(char*)PCBA_LOCK,sizeof(PCBA_LOCK));
@@ -171,10 +167,8 @@ void StressTest::start_test(BaseInfo* baseInfo)
 }
 
 
-NextProcess::NextProcess(Control* control)
-       :_control(control)
+NextProcess::NextProcess()
 {
-    pthread_mutex_init(&g_next_process_lock, NULL);
 }
 
 bool NextProcess::create_stress_test_lock() 
@@ -203,7 +197,7 @@ void NextProcess::next_process_handle()
         return;
     }
 
-    uihandle->confirm_test_result_warning("正在处理，请等待...");
+    uihandle->confirm_test_result_waiting("正在处理，请等待...");
     next_process_f = system("bash /etc/diskstatus_mgr.bash --product-detach");
     usleep(1000000);
 
@@ -241,10 +235,12 @@ void NextProcess::start_test(BaseInfo* baseInfo)
     pthread_create(&tid,NULL,test_all,baseInfo);
 }
 
-InterfaceTest::InterfaceTest(Control* control)
-       :_control(control)
+void NextProcess::init(){
+    pthread_mutex_init(&g_next_process_lock, NULL);
+}
+
+InterfaceTest::InterfaceTest()
 {
-    
 }
 
 
@@ -266,7 +262,7 @@ void* InterfaceTest::test_all(void *arg)
 		return NULL;
 	}
 
-	if (control->get_auto_upload_mes_status() && control->fac_config_status != 0) {
+	if (control->get_auto_upload_mes_status() && control->get_fac_config_status() != 0) {
 		control->get_ui_handle()->confirm_test_result_warning("配置文件有误");
 		return NULL;
 	}

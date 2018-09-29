@@ -8,10 +8,8 @@
 
 #define XAWTV_MAX_FAIL_COUNT   (5)
 
-CameraTest::CameraTest(Control* control)
-       :_control(control)
+CameraTest::CameraTest()
 {
-
 }
 
 unsigned long CameraTest::get_window_id(const char *winid_file)

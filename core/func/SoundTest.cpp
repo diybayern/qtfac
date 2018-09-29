@@ -6,6 +6,7 @@
 #include "../../inc/fac_log.h"
 #include "../../inc/fac_utils.h"
 
+
 #define DEFAULT_SAMPLERATE     (44100)
 #define DEFAULT_CHANNEL        (2)
 #define DEFAULT_FORMAT         (SND_PCM_FORMAT_S16_LE)
@@ -260,32 +261,9 @@ err_playback:
 }
 
 
-SoundTest::SoundTest(Control* control)
-	   :_control(control)
-{
-	init();
-}
-
-#if 0
 SoundTest::SoundTest()
 {
-    init();
 }
-
-SoundTest::~SoundTest()
-{
-
-}
-
-SoundTest* SoundTest::get_instance()
-{
-    if (_mInstance == NULL) {
-        _mInstance = new SoundTest();
-    }
-
-    return _mInstance;
-}
-#endif
 
 int SoundTest::open_sound_card(SndInfo *info)
 {
@@ -507,9 +485,9 @@ bool SoundTest::init()
     g_playback_info->direction      = PLAYBACK;
     g_playback_info->pcm            = NULL;
     g_playback_info->card           = DEFAULT_CARD_NAME;
+	
 
-
-    if (Control::get_control()->_is_idv) {
+    if (Control::get_control()->get_is_idv()) {
         if (system("if pulseaudio --check; then pulseaudio -k; else touch /tmp/no_pulseaudio; fi") < 0) {
             LOG_ERROR("pulseaudio -k error\n");
             return false;
@@ -553,6 +531,7 @@ void* SoundTest::test_all(void*)
 void SoundTest::start_test(BaseInfo* baseInfo)
 {	
     pthread_t tid;
+	init();
     pthread_create(&tid,NULL,test_all,baseInfo);
 }
 
