@@ -1,6 +1,7 @@
 #include "../../inc/Control.h"
 #include "../../inc/fac_log.h"
 
+#include <algorithm>
 
 Control::Control():QObject()
 {
@@ -224,11 +225,11 @@ void Control::ui_init()
 void Control::retry_sn_mac_test()
 {
     cout<<"retry_sn_mac_test"<<endl;
-/*	if (_sn_mac == "MAC") {
+	if (_sn_mac == "MAC") {
 		_uiHandle->show_sn_mac_message_box("MAC");
 	} else if (_sn_mac == "SN") {
 		_uiHandle->show_sn_mac_message_box("SN");
-	}*/
+	}
 }
 
 void Control::confirm_shut_down_or_next_process(string process)
@@ -244,43 +245,28 @@ void Control::confirm_shut_down_or_next_process(string process)
 }
 
 void Control::check_sn_mac_compare_result(string message)
-{cout<<"check"<<_sn_mac<<endl;
-	int i = 0, j = 0;
-	int size = (int)message.size();
+{
     if (_sn_mac == "MAC") {
-		if (size != 12) {
-			_uiHandle->show_sn_mac_comparison_result("MAC", "FAIL");
-			return;
-		} 
-		
 		string mac = _hwInfo->mac;
-		for(i = 0, j = 0; i < 12; i++, j++) {
-			if (message[i++] != mac[j++]) {
-				_uiHandle->show_sn_mac_comparison_result("MAC", "FAIL");
-				return;
-			}
-			if (message[i] != mac[j++]) {
-				_uiHandle->show_sn_mac_comparison_result("MAC", "FAIL");
-				return;
-			}
+		mac.erase(remove(mac.begin(), mac.end(), ':'), mac.end());
+		if (message.size() != mac.size() || message != mac) {
+			_uiHandle->update_sn_mac_test_result("MAC", "FAIL");
+			_uiHandle->show_sn_mac_comparison_result("MAC", "FAIL");
+		} else {
+			_uiHandle->update_sn_mac_test_result("MAC", "PASS");
+			_uiHandle->show_sn_mac_comparison_result("MAC", "PASS");
 		}
-		_uiHandle->show_sn_mac_comparison_result("MAC", "PASS");
-		return;
     }
 
 	if (_sn_mac == "SN") {
 		string sn = _hwInfo->sn;
-		if (size != (int)sn.size()) {
+		if (message.size() != sn.size() || message != sn) {
+			_uiHandle->update_sn_mac_test_result("SN", "FAIL");
 			_uiHandle->show_sn_mac_comparison_result("SN", "FAIL");
-			return;
-		} 
-		for(i = 0; i < size; i++) {
-			if (message[i] != sn[i]) {
-				_uiHandle->show_sn_mac_comparison_result("SN", "FAIL");
-				return;
-			}
+		} else {
+			_uiHandle->update_sn_mac_test_result("SN", "PASS");
+			_uiHandle->show_sn_mac_comparison_result("SN", "PASS");
 		}
-		_uiHandle->show_sn_mac_comparison_result("SN", "PASS");
     }
 }
 

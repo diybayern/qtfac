@@ -508,20 +508,20 @@ bool SoundTest::init()
     g_playback_info->pcm            = NULL;
     g_playback_info->card           = DEFAULT_CARD_NAME;
 
-#if 0
-    if (is_product_idv(global_product_id)) {
+
+    if (0) {
         if (system("if ps -ef | grep -v \"color\" | grep -q \"pulseaudio\"; then pulseaudio -k; else touch /tmp/no_pulseaudio; fi") < 0) {
-            mlog("pulseaudio -k error\n");
+            LOG_ERROR("pulseaudio -k error\n");
             return false;
         }
 
         if (system("if ! lsmod | grep -q \"snd_hda_intel\"; then modprobe snd_hda_intel; fi") < 0) {
-            mlog("modprobe snd_hda_intel error\n");
+            LOG_ERROR("modprobe snd_hda_intel error\n");
             return false;
         }
 
     }
-#endif
+
 
     if (pthread_mutex_init(&gMutex, NULL) != 0) {
         return false;

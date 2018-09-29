@@ -334,7 +334,7 @@ bool WifiTest::wifi_test_send_msg() {
 
     LOG_INFO("send package num: \t\t%d\n",  TOTAL_SEND_NUM);
     LOG_INFO("recv package num: \t\t%d\n",  info->recv_num);
-	wifi_screen_log += "send package num:\t\t100\nrecv package num:\t\t" + to_string(info->recv_num); + "\n";
+	wifi_screen_log += "send package num:\t\t100\nrecv package num:\t\t" + to_string(info->recv_num) + "\n";
     if (info->recv_num < RECEIVE_NUM) {
         ret = false;
         LOG_ERROR("WIFI test failed!\n");
