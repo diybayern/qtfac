@@ -223,6 +223,14 @@ void Control::ui_init()
 void Control::confirm_shut_down_or_next_process(string process)
 {
     cout<<"process = "<<process<<endl;
+	if (process == NEXT_PROCESS_NAME) {
+		_funcBase[NEXT_PROCESS]->start_test(_baseInfo);
+	} else if (process == "关机") {
+		if (execute_command("shutdown -h now") == "error"){
+            LOG_ERROR("shutdown cmd run error\n");			
+            _uiHandle->confirm_test_result_warning("终端异常，无法关机！");
+		}
+	}
 }
 
 void Control::check_sn_mac_compare_result(string message)
@@ -746,11 +754,11 @@ void Control::set_test_result_pass_or_fail(string func, string result)
 void Control::set_sn_mac_test_result(string sn_mac, string result)
 {
     cout<<"sn_mac =" <<sn_mac<<", result = "<<result<<endl;
-/*	if (sn_mac == "MAC" && result == "PASS" && whole_test_state) {
+	if (sn_mac == "MAC" && result == "PASS" && whole_test_state) {
 		sleep(2);
 		_sn_mac = "SN";
 		_uiHandle->show_sn_mac_message_box("SN");
-	}*/
+	}
 }
 
 bool Control::is_stress_test_window_quit_safely()

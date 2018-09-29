@@ -104,7 +104,8 @@ void* StressTest::test_all(void *arg)
 	if (check_file_exit(STRESS_LOCK_FILE.c_str())) {
 		string stress_stage = control->get_stress_test_stage();		
 		remove_local_file(STRESS_LOCK_FILE.c_str());
-		if (stress_stage == WHOLE_LOCK|| stress_stage == PCBA_LOCK) {
+		if (stress_stage == WHOLE_LOCK || stress_stage == PCBA_LOCK) {
+			uihandle->confirm_test_result_warning("上次拷机退出异常");
 			LOG_INFO("last stress test exit error\n");			
 	    } else if (stress_stage == NEXT_LOCK) {
 			LOG_INFO("next process -> stress test\n");
@@ -213,7 +214,7 @@ void NextProcess::next_process_handle()
         if (!create_stress_test_lock()) {
             LOG_ERROR("create stress test lock fail!\n");			
             uihandle->confirm_test_result_warning("EMMC异常，无法关机！");
-        } else if (system("shutdown -h now") < 0) {
+        } else if (execute_command("shutdown -h now") == "error") {
             LOG_ERROR("shutdown cmd run error\n");			
             uihandle->confirm_test_result_warning("终端异常，无法关机！");
         }
