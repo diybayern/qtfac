@@ -238,11 +238,12 @@ void MessageForm::timerEvent(QTimerEvent *evt)
 {
     if (evt->timerId() == timerId)
     {
-        emit sig_send_sn_mac_test_result(_m_test_item, _m_snmac_state);
         if (g_mode != SNMAC) {
+
             killTimer(timerId);
             accept();
         }
+        emit sig_send_sn_mac_test_result(_m_test_item, _m_snmac_state);
     }
 }
 
