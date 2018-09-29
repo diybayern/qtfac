@@ -59,6 +59,7 @@ void* MemTest::test_all(void *arg)
 	}
 	control->update_screen_log(mem_screen_log);
 	control->set_interface_test_status(MEM_TEST_NAME, true);
+    remove_local_file(MEM_UI_LOG.c_str());
 	mem_screen_log = "";
 	return NULL;
 }
