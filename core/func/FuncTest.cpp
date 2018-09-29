@@ -13,7 +13,8 @@ CpuTest::CpuTest()
 
 bool CpuTest::is_cpu_test_pass(BaseInfo* baseInfo)
 {
-	string hw_cpu_type = _control->get_hw_info()->cpu_type;
+	Control *control = Control::get_control();
+	string hw_cpu_type = control->get_hw_info()->cpu_type;
 	string base_cpu_type = baseInfo->cpu_type;	
 	string::size_type idx;
 	idx = hw_cpu_type.find(base_cpu_type);
@@ -399,9 +400,11 @@ void* InterfaceTest::test_all(void *arg)
 		string mem_total_result = "MEM        ";
         if(interfaceTestFailNum->mem_test_fail_num == 0) {
 			mem_total_result = mem_total_result + "PASS(Time:" + to_string(real_test_num) + ",ERROR:0)";
+			control->update_mes_log("MEM","PASS");
             control->set_func_test_result(MEM_TEST_NAME,"PASS");
 			control->set_interface_test_finish(MEM_TEST_NAME);
         } else {
+			control->update_mes_log("MEM","FAIL");
             control->set_func_test_result(MEM_TEST_NAME,"FAIL");
 			mem_total_result = mem_total_result + "FAIL(Time:" + to_string(real_test_num) + ",ERROR:" 
 				               + to_string(interfaceTestFailNum->mem_test_fail_num) + ")";
@@ -413,9 +416,11 @@ void* InterfaceTest::test_all(void *arg)
 		string usb_total_result = "USB        ";
         if(interfaceTestFailNum->usb_test_fail_num == 0) {
 			usb_total_result = usb_total_result + "PASS(Time:" + to_string(real_test_num) + ",ERROR:0)";
+			control->update_mes_log("USB","PASS");
             control->set_func_test_result(USB_TEST_NAME,"PASS");
 			control->set_interface_test_finish(USB_TEST_NAME);
         } else {
+			control->update_mes_log("USB","FAIL");
             control->set_func_test_result(USB_TEST_NAME,"FAIL");
 			usb_total_result = usb_total_result + "FAIL(Time:" + to_string(real_test_num) + ",ERROR:" 
 				               + to_string(interfaceTestFailNum->usb_test_fail_num) + ")";
@@ -426,10 +431,12 @@ void* InterfaceTest::test_all(void *arg)
     if (interfaceSelectStatus->net_select) {
 		string net_total_result = "NET        ";
         if(interfaceTestFailNum->net_test_fail_num == 0) {
+			control->update_mes_log("NET","PASS");
             control->set_func_test_result(NET_TEST_NAME,"PASS");
 			control->set_interface_test_finish(NET_TEST_NAME);
 			net_total_result = net_total_result + "PASS(Time:" + to_string(real_test_num) + ",ERROR:0)";
         } else {
+			control->update_mes_log("NET","FAIL");
             control->set_func_test_result(NET_TEST_NAME,"FAIL");
 			net_total_result = net_total_result + "FAIL(Time:" + to_string(real_test_num) + ",ERROR:" 
 				               + to_string(interfaceTestFailNum->net_test_fail_num) + ")";
@@ -440,10 +447,12 @@ void* InterfaceTest::test_all(void *arg)
     if (interfaceSelectStatus->edid_select) {
 		string edid_total_result = "EDID      ";
         if(interfaceTestFailNum->edid_test_fail_num == 0) {
+			control->update_mes_log("EDID","PASS");
             control->set_func_test_result(EDID_TEST_NAME,"PASS");
 			control->set_interface_test_finish(EDID_TEST_NAME);
 			edid_total_result = edid_total_result + "PASS(Time:" + to_string(real_test_num) + ",ERROR:0)";
         } else {
+			control->update_mes_log("EDID","FAIL");
             control->set_func_test_result(EDID_TEST_NAME,"FAIL");
 			edid_total_result = edid_total_result + "FAIL(Time:" + to_string(real_test_num) + ",ERROR:" 
 				               + to_string(interfaceTestFailNum->edid_test_fail_num) + ")";
@@ -454,10 +463,12 @@ void* InterfaceTest::test_all(void *arg)
     if (interfaceSelectStatus->cpu_select) {
 		string cpu_total_result = "CPU       ";
         if(interfaceTestFailNum->cpu_test_fail_num == 0) {
+			control->update_mes_log("CPU","PASS");
             control->set_func_test_result(CPU_TEST_NAME,"PASS");
 			control->set_interface_test_finish(CPU_TEST_NAME);
 			cpu_total_result = cpu_total_result + "PASS(Time:" + to_string(real_test_num) + ",ERROR:0)";
         } else {
+			control->update_mes_log("CPU","FAIL");
             control->set_func_test_result(CPU_TEST_NAME,"FAIL");
 			cpu_total_result = cpu_total_result + "FAIL(Time:" + to_string(real_test_num) + ",ERROR:" 
 				               + to_string(interfaceTestFailNum->cpu_test_fail_num) + ")";
@@ -469,10 +480,12 @@ void* InterfaceTest::test_all(void *arg)
         if (interfaceSelectStatus->hdd_select) {
 			string hdd_total_result = "HDD       ";
             if(interfaceTestFailNum->hdd_test_fail_num == 0) {
+				control->update_mes_log("HDD","PASS");
                 control->set_func_test_result(HDD_TEST_NAME,"PASS");
 				control->set_interface_test_finish(HDD_TEST_NAME);
 				hdd_total_result = hdd_total_result + "PASS(Time:" + to_string(real_test_num) + ",ERROR:0)";
             } else {
+				control->update_mes_log("HDD","FAIL");
                 control->set_func_test_result(HDD_TEST_NAME,"FAIL");
 				hdd_total_result = hdd_total_result + "FAIL(Time:" + to_string(real_test_num) + ",ERROR:" 
 				               + to_string(interfaceTestFailNum->hdd_test_fail_num) + ")";
@@ -485,10 +498,12 @@ void* InterfaceTest::test_all(void *arg)
         if (interfaceSelectStatus->fan_select) {
 			string fan_total_result = "FAN       ";
             if(interfaceTestFailNum->fan_test_fail_num == 0) {
+				control->update_mes_log("FAN","PASS");
                 control->set_func_test_result(FAN_TEST_NAME,"PASS");
 				control->set_interface_test_finish(FAN_TEST_NAME);
 				fan_total_result = fan_total_result + "PASS(Time:" + to_string(real_test_num) + ",ERROR:0)";
             } else {
+				control->update_mes_log("FAN","FAIL");
                 control->set_func_test_result(FAN_TEST_NAME,"FAIL");
 				fan_total_result = fan_total_result + "FAIL(Time:" + to_string(real_test_num) + ",ERROR:" 
 				               + to_string(interfaceTestFailNum->fan_test_fail_num) + ")";
@@ -501,10 +516,12 @@ void* InterfaceTest::test_all(void *arg)
         if (interfaceSelectStatus->wifi_select) {
 			string wifi_total_result = "WIFI       ";
             if(interfaceTestFailNum->wifi_test_fail_num == 0) {
+				control->update_mes_log("WIFI","PASS");
                 control->set_func_test_result(WIFI_TEST_NAME,"PASS");
 				control->set_interface_test_finish(WIFI_TEST_NAME);
 				wifi_total_result = wifi_total_result + "PASS(Time:" + to_string(real_test_num) + ",ERROR:0)";
             } else {
+				control->update_mes_log("WIFI","FAIL");
                 control->set_func_test_result(WIFI_TEST_NAME,"FAIL");
 				wifi_total_result = wifi_total_result + "FAIL(Time:" + to_string(real_test_num) + ",ERROR:" 
 				               + to_string(interfaceTestFailNum->wifi_test_fail_num) + ")";

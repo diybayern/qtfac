@@ -136,7 +136,7 @@ public:
     void set_func_test_result(string func,string result);
     void upload_mes_log();
     void init_mes_log();
-    void update_mes_log(char* tag,char* value);
+    void update_mes_log(string tag,string value);
     int get_screen_height();
     int get_screen_width();
     bool is_stress_test_window_quit_safely();

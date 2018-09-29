@@ -461,7 +461,7 @@ void Control::init_mes_log()
     free(sn_capital);
 }
 
-void Control::update_mes_log(char* tag,char* value)
+void Control::update_mes_log(string tag,string value)
 {
     FILE* fp;
     char line[200];
@@ -482,10 +482,10 @@ void Control::update_mes_log(char* tag,char* value)
     bzero(buf,file_size);
  
     while (fgets(line, sizeof(line), fp) != NULL) {
-        if (first &&((sp = strstr(line, tag)) != NULL)) {
+        if (first &&((sp = strstr(line, tag.c_str())) != NULL)) {
             char value_temp[128];
             bzero(value_temp,128);
-            sprintf(value_temp,"%s\n",value);
+            sprintf(value_temp,"%s\n",value.c_str());
             memcpy(sp+11,value_temp,strlen(value_temp)+1);//修改标签内容，加TAG_OFFSET是为了对齐值
             first = 0;
         }
