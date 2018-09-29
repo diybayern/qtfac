@@ -88,10 +88,10 @@ int main(int argc, char *argv[])
               && (dtw->width() <= 1440 && dtw->width() >= 1280)) {
        font.setPointSize(10);
     } else if ((dtw->height() < 900 && dtw->height() >= 720)
-              && (dtw->width() <= 1280 && dtw->width() > 1024)) {
-       font.setPointSize(6);
+              && (dtw->width() <= 1370 && dtw->width() > 1024)) {
+       font.setPointSize(8);
     } else {
-       font.setPointSize(14);
+       font.setPointSize(9);
     }
     a.setFont(font);
 

@@ -152,7 +152,6 @@ void MainTestWindow::setupUI()
     _vbox_function_layout->addLayout(_hbox_bottom_left_layout);
 
     _grid_main_test_window_layout = new QGridLayout(this);
-    _grid_main_test_window_layout->setMargin(40);
     _grid_main_test_window_layout->addLayout(_vbox_function_layout, 0, 0);
     _grid_main_test_window_layout->addLayout(_vbox_screenlog_layout, 0, 1);
     _grid_main_test_window_layout->setColumnStretch(0, 3);
@@ -400,8 +399,10 @@ void MainTestWindow::_create_screen_log_layout()
     _editInfo->setReadOnly(true);
     _editInfo->setFont(font);
     _editInfo->setFrameStyle(QFrame::Panel|QFrame::Sunken);
+
     connect(_editInfo, SIGNAL(textChanged()), this, SLOT(_slot_text_changed()));
     _vbox_screenlog_layout->addWidget(_editInfo);
+    _vbox_screenlog_layout->setContentsMargins(0, 0, 0, 20);
 }
 
 void MainTestWindow::_slot_text_changed()
