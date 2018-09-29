@@ -268,6 +268,7 @@ public slots:
     void set_sn_mac_test_result(string sn_mac, string result);
     void check_sn_mac_compare_result(string message);
     void confirm_shut_down_or_next_process(string process);
+    void retry_sn_mac_test();
 };
 
 #endif // CONTROL_H

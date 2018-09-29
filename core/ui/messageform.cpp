@@ -147,6 +147,7 @@ MessageForm::MessageForm(QWidget *parent, const int mode, const int timeout) : Q
             connect(bt_ok, SIGNAL(clicked()), this, SLOT(proButtonOK()));
             connect(bt_fail, SIGNAL(clicked()), this, SLOT(proButtonFail()));
             connect(this, SIGNAL(sig_handled_test_result(QString, QString)), UiHandle::get_uihandle(), SLOT(slot_handled_test_result(QString, QString)));
+
         } else if (mode == SNMAC) {
             QFont font_snmac;
             font_snmac.setPointSize(16);
@@ -156,6 +157,7 @@ MessageForm::MessageForm(QWidget *parent, const int mode, const int timeout) : Q
             bt_snmac->setFont(font_snmac);
             bt_snmac->setText(tr("取消"));
             connect(bt_snmac, SIGNAL(clicked()), this, SLOT(proButtonCancel()));
+
         } else if (mode == Warnning) {
             bt_cancle = new QPushButton(frame);
             bt_cancle->setObjectName(QString::fromUtf8("bt_cancel"));
@@ -168,6 +170,7 @@ MessageForm::MessageForm(QWidget *parent, const int mode, const int timeout) : Q
             bt_cancle->setFont(font);
             bt_cancle->setText(tr("退出"));
             connect(bt_cancle, SIGNAL(clicked()), this, SLOT(proButtonQuit()));
+
         } else if (mode == Success) {
             bt_confirm = new QPushButton(frame);
             bt_confirm->setObjectName(QString::fromUtf8("bt_confirm"));
@@ -180,16 +183,29 @@ MessageForm::MessageForm(QWidget *parent, const int mode, const int timeout) : Q
             }
             connect(bt_confirm, SIGNAL(clicked()), this, SLOT(proButtonConfirm()));
             connect(this, SIGNAL(sig_confirm_shut_down_or_next_process(QString)), UiHandle::get_uihandle(), SLOT(slot_confirm_shut_down_or_next_process(QString)));
-        } else if (mode == SNMAC_Success || mode == SNMAC_Error) {
+
+        } else if (mode == SNMAC_Error) {
             QFont font_snmac_state;
             font_snmac_state.setPointSize(16);
-            bt_check_snmac = new QPushButton(frame);
-            bt_check_snmac->setObjectName(QString::fromUtf8("bt_check_snmac"));
-            bt_check_snmac->setGeometry(QRect(250, 150, 80, 30));
-            bt_check_snmac->setFont(font_snmac_state);
-            bt_check_snmac->setText(tr("确定"));
-            connect(bt_check_snmac, SIGNAL(clicked()), this, SLOT(proButtonSNMAC()));
+
+            bt_snmac_cancel = new QPushButton(frame);
+            bt_snmac_cancel->setObjectName(QString::fromUtf8("bt_check_snmac"));
+            bt_snmac_cancel->setGeometry(QRect(250, 150, 80, 30));
+            bt_snmac_cancel->setFont(font_snmac_state);
+            bt_snmac_cancel->setText(tr("取消"));
+            connect(bt_snmac_cancel, SIGNAL(clicked()), this, SLOT(proButtonSnmacCancel()));
+
+            bt_snmac_retry = new QPushButton(frame);
+            bt_snmac_retry->setObjectName(QString::fromUtf8("bt_snmac_retry"));
+            bt_snmac_retry->setGeometry(QRect(70, 150, 80, 30));
+            bt_snmac_retry->setFont(font_snmac_state);
+            bt_snmac_retry->setText(tr("重试"));
+            connect(bt_snmac_retry, SIGNAL(clicked()), this, SLOT(proButtonSNMACRetry()));
+            connect(this, SIGNAL(sig_retry_sn_mac_test()), UiHandle::get_uihandle(), SLOT(slot_retry_sn_mac()));
+
+        } else if (mode == SNMAC_Success) {
             connect(this, SIGNAL(sig_send_sn_mac_test_result(QString, QString)), UiHandle::get_uihandle(), SLOT(slot_recv_sn_mac_test_result(QString, QString)));
+
         }
     }
     this->timeout = timeout;
@@ -258,9 +274,14 @@ void MessageForm::proButtonConfirm()
     accept();
 }
 
-void MessageForm::proButtonSNMAC()
+void MessageForm::proButtonSnmacCancel()
 {
-    emit sig_send_sn_mac_test_result(_m_test_item, _m_snmac_state);
+    reject();
+}
+
+void MessageForm::proButtonSNMACRetry()
+{
+    emit sig_retry_sn_mac_test();
     accept();
 }
 

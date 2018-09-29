@@ -187,6 +187,11 @@ void UiHandle::show_sn_mac_comparison_result(string sn_mac, string result)
     emit sig_show_sn_mac_comparison_result(QString::fromStdString(sn_mac), QString::fromStdString(result));
 }
 
+void UiHandle::slot_retry_sn_mac()
+{
+    emit sig_ui_retry_sn_mac();
+}
+
 void UiHandle::set_stress_test_pass_or_fail(string result)
 {
     emit to_update_stress_test_pass_or_fail(QString::fromStdString(result));

@@ -47,6 +47,7 @@ signals:
     void sig_handled_test_result(QString test_item, QString result);
     void sig_send_sn_mac_test_result(QString snmac, QString result);
     void sig_confirm_shut_down_or_next_process(QString process);
+    void sig_retry_sn_mac_test();
 
 private slots:
     void proButtonOK();
@@ -54,7 +55,8 @@ private slots:
     void proButtonCancel();
     void proButtonQuit();
     void proButtonConfirm();
-    void proButtonSNMAC();
+    void proButtonSnmacCancel();
+    void proButtonSNMACRetry();
 
 public:
     QFrame          *frame;
@@ -64,7 +66,8 @@ public:
     QPushButton     *bt_fail;
     QPushButton     *bt_cancle;
     QPushButton     *bt_confirm;
-    QPushButton     *bt_check_snmac;
+    QPushButton     *bt_snmac_retry;
+    QPushButton     *bt_snmac_cancel;
     QLabel          *lb_icon;
     QLineEdit       *le_snmac;
     QFormLayout     *fl_snmac;
