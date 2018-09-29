@@ -509,8 +509,8 @@ bool SoundTest::init()
     g_playback_info->card           = DEFAULT_CARD_NAME;
 
 
-    if (0) {
-        if (system("if ps -ef | grep -v \"color\" | grep -q \"pulseaudio\"; then pulseaudio -k; else touch /tmp/no_pulseaudio; fi") < 0) {
+    if (Control::get_control()->_is_idv) {
+        if (system("if pulseaudio --check; then pulseaudio -k; else touch /tmp/no_pulseaudio; fi") < 0) {
             LOG_ERROR("pulseaudio -k error\n");
             return false;
         }

@@ -143,6 +143,7 @@ public:
     bool stress_test_window_quit_status;
     int fac_config_status;
     bool whole_test_state;
+    bool _is_idv;
     
     int get_test_step();
 

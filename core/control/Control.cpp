@@ -72,7 +72,8 @@ Control::Control():QObject()
     _autoUploadLog = true;
     _mes_log_file = "";
 	_auto_upload_mes = true;
-    
+    _is_idv = true;
+	
     init_base_info();
     init_hw_info();
     ui_init();
