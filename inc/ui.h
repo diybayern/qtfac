@@ -93,7 +93,7 @@ class MyEventLoop : public QObject
         virtual ~MyEventLoop();
 
         int exec(QEventLoop::ProcessEventsFlags = QEventLoop::AllEvents,bool hassignal=false);
-        void exit(int returnCode = 0);
+        void exit();
         bool isRunning() const;
     signals:
         void enterEventLoop();

@@ -96,6 +96,6 @@ private:
 
 extern QString g_sn_mac_message;
 extern QPointer<MessageForm> g_form;
-extern bool MessageBox(QWidget *parent,const int mode,const QString &test_item, const QString &title,const QString &text,const int timeout);
+extern bool MessageBox(const int mode,const QString &test_item, const QString &title,const QString &text,const int timeout);
 
 #endif // MESSAGEFORM_H

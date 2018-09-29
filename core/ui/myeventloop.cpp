@@ -4,6 +4,7 @@
 #define  printDebugMsg()     qDebug() << __FILE__ << __LINE__
 
 MyEventLoop::MyEventLoop(QObject *parent)
+                    : QObject(parent)
 {
     runflag = false;
 }
@@ -42,7 +43,7 @@ int MyEventLoop::exec(QEventLoop::ProcessEventsFlags flags,bool hassignal)
     printDebugMsg();
     return 0;
 }
-void MyEventLoop::exit(int returnCode)
+void MyEventLoop::exit()
 {  
     printDebugMsg();
     runflag = false;

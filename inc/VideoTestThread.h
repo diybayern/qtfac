@@ -36,7 +36,7 @@ public:
     };
     explicit VideoTestThread(QThread *parent = 0);
     ~VideoTestThread();
-    char* filepath;
+    const char* filepath;
     int videoindex;
     int error;
     int sws_width;

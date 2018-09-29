@@ -295,9 +295,11 @@ int MessageForm::startExec()
     return exec();
 }
 
-bool MessageBox(QWidget *parent,const int mode,const QString &test_item, const QString &title,const QString &text,const int timeout)
+bool MessageBox(const int mode,const QString &test_item, const QString &title,const QString &text,const int timeout)
 {
+
     int timeoutTemp = timeout;
+
     g_mode = mode;
     if (g_form != NULL)
     {
