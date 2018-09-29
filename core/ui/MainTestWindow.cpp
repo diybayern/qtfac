@@ -177,8 +177,16 @@ void MainTestWindow::_create_main_label_layout()
     {
         _grid_main_label_layout->addWidget(_lab_complete_or_single_test, i , 1);
     }
+
+    _hbox_checkbox_auto_upload_log = new QHBoxLayout;
+    _checkbox_auto_upload_log = new QCheckBox(tr("自动上传"));
+    _checkbox_auto_upload_log->setChecked(true);
+    connect(_checkbox_auto_upload_log, SIGNAL(stateChanged(int)), this, SLOT(_auto_upload_state_changed(int)));
+
+    _hbox_checkbox_auto_upload_log->addWidget(_checkbox_auto_upload_log);
     _hbox_main_label_layout->addLayout(_grid_main_label_layout);
     _hbox_main_label_layout->addStretch();
+    _hbox_main_label_layout->addLayout(_hbox_checkbox_auto_upload_log);
 }
 
 void MainTestWindow::on_state_changed(int state)
@@ -323,25 +331,21 @@ void MainTestWindow::_create_main_test_layout()
 
                 for (int j = 0 ; j < _interface_test_list.count(); j++)
                 {
-                    QCheckBox*checkbox = new QCheckBox;
+                    QCheckBox*checkbox = new QCheckBox(_interface_test_list.at(j).itemname);
                     checkbox->setChecked(true);
                     checkbox->setObjectName(_interface_test_list.at(j).itemname);
                     connect(checkbox, SIGNAL(stateChanged(int)), this, SLOT(on_state_changed(int)));
                     label = new QLabel;
-                    button = new QPushButton(_interface_test_list.at(j).itemname);
 
-                    _grid_main_test_layout->addWidget(checkbox, j+1, 0, Qt::AlignRight);
-                    _grid_main_test_layout->addWidget(button, j+1, 1);
+                    _grid_main_test_layout->addWidget(checkbox, j+1, 1);
                     _grid_main_test_layout->addWidget(label, j+1, 2);
                     iteminfo.name = _interface_test_list.at(j).itemname;
                     iteminfo.checkbox = checkbox;
-                    iteminfo.button = button;
                     iteminfo.label = label;
                     _insert_item_record(iteminfo);
 
                     InterfaceTestItemPri if_item;
                     if_item.checkbox = checkbox;
-                    if_item.button = button;
                     if_test_pri_list.append(if_item);
                 }
 
@@ -409,21 +413,13 @@ void MainTestWindow::_create_test_count_and_upload_layout()
     _lineedit_test_count->setFixedWidth(50);
 
     _hbox_test_count_layout = new QHBoxLayout;
-    _hbox_checkbox_auto_upload_log = new QHBoxLayout;
     _vbox_test_count_auto_upload_layout = new QVBoxLayout;
     _hbox_test_count_layout->addStretch();
     _hbox_test_count_layout->addWidget(_lab_test_count);
     _hbox_test_count_layout->addWidget(_lineedit_test_count);
 
-    _checkbox_auto_upload_log = new QCheckBox(tr("自动上传"));
-    _checkbox_auto_upload_log->setChecked(true);
-    connect(_checkbox_auto_upload_log, SIGNAL(stateChanged(int)), this, SLOT(_auto_upload_state_changed(int)));
-    _hbox_checkbox_auto_upload_log->addStretch();
-    _hbox_checkbox_auto_upload_log->addWidget(_checkbox_auto_upload_log);
-
     _vbox_test_count_auto_upload_layout->addLayout(_hbox_test_count_layout);
     _vbox_test_count_auto_upload_layout->addStretch();
-    _vbox_test_count_auto_upload_layout->addLayout(_hbox_checkbox_auto_upload_log);
 }
 
 void MainTestWindow::_create_spilter_line_layout()
@@ -537,10 +533,8 @@ void MainTestWindow::_set_interface_test_item_enable(bool state)
     foreach (InterfaceTestItemPri item, if_test_pri_list) {
         if (state == true) {
             item.checkbox->setEnabled(true);
-            item.button->setEnabled(true);
         } else {
             item.checkbox->setEnabled(false);
-            item.button->setEnabled(false);
         }
     }
 }

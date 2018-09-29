@@ -55,7 +55,6 @@ class InterfaceTestItemPri
 {
     public:
         QCheckBox *checkbox;
-        QPushButton *button;
 };
 
 class MainLabelItem
