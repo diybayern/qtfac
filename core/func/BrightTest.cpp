@@ -79,7 +79,7 @@ void BrightTest::bright_test_all(string bright_level)
         	bright_set |= 1<<ret;
             LOG_INFO("PRESS %d:now the brightness is %d, brightness level %d\n", bright_cnt+1, bright_value, ret+1);
 			control->update_screen_log("PRESS " + to_string(bright_cnt+1) + ":now the brightness is "
-					+ to_string(bright_value) + ", brightness level " + to_string(ret+1) + "\n");
+					+ to_string(bright_value) + ", brightness level " + to_string(ret+1));
         } else {
             LOG_ERROR("PRESS %d: brightness value is not set, brightness is %d\n",bright_cnt+1, bright_value);
 			control->update_screen_log("PRESS " + to_string(bright_cnt+1) + ": brightness value is not set, brightness is "
@@ -94,7 +94,6 @@ void BrightTest::bright_test_all(string bright_level)
 		control->update_screen_log("all the brightness value cannot be corvered within 6 presses\n");
         goto error_return;
     }
-    
 error_return:
 
     inotify_rm_watch (inotify_fd, wd);
@@ -105,9 +104,10 @@ error_return:
 
 void* BrightTest::test_all(void *arg)
 {
+	Control::get_control()->update_screen_log("==================== bright test ====================\n");
 	BaseInfo* baseInfo = (BaseInfo *)arg;
 	bright_test_all(baseInfo->bright_level);
-	Control::get_control()->update_screen_log("==================== bright test ====================\n");
+    Control::get_control()->confirm_test_result(BRIGHT_TEST_NAME);
 	//Control::get_control()->set_bright_test_finish();
 	return NULL;
 }

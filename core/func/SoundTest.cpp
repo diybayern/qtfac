@@ -523,7 +523,7 @@ void* SoundTest::test_all(void*)
     sleep(3);
     stop_playback();
     sleep(1);		
-	control->confirm_test_result("音频测试");
+	control->confirm_test_result(SOUND_TEST_NAME);
 	
 	return NULL;
 }
