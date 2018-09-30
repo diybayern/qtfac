@@ -46,7 +46,6 @@ public:
     AVCodecContext  *pCodecCtx;
     AVCodec         *pCodec;
     AVFrame         *pFrameRGB;
-    QImage           finalImage;
     AVPixelFormat    pixFormat;
     struct SwsContext *img_convert_ctx;
     int ffmpeg_read_stream();
@@ -63,7 +62,7 @@ public:
 
 private:
     static VideoTestThread* _video_test_thread;
-    bool _m_stopped;
+   // bool _m_stopped;
 
 signals:
 #if 0
