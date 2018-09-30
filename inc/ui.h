@@ -236,7 +236,7 @@ class MainTestWindow : public QDialog
         void show_display_test_window();
         void show_sn_mac_message_box(QString sn_mac);
         void slot_finish_show_stress_window();
-        void slot_finish_show_display_window();
+        void slot_finish_show_display_window(bool state);
         void update_screen_log(QString info);
         void update_stress_label_value(QString item, QString result);
         void confirm_test_result_dialog(QString title);
@@ -393,7 +393,7 @@ private:
     QPixmap _text2Pixmap(QString text);
 
 signals:
-    void sig_finish_show_display_window();
+    void sig_finish_show_display_window(bool state);
 };
 
 

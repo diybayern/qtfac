@@ -516,7 +516,7 @@ void MainTestWindow::slot_finish_show_stress_window()
     emit to_quit_test_window("拷机测试");
 }
 
-void MainTestWindow::slot_finish_show_display_window()
+void MainTestWindow::slot_finish_show_display_window(bool state)
 {
     DisplayTestWindow::get_display_test_window()->finish_display_window();
     while(true) {
@@ -529,7 +529,9 @@ void MainTestWindow::slot_finish_show_display_window()
             break;
         }
     }
-    emit to_quit_test_window("显示测试");
+    if (state == true) {
+        emit to_quit_test_window("显示测试");
+    }
 }
 
 QPushButton* MainTestWindow::_get_interface_test_button()

@@ -54,7 +54,7 @@ DisplayTestWindow::DisplayTestWindow(QWidget *parent)
 
     this->_state = 0;
 
-    connect(this, SIGNAL(sig_finish_show_display_window()), MainTestWindow::get_main_test_window(), SLOT(slot_finish_show_display_window()));
+    connect(this, SIGNAL(sig_finish_show_display_window(bool)), MainTestWindow::get_main_test_window(), SLOT(slot_finish_show_display_window(bool)));
 }
 
 DisplayTestWindow::~DisplayTestWindow()
@@ -107,7 +107,7 @@ void DisplayTestWindow::mousePressEvent(QMouseEvent* event)
            }
            case 2: {
                 if (NULL != _display_test_window) {
-                    emit sig_finish_show_display_window();
+                    emit sig_finish_show_display_window(true);
                 }
                 break;
            }
@@ -117,7 +117,7 @@ void DisplayTestWindow::mousePressEvent(QMouseEvent* event)
 
     } else if (event->button() == Qt::RightButton) {
         if (NULL != _display_test_window) {
-            emit sig_finish_show_display_window();
+            emit sig_finish_show_display_window(false);
         }
     }
 
@@ -139,7 +139,7 @@ void DisplayTestWindow::keyPressEvent(QKeyEvent *event)
             }
             case 2: {
                  if (NULL != _display_test_window) {
-                     emit sig_finish_show_display_window();
+                     emit sig_finish_show_display_window(true);
                  }
                  break;
             }
@@ -149,7 +149,7 @@ void DisplayTestWindow::keyPressEvent(QKeyEvent *event)
 
     } else if (event->key() == Qt::Key_Escape) {
         if (NULL != _display_test_window) {
-            emit sig_finish_show_display_window();
+            emit sig_finish_show_display_window(false);
         }
     }
 
