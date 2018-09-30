@@ -250,9 +250,11 @@ void Control::check_sn_mac_compare_result(string message)
 		if (message.size() != mac.size() || message != mac) {
 			_uiHandle->update_sn_mac_test_result("MAC", "FAIL");
 			_uiHandle->show_sn_mac_comparison_result("MAC", "FAIL");
+			return ;
 		} else {
 			_uiHandle->update_sn_mac_test_result("MAC", "PASS");
 			_uiHandle->show_sn_mac_comparison_result("MAC", "PASS");
+			return ;
 		}
     }
 
@@ -261,9 +263,11 @@ void Control::check_sn_mac_compare_result(string message)
 		if (message.size() != sn.size() || message != sn) {
 			_uiHandle->update_sn_mac_test_result("SN", "FAIL");
 			_uiHandle->show_sn_mac_comparison_result("SN", "FAIL");
+			return ;
 		} else {
 			_uiHandle->update_sn_mac_test_result("SN", "PASS");
 			_uiHandle->show_sn_mac_comparison_result("SN", "PASS");
+			return ;
 		}
     }
 }
