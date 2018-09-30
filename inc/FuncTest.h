@@ -71,7 +71,7 @@ class StressTest : public FuncBase
 {
 public:
     StressTest();
-    static void *test_all(void*);
+    static void *test_all(void* arg);
     void start_test(BaseInfo* baseInfo);
 
 private:

@@ -185,9 +185,10 @@ bool remove_local_file(const char* filename) {
         return true;
     }
     ret = remove(filename);
- 	/*   if (system("sync") < )
+ 	if (execute_command("sync") == "error" ) {
 		LOG_ERROR("system sync error\n");
-	*/
+ 	}
+	
 	if(ret == 0)
 		return true;
     return false;

@@ -140,7 +140,6 @@ public:
     int get_screen_height();
     int get_screen_width();
     bool is_stress_test_window_quit_safely();
-    bool stress_test_window_quit_status;
     int get_test_step();
 
     UiHandle* get_ui_handle() {
@@ -225,13 +224,16 @@ public:
     }
     
     int get_fac_config_status(){
-        return fac_config_status;
+        return _fac_config_status;
     }
     
     bool get_whole_test_state(){
-        return whole_test_state;
+        return _whole_test_state;
     }
     
+    void set_stress_test_window_quit_status(bool status) {
+        _stress_test_window_quit_status = status;
+    }
     
 private:
     void init_base_info();
@@ -263,8 +265,9 @@ private:
     int _interfaceRunStatus;
     string _sn_mac;
     bool _is_idv;
-    int fac_config_status;
-    bool whole_test_state;
+    int _fac_config_status;
+    bool _whole_test_state;
+    bool _stress_test_window_quit_status;
 
 signals:
 

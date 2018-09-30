@@ -88,8 +88,9 @@ StressTest::StressTest()
 }
 
 
-void* StressTest::test_all(void *)
+void* StressTest::test_all(void* arg)
 {
+	BaseInfo* baseinfo = (BaseInfo*)arg;
 	Control *control = Control::get_control();
 	UiHandle* uihandle = UiHandle::get_uihandle();
     TimeInfo init_time = {0,0,0,0};
@@ -101,14 +102,15 @@ void* StressTest::test_all(void *)
 		string stress_stage = control->get_stress_test_stage();		
 		remove_local_file(STRESS_LOCK_FILE.c_str());
 		if (stress_stage == WHOLE_LOCK || stress_stage == PCBA_LOCK) {
-			uihandle->confirm_test_result_warning("上次拷机退出异常");
+			//uihandle->confirm_test_result_warning("上次拷机退出异常");
 			LOG_INFO("last stress test exit error\n");			
 	    } else if (stress_stage == NEXT_LOCK) {
 			LOG_INFO("next process -> stress test\n");
 	    } else {
+			uihandle->confirm_test_result_warning("lock文件异常");
 			LOG_ERROR("stress test lock file wrong\n");
+			return NULL;
 	    }
-		remove_local_file(STRESS_LOCK_FILE.c_str());
 	}
 	
 	if (control->get_whole_test_state()) {
@@ -117,12 +119,24 @@ void* StressTest::test_all(void *)
 		write_local_data(STRESS_LOCK_FILE.c_str(),"w+",(char*)PCBA_LOCK,sizeof(PCBA_LOCK));
 	}
 
-	if (!check_file_exit(STRESS_LOCK_FILE.c_str())) {
+	if(execute_command("sync") == "error") {
+		uihandle->confirm_test_result_warning("cmd sync error");
+        LOG_ERROR("cmd sync error\n");
 		return NULL;
 	}
-	control->stress_test_window_quit_status = true;
+	
+	if (!check_file_exit(STRESS_LOCK_FILE.c_str())) {
+		uihandle->confirm_test_result_warning("lock文件创建异常");
+        LOG_ERROR("create stress test lock failed\n");
+		return NULL;
+	}
+	control->set_stress_test_window_quit_status(true);
 	uihandle->show_stress_test_ui();
-
+/*	if (get_int_value(baseinfo->camera_exist) == 1) {
+		CameraTest* camera = new CameraTest();
+		camera->start_camera_xawtv_on_stress();
+	}*/
+	
     uihandle->update_stress_label_value("编码状态","PASS");
     uihandle->update_stress_label_value("解码状态","PASS");
     uihandle->update_stress_label_value("产品型号",(control->get_hw_info())->product_name);
@@ -134,6 +148,9 @@ void* StressTest::test_all(void *)
     while(true)
     {
         if (!control->is_stress_test_window_quit_safely()) {
+			if (check_file_exit(STRESS_LOCK_FILE.c_str())) {
+				remove_local_file(STRESS_LOCK_FILE.c_str());
+			}
             break;
         }
 		
@@ -155,9 +172,6 @@ void* StressTest::test_all(void *)
         sleep(1);
     }
 	
-	if (check_file_exit(STRESS_LOCK_FILE.c_str())) {
-		remove_local_file(STRESS_LOCK_FILE.c_str());
-	}
 	return NULL;
 }
 

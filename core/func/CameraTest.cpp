@@ -40,7 +40,7 @@ unsigned long CameraTest::get_window_id(const char *winid_file)
 	
     return winid;
 }
-
+#if 0 
 void CameraTest::move_xawtv_window(int new_x, int new_y)
 {
     Display *display;
@@ -72,9 +72,9 @@ void CameraTest::move_xawtv_window_on_func_test(void)
     new_x = screen_width - 395;
     new_y = 50;
     move_xawtv_window(new_x, new_y);
-}
+} 
 
-
+#endif
 void CameraTest::start_camera_xawtv()
 {
     if (system("/usr/local/bin/factory/start_xawtv.sh") < 0) {
@@ -88,11 +88,6 @@ void CameraTest::start_camera_xawtv()
             return ;
         }
         usleep(5000);
-
-        /* move xawtv window to right-top */
-        move_xawtv_window_on_func_test();
-        usleep(5000);
-
 }
 
 bool CameraTest::check_if_xawtv_started()
@@ -152,8 +147,8 @@ bool CameraTest::camera_test_all()
 
 void* CameraTest::test_all(void*)
 {
-	camera_test_all();
 	Control::get_control()->update_screen_log("==================== camera test ====================\n");
+	camera_test_all();
 	//Control::get_control()->set_bright_test_finish();
 	return NULL;
 }
@@ -162,6 +157,62 @@ void CameraTest::start_test(BaseInfo* baseInfo)
 {
     pthread_t tid;
     pthread_create(&tid,NULL,test_all,baseInfo);
+}
+
+
+
+
+bool CameraTest::check_if_camera_exist()
+{
+    FILE *fp;
+    char xawtv_status[CMD_BUF_SIZE];
+    char *p;
+
+    fp = fopen("/tmp/xawtv.status", "r");
+    if (fp == NULL) {
+        LOG_ERROR("Failed to get camera status: %s\n", strerror(errno));
+        return false;
+    }
+
+    memset(xawtv_status, 0, CMD_BUF_SIZE);
+    p = fgets(xawtv_status, CMD_BUF_SIZE, fp);
+    if (p == NULL) {
+        LOG_ERROR("Error occured while getting camera status: %s\n", strerror(errno));
+        fclose(fp);
+        return false;
+    }
+    fclose(fp);
+
+    if (!strcmp(delNL(xawtv_status), "VIDEOOK")) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+void CameraTest::start_camera_xawtv_on_stress()
+{
+    /* check if camera device exists */
+	string result = execute_command("bash " + CAMERA_CHECK_SCRIPT);
+	if (result == "error"){
+    	LOG_ERROR("system run error!\n");
+    }
+    usleep(50000);
+    if (!check_if_camera_exist()) {
+        LOG_ERROR("ERROR: Camera device is not found!\n");
+        return;
+    }
+	result = execute_command("bash " + CAMERA_START_SCRIPT);
+	if (result == "error"){
+    	LOG_ERROR("system run error!\n");
+    }
+    usleep(50000);
+	
+	if (system("/usr/local/bin/factory/close_xawtv.sh") ==	0) {
+		LOG_ERROR("system run close_xawtv.sh error!\n");
+		return ;
+	}
+	usleep(5000);
 }
 
 

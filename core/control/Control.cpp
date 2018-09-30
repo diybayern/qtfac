@@ -109,9 +109,9 @@ void Control::init_hw_info()
 void Control::ui_init()
 {
 	if (check_file_exit(WHOLE_TEST_FILE)) {
-		whole_test_state = true;
+		_whole_test_state = true;
 	} else {
-		whole_test_state = false;
+		_whole_test_state = false;
 	}
 	
     _uiHandle->add_main_label("产品型号:", _hwInfo->product_name);
@@ -168,17 +168,17 @@ void Control::ui_init()
     _uiHandle->add_main_test_button(UPLOAD_LOG_NAME);
 
     if (_baseInfo->hdd_cap != "0" && _baseInfo->hdd_cap != "") {
-        if (!whole_test_state) {
+        if (!_whole_test_state) {
              _uiHandle->add_main_test_button(NEXT_PROCESS_NAME);
         }
     }    
     
-    if (whole_test_state) {
+    if (_whole_test_state) {
         _uiHandle->add_complete_or_single_test_label("整机测试");
     } else {
         _uiHandle->add_complete_or_single_test_label("单板测试");
     }
-	_uiHandle->set_is_complete_test(whole_test_state);
+	_uiHandle->set_is_complete_test(_whole_test_state);
 	
     _uiHandle->sync_main_test_ui();
     
@@ -208,7 +208,7 @@ void Control::ui_init()
     connect(_uiHandle->get_qobject(UPLOAD_LOG_NAME), SIGNAL(clicked()), this, SLOT(start_upload_log()));
 
 	if (_baseInfo->hdd_cap != "0" && _baseInfo->hdd_cap != "") {
-        if (!whole_test_state) {
+        if (!_whole_test_state) {
     		connect(_uiHandle->get_qobject(NEXT_PROCESS_NAME), SIGNAL(clicked()), this, SLOT(start_next_process()));
         }
 	}
@@ -271,7 +271,7 @@ void Control::check_sn_mac_compare_result(string message)
 void Control::show_test_confirm_dialog(string item)
 {
     if (item.compare(STRESS_TEST_NAME) == 0) {
-        stress_test_window_quit_status = false;
+        _stress_test_window_quit_status = false;
     }
     _uiHandle->confirm_test_result_dialog(item);
 }
@@ -297,12 +297,12 @@ void Control::init_fac_config()
 	if (!usb->usb_test_read_status()) {
 		LOG_ERROR("init copy fac config error");
 	}
-    fac_config_status = get_fac_config_from_conf(FAC_CONFIG_FILE, _facArg);
-    if (fac_config_status == NO_FTP_PATH) {
+    _fac_config_status = get_fac_config_from_conf(FAC_CONFIG_FILE, _facArg);
+    if (_fac_config_status == NO_FTP_PATH) {
         LOG_INFO("NO_FTP_PATH");
-    } else if (fac_config_status == NO_JOB_NUMBER) {
+    } else if (_fac_config_status == NO_JOB_NUMBER) {
         LOG_INFO("NO_JOB_NUMBER");
-    } else if (fac_config_status == (NO_FTP_PATH + NO_JOB_NUMBER)) {
+    } else if (_fac_config_status == (NO_FTP_PATH + NO_JOB_NUMBER)) {
         LOG_INFO("NO_FTP_PATH and NO_JOB_NUMBER");
     } 
 }
@@ -505,7 +505,7 @@ void Control::update_mes_log(string tag,string value)
 
 
 void Control::upload_mes_log() {
-	if (fac_config_status != 0) {
+	if (_fac_config_status != 0) {
 		LOG_INFO("fac config is wrong, do not upload");
 		_uiHandle->confirm_test_result_warning("配置文件有误");
 		set_test_result(UPLOAD_LOG_NAME,"FAIL","配置文件有误");
@@ -759,7 +759,7 @@ void Control::set_test_result_pass_or_fail(string func, string result)
 
 void Control::set_sn_mac_test_result(string sn_mac, string result)
 {
-	if (sn_mac == "MAC" && result == "PASS" && whole_test_state) {
+	if (sn_mac == "MAC" && result == "PASS" && _whole_test_state) {
 		sleep(1);
 		_sn_mac = "SN";
 		_uiHandle->show_sn_mac_message_box("SN");
@@ -768,7 +768,6 @@ void Control::set_sn_mac_test_result(string sn_mac, string result)
 
 bool Control::is_stress_test_window_quit_safely()
 {
-    return stress_test_window_quit_status;
+    return _stress_test_window_quit_status;
 }
-
 
