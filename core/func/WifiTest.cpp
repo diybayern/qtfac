@@ -381,10 +381,13 @@ bool WifiTest::check_if_wifi_connect_pass(void)
 
 		if(!get_file_size("/tmp/ssid.mac", &size)) {
 			LOG_ERROR("/tmp/ssid.mac is null\n");
+			wifi_screen_log += "/tmp/ssid.mac is null\n";
 			return false;
 		}
 		memset(wifi_ssid_mac, 0, CMD_BUF_SIZE);
-		if(read_local_data("/tmp/ssid.mac",wifi_ssid_mac,size)) {
+		if(!read_local_data("/tmp/ssid.mac",wifi_ssid_mac,size)) {
+			LOG_ERROR("/tmp/ssid.mac read error\n");
+			wifi_screen_log += "/tmp/ssid.mac read error\n";
 			return false;
 		}
         LOG_INFO("WIFI SSID mac:\t%s\n",wifi_ssid_mac);
