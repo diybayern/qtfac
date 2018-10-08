@@ -180,7 +180,9 @@ void* StressTest::test_all(void* arg)
     {
         if (!control->is_stress_test_window_quit_safely()) {
             stop_gpu_stress_test();
-			camera->close_xawtv_window();
+			if (get_int_value(baseInfo->camera_exist) == 1) {
+				camera->close_xawtv_window();
+			}
 			if (check_file_exit(STRESS_LOCK_FILE.c_str())) {
 				remove_local_file(STRESS_LOCK_FILE.c_str());
 			}

@@ -522,7 +522,8 @@ void Control::upload_mes_log() {
 		upload_log += "ftp passwd:\t\t" + (string)_facArg->ftp_passwd + "\n";
 		upload_log += "ftp path:\t\t" + (string)_facArg->ftp_dest_path + "\n";
 		update_screen_log(upload_log);
-		
+
+		//_uiHandle->confirm_test_result_waiting("upload log ...");
         char* response = ftp_send_file(MES_FILE,_facArg);
         response = response_to_chinese(response);
         LOG_INFO("upload %s",response);
