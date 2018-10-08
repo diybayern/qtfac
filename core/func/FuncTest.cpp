@@ -88,9 +88,8 @@ StressTest::StressTest()
 }
 
 
-void* StressTest::test_all(void* arg)
+void* StressTest::test_all(void*)
 {
-	BaseInfo* baseinfo = (BaseInfo*)arg;
 	Control *control = Control::get_control();
 	UiHandle* uihandle = UiHandle::get_uihandle();
     TimeInfo init_time = {0,0,0,0};
@@ -156,7 +155,7 @@ void* StressTest::test_all(void* arg)
 		
         get_current_open_time(&tmp_dst);
         diff_running_time(&tmp_dst, &init_time);
-		if (tmp_dst.minute == 2) {
+		if (tmp_dst.day == 0 && tmp_dst.hour == 0 && tmp_dst.minute == 2 && tmp_dst.second == 0) {
 			remove_local_file(STRESS_LOCK_FILE.c_str());
 			uihandle->set_stress_test_pass_or_fail("PASS");
 		}

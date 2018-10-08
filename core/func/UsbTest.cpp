@@ -139,7 +139,7 @@ void UsbTest::get_usb_mass_storage(USB_INFO_T* info) {
 	udev_enumerate_unref(enumerate);
 }
 
-bool UsbTest::usb_test_mount(char* block, char* dir) {
+bool UsbTest::usb_test_mount(char* block, const char* dir) {
 	char cmd[64] = { 0, };
 
 	if (NULL == block || NULL == dir) {
@@ -156,7 +156,7 @@ bool UsbTest::usb_test_mount(char* block, char* dir) {
 	return true;
 }
 
-bool UsbTest::usb_test_write(char* dir, char* file_name) {
+bool UsbTest::usb_test_write(const char* dir, const char* file_name) {
 
 	int i = 0;
 	bool ret = false;
@@ -177,7 +177,7 @@ bool UsbTest::usb_test_write(char* dir, char* file_name) {
 	return ret;
 }
 
-bool UsbTest::usb_test_read(char* dir, char* file_name) {
+bool UsbTest::usb_test_read(const char* dir, const char* file_name) {
 
 	int i = 0;
 	bool ret = false;
@@ -205,7 +205,7 @@ bool UsbTest::usb_test_read(char* dir, char* file_name) {
 	return ret;
 }
 
-bool UsbTest::usb_test_umount(char* dir) {
+bool UsbTest::usb_test_umount(const char* dir) {
 	int ret = false;
 	char cmd[64] = { 0, };
 
@@ -226,28 +226,28 @@ bool UsbTest::usb_test_umount(char* dir) {
 bool UsbTest::usb_test_write_read(USB_INFO_T* info) {
 
 	int i = 0;
-	char* path = "/mnt/usb_factory_test";
-	char* file_name = "usbbbbbb_test";
+	string path = "/mnt/usb_factory_test";
+	string file_name = "usbbbbbb_test";
 
-    (void) mkdir(path, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+    (void) mkdir(path.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
     
 	for (i = 0; i < info->dev_num; i++) {
-        if (!usb_test_mount(info->dev[i].block, path)) {
+        if (!usb_test_mount(info->dev[i].block, path.c_str())) {
             return false;
         }
-        if (!usb_test_write(path, file_name)) {
+        if (!usb_test_write(path.c_str(), file_name.c_str())) {
             return false;
         }
-        if (!usb_test_read(path, file_name)) {
+        if (!usb_test_read(path.c_str(), file_name.c_str())) {
             return false;
         }
-        if (!usb_test_umount(path)) {
+        if (!usb_test_umount(path.c_str())) {
             return false;
         }
 		usleep(10000);
 	}
 
-	(void) remove(path);
+	(void) remove(path.c_str());
 
 	return true;
 }
@@ -309,7 +309,7 @@ void UsbTest::start_test(BaseInfo* baseInfo)
 }
 
 
-bool UsbTest::usb_test_read_cfg(char* dir)
+bool UsbTest::usb_test_read_cfg(const char* dir)
 {
     char name[128] = {0};
     char cmd[256] = {0};
@@ -336,15 +336,15 @@ bool UsbTest::usb_test_read_cfg(USB_INFO_T* info) {
 
 	int i = 0;
 	bool ret = false;
-	char* path = "/mnt/usb_factory_test";
+	string path = "/mnt/usb_factory_test";
 
-    (void) mkdir(path, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+    (void) mkdir(path.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 
 	for (i = 0; i < info->dev_num; i++) {
 
-		usb_test_mount(info->dev[i].block, path);
-        ret = usb_test_read_cfg(path);
-		usb_test_umount(path);
+		usb_test_mount(info->dev[i].block, path.c_str());
+        ret = usb_test_read_cfg(path.c_str());
+		usb_test_umount(path.c_str());
 
         if (ret) {
             break;

@@ -47,10 +47,10 @@ public:
     static bool get_dev_mount_point(struct udev_device* dev, char* dst);
     static struct udev_device* get_child(struct udev* udev, struct udev_device* parent, const char* subsystem);
     static void get_usb_mass_storage(USB_INFO_T* info);
-    static bool usb_test_mount(char* block, char* dir);
-    static bool usb_test_write(char* dir, char* file_name);
-    static bool usb_test_read(char* dir, char* file_name);
-    static bool usb_test_umount(char* dir);
+    static bool usb_test_mount(char* block, const char* dir);
+    static bool usb_test_write(const char* dir, const char* file_name);
+    static bool usb_test_read(const char* dir, const char* file_name);
+    static bool usb_test_umount(const char* dir);
     static bool usb_test_write_read(USB_INFO_T* info);
     static bool usb_test_all(int num);
     
@@ -59,7 +59,7 @@ public:
 
     bool usb_test_read_status();
     static bool usb_test_read_cfg(USB_INFO_T* info);
-    static bool usb_test_read_cfg(char* dir);
+    static bool usb_test_read_cfg(const char* dir);
 
 private:
     Control* _control;
@@ -71,7 +71,7 @@ class StressTest : public FuncBase
 {
 public:
     StressTest();
-    static void *test_all(void* arg);
+    static void *test_all(void*);
     void start_test(BaseInfo* baseInfo);
 
 private:
