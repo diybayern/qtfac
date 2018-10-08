@@ -630,4 +630,20 @@ string get_cpu_info(CpuStatus* st_cpu) {
 	return cpu_str;
 }
 
-
+void stop_gpu_stress_test(void) {
+    if (system("killall -s 9 heaven_x64") < 0) {
+        LOG_ERROR("system cmd run error\n");
+    }
+    if (system("killall -s 9 browser_x64") < 0) {
+        LOG_ERROR("system cmd run error\n");
+    }
+    if (system("killall -s 9 heaven_x86") < 0) {
+        LOG_ERROR("system cmd run error\n");
+    }
+    if (system("killall -s 9 browser_x86") < 0) {
+        LOG_ERROR("system cmd run error\n");
+    }
+    if (system("killall -s 9 heaven") < 0) {
+        LOG_ERROR("system cmd run error\n");
+    }
+}

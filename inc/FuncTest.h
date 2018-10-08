@@ -73,6 +73,7 @@ public:
     StressTest();
     static void *test_all(void*);
     void start_test(BaseInfo* baseInfo);
+    static void* gpu_stress_test(void* arg);
 
 private:
     Control* _control;

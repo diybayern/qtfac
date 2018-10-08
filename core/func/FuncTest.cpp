@@ -87,6 +87,16 @@ StressTest::StressTest()
 {
 }
 
+void* StressTest::gpu_stress_test(void*)
+{
+    pthread_detach(pthread_self());
+    stop_gpu_stress_test();
+    if (system("cd /usr/bin/Unigine_Heaven-4.0; ./heaven") < 0) {
+        LOG_ERROR("system cmd run error\n");
+    }
+    return NULL;
+}
+
 
 void* StressTest::test_all(void*)
 {
@@ -96,6 +106,7 @@ void* StressTest::test_all(void*)
     TimeInfo tmp_dst = {0,0,0,0};
     char datebuf[CMD_BUF_SIZE] = {0};
 	CpuStatus st_cpu = {0,0,0,0,0,0,0,0,0,0,0};
+    pthread_t pid_t;
 
     control->set_pcba_whole_lock_state(false);
 	if (check_file_exit(STRESS_LOCK_FILE.c_str())) {
@@ -147,11 +158,16 @@ void* StressTest::test_all(void*)
     uihandle->update_stress_label_value("硬件版本",(control->get_hw_info())->product_hw_version);
     uihandle->update_stress_label_value("SN序列号",(control->get_hw_info())->sn);
     uihandle->update_stress_label_value("MAC地址",(control->get_hw_info())->mac);
+
+    if (control->get_is_idv()) {
+        pthread_create(&pid_t, NULL, gpu_stress_test, NULL);
+    }
     
     get_current_open_time(&init_time);
-    /*while(true)
+    while(true)
     {
         if (!control->is_stress_test_window_quit_safely()) {
+            stop_gpu_stress_test();
 			if (check_file_exit(STRESS_LOCK_FILE.c_str())) {
 				remove_local_file(STRESS_LOCK_FILE.c_str());
 			}
@@ -174,8 +190,7 @@ void* StressTest::test_all(void*)
         uihandle->update_stress_label_value("Cpu",get_cpu_info(&st_cpu));
 
         sleep(1);
-    }*/
-	
+    }	
 	return NULL;
 }
 

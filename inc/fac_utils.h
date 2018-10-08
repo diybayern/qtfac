@@ -217,6 +217,7 @@ string get_current_cpu_freq();
 string get_mem_info();
 string get_cpu_info(CpuStatus* st_cpu);
 string change_float_to_string(float fla);
+void stop_gpu_stress_test(void);
 
 
 #endif
