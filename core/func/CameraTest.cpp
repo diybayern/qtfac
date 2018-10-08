@@ -40,7 +40,7 @@ unsigned long CameraTest::get_window_id(const char *winid_file)
 	
     return winid;
 }
-#if 0 
+ 
 void CameraTest::move_xawtv_window(int new_x, int new_y)
 {
     Display *display;
@@ -74,7 +74,6 @@ void CameraTest::move_xawtv_window_on_func_test(void)
     move_xawtv_window(new_x, new_y);
 } 
 
-#endif
 void CameraTest::start_camera_xawtv()
 {
     if (system("/usr/local/bin/factory/start_xawtv.sh") < 0) {
@@ -88,6 +87,7 @@ void CameraTest::start_camera_xawtv()
             return ;
         }
         usleep(5000);
+	move_xawtv_window_on_func_test();
 }
 
 bool CameraTest::check_if_xawtv_started()
