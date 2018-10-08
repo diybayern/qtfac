@@ -1,6 +1,5 @@
 #include "../../inc/VideoTestThread.h"
 
-static bool g_stopped = false;
 VideoTestThread* VideoTestThread::_video_test_thread = NULL;
 VideoTestThread* VideoTestThread::get_video_test_thread()
 {
@@ -12,7 +11,7 @@ VideoTestThread* VideoTestThread::get_video_test_thread()
 
 VideoTestThread::VideoTestThread(QThread *parent) : QThread(parent)
 {
-    g_stopped = false;
+    this->_m_stopped = false;
     this->videoindex = -1;
     this->filepath = "movie.mp4";
     this->pFormatCtx        = NULL;
@@ -135,7 +134,9 @@ int VideoTestThread::ffmpeg_video_change_format(AVFrame* frame, int dst_w, int d
     QImage tmpImg((uchar *)buffer, dst_w, dst_h, QImage::Format_RGBA8888);
     QPixmap pixmap2(QPixmap::fromImage (tmpImg));
 
-    StressTestWindow::get_stress_test_window()->_lb_video->setPixmap(pixmap2);
+    if (NULL != StressTestWindow::g_get_stress_test_window()) {
+        StressTestWindow::g_get_stress_test_window()->_lb_video->setPixmap(pixmap2);
+    }
 
     av_free(buffer);
     av_frame_unref(pFrameRGB);
@@ -202,8 +203,8 @@ void VideoTestThread::stop_play()
     if (_video_test_thread->isRunning()) {
         if (NULL != _video_test_thread) {
             disconnect(_video_test_thread);
-            g_stopped = true;
-            //quit();
+            _m_stopped = true;
+            quit();
             wait();
             delete _video_test_thread;
             _video_test_thread = NULL;
@@ -213,7 +214,6 @@ void VideoTestThread::stop_play()
 
 void VideoTestThread::slot_finish_video_test_thread()
 {
-    qDebug()<<"VideoTestThread  slot_finish_video_test_thread";
     stop_play();
 }
 
@@ -225,8 +225,8 @@ void VideoTestThread::run()
     AVPacket pkt;
 
     //(1) here we want to get frame
-    while(!g_stopped)
-    {       
+    while(!_m_stopped)
+    {
         if (video_type == VIDEO_INIT) {
             video_type = VIDEO_LOOP;
             ffmpeg_decode_deinit();

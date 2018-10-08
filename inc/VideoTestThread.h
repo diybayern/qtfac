@@ -62,7 +62,7 @@ public:
 
 private:
     static VideoTestThread* _video_test_thread;
-   // bool _m_stopped;
+    bool _m_stopped;
 
 signals:
 #if 0

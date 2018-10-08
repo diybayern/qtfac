@@ -502,35 +502,40 @@ void MainTestWindow::show_display_test_window()
 
 void MainTestWindow::slot_finish_show_stress_window()
 {
-    StressTestWindow::get_stress_test_window()->finish_stress_window();
-    while(true) {
-        if (NULL != StressTestWindow::g_get_stress_test_window()) {
-            eventloop.exec();
-        } else {
-            if (eventloop.isRunning()) {
-                eventloop.exit();
+    if (StressTestWindow::g_get_stress_test_window() != NULL) {
+        StressTestWindow::g_get_stress_test_window()->finish_stress_window();
+        while(true) {
+            if (NULL != StressTestWindow::g_get_stress_test_window()) {
+                eventloop.exec();
+            } else {
+                if (eventloop.isRunning()) {
+                    eventloop.exit();
+                }
+                break;
             }
-            break;
         }
+        emit to_quit_test_window("拷机测试");
     }
-    emit to_quit_test_window("拷机测试");
+
 }
 
 void MainTestWindow::slot_finish_show_display_window(bool state)
 {
-    DisplayTestWindow::get_display_test_window()->finish_display_window();
-    while(true) {
-        if (NULL != DisplayTestWindow::g_get_display_test_window()) {
-            eventloop.exec();
-        } else {
-            if (eventloop.isRunning()) {
-                eventloop.exit();
+    if (NULL != DisplayTestWindow::g_get_display_test_window()) {
+        DisplayTestWindow::g_get_display_test_window()->finish_display_window();
+        while(true) {
+            if (NULL != DisplayTestWindow::g_get_display_test_window()) {
+                eventloop.exec();
+            } else {
+                if (eventloop.isRunning()) {
+                    eventloop.exit();
+                }
+                break;
             }
-            break;
         }
-    }
-    if (state == true) {
-        emit to_quit_test_window("显示测试");
+        if (state == true) {
+            emit to_quit_test_window("显示测试");
+        }
     }
 }
 
@@ -597,10 +602,15 @@ void MainTestWindow::slot_show_sn_mac_comparison_result(QString sn_mac, QString 
 
 void MainTestWindow::slot_update_stress_test_pass_or_fail(QString result)
 {
-    StressTestWindow::get_stress_test_window()->update_stress_test_pass_or_fail(result);
+    if (StressTestWindow::g_get_stress_test_window() != NULL) {
+        StressTestWindow::g_get_stress_test_window()->update_stress_test_pass_or_fail(result);
+    }
 }
 
 void MainTestWindow::update_stress_label_value(QString item, QString result)
 {
-    StressTestWindow::get_stress_test_window()->update_stress_label_value(item, result);
+    if (StressTestWindow::g_get_stress_test_window() != NULL) {
+        StressTestWindow::g_get_stress_test_window()->update_stress_label_value(item, result);
+    }
+
 }

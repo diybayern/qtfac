@@ -160,12 +160,12 @@ StressTestWindow::StressTestWindow(QWidget *parent)
     connect(ImageTestThread::get_image_test_thread(), SIGNAL(sig_send_one_pixmap(QPixmap)), this, SLOT(slot_get_one_pixmap(QPixmap)));
 #if 0
     connect(VideoTestThread::get_video_test_thread(), SIGNAL(sig_send_one_frame(QImage)), this, SLOT(slot_get_one_frame(QImage)));
-#endif    
+#endif
     ImageTestThread::get_image_test_thread()->start_run();
     VideoTestThread::get_video_test_thread()->start_play();
-    connect(this, SIGNAL(sig_finish_video_test_thread()), VideoTestThread::get_video_test_thread(), SLOT(slot_finish_video_test_thread()));
-    connect(this, SIGNAL(sig_finish_image_test_thread()), ImageTestThread::get_image_test_thread(), SLOT(slot_finish_image_test_thread()));
-    connect(this, SIGNAL(sig_finish_show_stress_window()), MainTestWindow::get_main_test_window(), SLOT(slot_finish_show_stress_window()));    
+    connect(this, SIGNAL(sig_finish_video_test_thread()), VideoTestThread::get_video_test_thread(), SLOT(slot_finish_video_test_thread()), Qt::QueuedConnection);
+    connect(this, SIGNAL(sig_finish_image_test_thread()), ImageTestThread::get_image_test_thread(), SLOT(slot_finish_image_test_thread()), Qt::QueuedConnection);
+    connect(this, SIGNAL(sig_finish_show_stress_window()), MainTestWindow::get_main_test_window(), SLOT(slot_finish_show_stress_window()), Qt::QueuedConnection);
 }
 
 StressTestWindow::~StressTestWindow()
