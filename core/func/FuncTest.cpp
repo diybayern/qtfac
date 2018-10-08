@@ -97,16 +97,27 @@ void* StressTest::gpu_stress_test(void*)
     return NULL;
 }
 
-
-void* StressTest::test_all(void*)
+void* StressTest::camera_stress_test(void* arg)
 {
+	pthread_detach(pthread_self());
+	CameraTest* camera = (CameraTest*)arg;
+	camera->start_camera_xawtv_on_stress();
+	return NULL;
+}
+
+void* StressTest::test_all(void* arg)
+{
+	BaseInfo* baseInfo = (BaseInfo*)arg;
 	Control *control = Control::get_control();
 	UiHandle* uihandle = UiHandle::get_uihandle();
     TimeInfo init_time = {0,0,0,0};
     TimeInfo tmp_dst = {0,0,0,0};
     char datebuf[CMD_BUF_SIZE] = {0};
 	CpuStatus st_cpu = {0,0,0,0,0,0,0,0,0,0,0};
-    pthread_t pid_t;
+    pthread_t pid_t1, pid_t2;
+	
+	FuncBase** _funcBase = control->get_funcbase();
+	CameraTest* camera = (CameraTest*)_funcBase[CAMERA];
 
     control->set_pcba_whole_lock_state(false);
 	if (check_file_exit(STRESS_LOCK_FILE.c_str())) {
@@ -143,13 +154,14 @@ void* StressTest::test_all(void*)
 	}
 	control->set_stress_test_window_quit_status(true);
 	uihandle->show_stress_test_ui();
-/*	if (get_int_value(baseinfo->camera_exist) == 1) {
-		CameraTest* camera = new CameraTest();
-		camera->start_camera_xawtv_on_stress();
-    }*/
+	
     if (control->get_pcba_whole_lock_state()) {
         sleep(1);
         uihandle->confirm_test_result_warning("上次拷机退出异常");
+    }
+	
+	if (get_int_value(baseInfo->camera_exist) == 1) {
+        pthread_create(&pid_t1, NULL, camera_stress_test, camera);
     }
 
     uihandle->update_stress_label_value("编码状态","PASS");
@@ -160,7 +172,7 @@ void* StressTest::test_all(void*)
     uihandle->update_stress_label_value("MAC地址",(control->get_hw_info())->mac);
 
     if (control->get_is_idv()) {
-        pthread_create(&pid_t, NULL, gpu_stress_test, NULL);
+        pthread_create(&pid_t2, NULL, gpu_stress_test, NULL);
     }
     
     get_current_open_time(&init_time);
@@ -168,6 +180,7 @@ void* StressTest::test_all(void*)
     {
         if (!control->is_stress_test_window_quit_safely()) {
             stop_gpu_stress_test();
+			camera->close_xawtv_window();
 			if (check_file_exit(STRESS_LOCK_FILE.c_str())) {
 				remove_local_file(STRESS_LOCK_FILE.c_str());
 			}

@@ -738,39 +738,49 @@ void Control::set_test_result_pass_or_fail(string func, string result)
     if (result == "PASS") {
         if (func == SOUND_TEST_NAME) {
             _funcFinishStatus->sound_finish= true;
+			update_mes_log("AUDIO", "PASS");
         }
         if (func == DISPLAY_TEST_NAME) {
             _funcFinishStatus->display_finish= true;
+			update_mes_log("DISPLAY", "PASS");
         }
         if (func == BRIGHT_TEST_NAME) {
             _funcFinishStatus->bright_finish= true;
+			update_mes_log("BRIGHTNESS", "PASS");
         }
         if (func == CAMERA_TEST_NAME) {
             _funcFinishStatus->camera_finish= true;
 			CameraTest* camera = (CameraTest*)_funcBase[CAMERA];
 			camera->close_xawtv_window();
+			update_mes_log("CAMERA", "PASS");
         }
         if (func == STRESS_TEST_NAME) {
             _funcFinishStatus->stress_finish= true;
+			update_mes_log("STRESS", "PASS");
         }
     } else {
 
         if (func == SOUND_TEST_NAME) {
             _funcFinishStatus->sound_finish= false;
+			update_mes_log("AUDIO", "FAIL");
         }
         if (func == DISPLAY_TEST_NAME) {
             _funcFinishStatus->display_finish= false;
+			update_mes_log("DISPLAY", "FAIL");
         }
         if (func == BRIGHT_TEST_NAME) {
             _funcFinishStatus->bright_finish= false;
+			update_mes_log("BRIGHTNESS", "FAIL");
         }
         if (func == CAMERA_TEST_NAME) {
             _funcFinishStatus->camera_finish= false;
 			CameraTest* camera = (CameraTest*)_funcBase[CAMERA];
 			camera->close_xawtv_window();
+			update_mes_log("CAMERA", "FAIL");
         }
         if (func == STRESS_TEST_NAME) {
             _funcFinishStatus->stress_finish= false;
+			update_mes_log("STRESS", "FAIL");
         }
     }
     _uiHandle->set_test_result(func, result);

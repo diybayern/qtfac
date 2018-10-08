@@ -151,7 +151,6 @@ void* CameraTest::test_all(void*)
 	control->update_screen_log("==================== camera test ====================\n");
 	camera_test_all();	
 	control->confirm_test_result(CAMERA_TEST_NAME);
-	//Control::get_control()->set_bright_test_finish();
 	return NULL;
 }
 
