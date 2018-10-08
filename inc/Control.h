@@ -277,6 +277,7 @@ private:
     bool _whole_test_state;
     bool _stress_test_window_quit_status;
     bool _pcba_whole_lock_state;
+    bool _lock_file_status;
 
 signals:
 

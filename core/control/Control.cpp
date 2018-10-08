@@ -320,7 +320,6 @@ void Control::start_interface_test()
 
 void Control::start_sound_test()
 {
-    _uiHandle->start_audio_progress_dialog();    
     _funcBase[SOUND]->start_test(_baseInfo);
     LOG_INFO("start sound test");
 }
@@ -382,7 +381,7 @@ void Control::show_main_test_ui()
 }
 
 void Control::auto_test_mac_sn() {
-	if (!check_file_exit(STRESS_LOCK_FILE.c_str())) {
+	if (!_lock_file_status) {
 		_sn_mac = "MAC";
 		_uiHandle->show_sn_mac_message_box("MAC");
 	}
@@ -509,12 +508,21 @@ void Control::update_mes_log(string tag,string value)
 
 
 void Control::upload_mes_log() {
+	update_screen_log("==================== upload log ====================\n");
 	if (_fac_config_status != 0) {
 		LOG_INFO("fac config is wrong, do not upload");
 		_uiHandle->confirm_test_result_warning("配置文件有误");
 		set_test_result(UPLOAD_LOG_NAME,"FAIL","配置文件有误");
 		return;
 	} else if (combine_fac_log_to_mes(MES_FILE)) {
+		LOG_INFO("ftp ip:%s\tftp user:%s\tftp passwd:%s\tftp path:%s\t",
+					_facArg->ftp_ip,_facArg->ftp_user,_facArg->ftp_passwd,_facArg->ftp_dest_path);
+		string upload_log = "ftp ip:\t\t" + (string)_facArg->ftp_ip + "\n";
+		upload_log += "ftp user:\t\t" + (string)_facArg->ftp_user + "\n";
+		upload_log += "ftp passwd:\t\t" + (string)_facArg->ftp_passwd + "\n";
+		upload_log += "ftp path:\t\t" + (string)_facArg->ftp_dest_path + "\n";
+		update_screen_log(upload_log);
+		
         char* response = ftp_send_file(MES_FILE,_facArg);
         response = response_to_chinese(response);
         LOG_INFO("upload %s",response);
@@ -557,11 +565,14 @@ int Control::get_screen_width()
 void Control::auto_start_stress_test()
 {
     if (check_file_exit(STRESS_LOCK_FILE.c_str())) {
+		_lock_file_status = true;
         LOG_INFO("auto start stress test");
         _stress_test_stage = execute_command("cat " + STRESS_LOCK_FILE);
         LOG_INFO("stress stage:%s",_stress_test_stage.c_str());
         _funcBase[STRESS]->start_test(_baseInfo);
-    }
+    } else {
+    	_lock_file_status = false;
+	}
 }
 
 void Control::set_interface_select_status(string func, bool state) {

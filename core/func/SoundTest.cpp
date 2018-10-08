@@ -514,7 +514,9 @@ bool SoundTest::init()
 void* SoundTest::test_all(void*)
 {
 	Control *control = Control::get_control();
-
+	UiHandle* uihandle = UiHandle::get_uihandle();
+	uihandle->start_audio_progress_dialog();
+	usleep(200000);
     start_record();
     sleep(3);
     stop_record();
