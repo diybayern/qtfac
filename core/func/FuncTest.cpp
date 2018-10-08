@@ -97,11 +97,12 @@ void* StressTest::test_all(void*)
     char datebuf[CMD_BUF_SIZE] = {0};
 	CpuStatus st_cpu = {0,0,0,0,0,0,0,0,0,0,0};
 
+    control->set_pcba_whole_lock_state(false);
 	if (check_file_exit(STRESS_LOCK_FILE.c_str())) {
-		string stress_stage = control->get_stress_test_stage();		
+        string stress_stage = control->get_stress_test_stage();
 		remove_local_file(STRESS_LOCK_FILE.c_str());
-		if (stress_stage == WHOLE_LOCK || stress_stage == PCBA_LOCK) {
-			//uihandle->confirm_test_result_warning("上次拷机退出异常");
+        if (stress_stage == WHOLE_LOCK || stress_stage == PCBA_LOCK) {
+            control->set_pcba_whole_lock_state(true);
 			LOG_INFO("last stress test exit error\n");			
 	    } else if (stress_stage == NEXT_LOCK) {
 			LOG_INFO("next process -> stress test\n");
@@ -134,8 +135,12 @@ void* StressTest::test_all(void*)
 /*	if (get_int_value(baseinfo->camera_exist) == 1) {
 		CameraTest* camera = new CameraTest();
 		camera->start_camera_xawtv_on_stress();
-	}*/
-	
+    }*/
+    if (control->get_pcba_whole_lock_state()) {
+        sleep(1);
+        uihandle->confirm_test_result_warning("上次拷机退出异常");
+    }
+
     uihandle->update_stress_label_value("编码状态","PASS");
     uihandle->update_stress_label_value("解码状态","PASS");
     uihandle->update_stress_label_value("产品型号",(control->get_hw_info())->product_name);
@@ -144,7 +149,7 @@ void* StressTest::test_all(void*)
     uihandle->update_stress_label_value("MAC地址",(control->get_hw_info())->mac);
     
     get_current_open_time(&init_time);
-    while(true)
+    /*while(true)
     {
         if (!control->is_stress_test_window_quit_safely()) {
 			if (check_file_exit(STRESS_LOCK_FILE.c_str())) {
@@ -169,7 +174,7 @@ void* StressTest::test_all(void*)
         uihandle->update_stress_label_value("Cpu",get_cpu_info(&st_cpu));
 
         sleep(1);
-    }
+    }*/
 	
 	return NULL;
 }

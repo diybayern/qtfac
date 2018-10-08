@@ -234,6 +234,14 @@ public:
     void set_stress_test_window_quit_status(bool status) {
         _stress_test_window_quit_status = status;
     }
+
+    void set_pcba_whole_lock_state(bool state) {
+        _pcba_whole_lock_state = state;
+    }
+
+    bool get_pcba_whole_lock_state() {
+        return _pcba_whole_lock_state;
+    }
     
 private:
     void init_base_info();
@@ -268,6 +276,7 @@ private:
     int _fac_config_status;
     bool _whole_test_state;
     bool _stress_test_window_quit_status;
+    bool _pcba_whole_lock_state;
 
 signals:
 
