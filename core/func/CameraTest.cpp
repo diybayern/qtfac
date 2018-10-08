@@ -77,16 +77,16 @@ void CameraTest::move_xawtv_window_on_func_test(void)
 void CameraTest::start_camera_xawtv()
 {
     if (system("/usr/local/bin/factory/start_xawtv.sh") < 0) {
-            LOG_ERROR("system run start_xawtv.sh error!\n");
-            return ;
-        }
-        usleep(50000);
+        LOG_ERROR("system run start_xawtv.sh error!\n");
+        return ;
+    }
+    usleep(50000);
 
-        if (system("/usr/local/bin/factory/close_xawtv.sh") ==  0) {
-            LOG_ERROR("system run close_xawtv.sh error!\n");
-            return ;
-        }
-        usleep(5000);
+    if (system("/usr/local/bin/factory/close_xawtv.sh") < 0) {
+        LOG_ERROR("system run close_xawtv.sh error!\n");
+        return ;
+    }
+    usleep(5000);
 	move_xawtv_window_on_func_test();
 }
 
@@ -161,37 +161,6 @@ void CameraTest::start_test(BaseInfo* baseInfo)
     pthread_create(&tid,NULL,test_all,baseInfo);
 }
 
-
-
-
-bool CameraTest::check_if_camera_exist()
-{
-    FILE *fp;
-    char xawtv_status[CMD_BUF_SIZE];
-    char *p;
-
-    fp = fopen("/tmp/xawtv.status", "r");
-    if (fp == NULL) {
-        LOG_ERROR("Failed to get camera status: %s\n", strerror(errno));
-        return false;
-    }
-
-    memset(xawtv_status, 0, CMD_BUF_SIZE);
-    p = fgets(xawtv_status, CMD_BUF_SIZE, fp);
-    if (p == NULL) {
-        LOG_ERROR("Error occured while getting camera status: %s\n", strerror(errno));
-        fclose(fp);
-        return false;
-    }
-    fclose(fp);
-
-    if (!strcmp(delNL(xawtv_status), "VIDEOOK")) {
-        return true;
-    } else {
-        return false;
-    }
-}
-
 void CameraTest::start_camera_xawtv_on_stress()
 {
     /* check if camera device exists */
@@ -200,21 +169,42 @@ void CameraTest::start_camera_xawtv_on_stress()
     	LOG_ERROR("system run error!\n");
     }
     usleep(50000);
-    if (!check_if_camera_exist()) {
+    if (result != "VIDEOOK") {
         LOG_ERROR("ERROR: Camera device is not found!\n");
         return;
     }
-	result = execute_command("bash " + CAMERA_START_SCRIPT);
-	if (result == "error"){
-    	LOG_ERROR("system run error!\n");
+
+	if (system("/usr/local/bin/factory/start_xawtv.sh") < 0) {
+        LOG_ERROR("system run start_xawtv.sh error!\n");
+        return ;
     }
     usleep(50000);
 	
-	if (system("/usr/local/bin/factory/close_xawtv.sh") ==	0) {
+	if (system("/usr/local/bin/factory/close_xawtv.sh") < 0) {
 		LOG_ERROR("system run close_xawtv.sh error!\n");
 		return ;
 	}
 	usleep(5000);
+	move_xawtv_window_on_func_test();
 }
 
+
+void CameraTest::close_xawtv_window()
+{
+    Display *display;
+    unsigned long winid;
+
+    winid = get_window_id("/tmp/xawtv.winid");
+    if (winid == 0) {
+        LOG_ERROR("Failed to close xawtv window!\n");
+        return;
+    }
+	
+    display = XOpenDisplay(getenv("DISPLAY"));
+    XDestroyWindow(display, winid);
+    XFlush(display);
+    usleep(20000);
+    XCloseDisplay(display);
+    LOG_ERROR("xawtv window has been closed.\n");
+}
 

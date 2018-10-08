@@ -14,11 +14,11 @@ public:
     static bool camera_test_all();
     static void *test_all(void*);
     void start_test(BaseInfo* baseInfo);
-    void start_camera_xawtv_on_stress();
+    static void start_camera_xawtv_on_stress();
+    static void close_xawtv_window();
 
 private:
     Control* _control;
-    bool check_if_camera_exist();	
     static void start_camera_xawtv();
     static unsigned long get_window_id(const char *winid_file);
     static bool check_if_xawtv_started();

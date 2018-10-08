@@ -71,9 +71,10 @@ class StressTest : public FuncBase
 {
 public:
     StressTest();
-    static void *test_all(void*);
+    static void *test_all(void* arg);
     void start_test(BaseInfo* baseInfo);
     static void* gpu_stress_test(void* arg);
+    static void* camera_stress_test(void*);
 
 private:
     Control* _control;

@@ -747,6 +747,8 @@ void Control::set_test_result_pass_or_fail(string func, string result)
         }
         if (func == CAMERA_TEST_NAME) {
             _funcFinishStatus->camera_finish= true;
+			CameraTest* camera = (CameraTest*)_funcBase[CAMERA];
+			camera->close_xawtv_window();
         }
         if (func == STRESS_TEST_NAME) {
             _funcFinishStatus->stress_finish= true;
@@ -764,6 +766,8 @@ void Control::set_test_result_pass_or_fail(string func, string result)
         }
         if (func == CAMERA_TEST_NAME) {
             _funcFinishStatus->camera_finish= false;
+			CameraTest* camera = (CameraTest*)_funcBase[CAMERA];
+			camera->close_xawtv_window();
         }
         if (func == STRESS_TEST_NAME) {
             _funcFinishStatus->stress_finish= false;
